@@ -1,0 +1,22 @@
+#!/bin/sh
+#
+# Ensures some things about files and folders
+#
+# Author: Thomas Frössman  ( thomasf@jossystem.se / http://thomas.jossystem.se )
+# Updates to this file will probably be available at https://github.com/thomasf/dotfiles/
+#
+
+set -e
+set -u
+
+# Ensure sane file modes for some important files and directories
+if [ -d "${HOME}/.ssh" ]; then
+    chmod 700 ~/.ssh
+    chmod 600 ~/.ssh/*
+fi
+[ -d "${HOME}/.subversion" ] && chmod 700 "${HOME}/.subversion"
+
+# Create default directories
+for dir in $HOMEDIRS; do
+    mkdir -p "${HOME}/${dir}"
+done

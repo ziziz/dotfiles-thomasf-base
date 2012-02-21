@@ -1,0 +1,28 @@
+#!/bin/sh
+#
+# Opens editor (emacs)
+#
+# Author: Thomas Frössman  ( thomasf@jossystem.se / http://thomas.jossystem.se )
+# Updates to this file will probably be available at https://github.com/thomasf/dotfiles/
+#
+
+set -e
+
+# if runnung under osx, make some changes
+if [ "z$OSTYPE" = "zdarwin10.0" ]; then
+    if [ -x "/Applications/Emacs.app/Contents/MacOS/Emacs" ]; then
+      exec /Applications/Emacs.app/Contents/MacOS/Emacs $*
+    fi
+fi
+
+if [ $(which emacs) ]; then
+    args=""
+    [ ! "z" = "z$TERM" ] && args="-nw"
+    exec emacs $args $*
+elif [ $(which vim) ]; then
+    exec vim $*
+elif [ $(which vi) ]; then
+    exec vi $*
+else
+    echo "no suitable editor found"
+fi

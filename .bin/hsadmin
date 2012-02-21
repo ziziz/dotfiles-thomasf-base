@@ -1,0 +1,175 @@
+#!/bin/bash
+#
+# Manage directory synchronized repositories repositories stored in a gitolite repository
+#
+# Author: Thomas Frössman  ( thomasf@jossystem.se / http://thomas.jossystem.se )
+# Updates to this file will probably be available at https://github.com/thomasf/dotfiles/
+#
+
+#set -x
+#set -u
+
+set -e
+
+# Uses SSH to fetch a list of available repositories of
+# xa gitolite service 
+function clone_available_repositories_from_gitolite {
+    echo "Getting repositories list..."
+
+    # Fetch list of repositories from gitolite
+    local REPOS=$(ssh $gitolite_ssh expand | cut -s -f 3)
+
+    # Parse the list and clone if not already there
+    for RR in $REPOS; do
+        if [[ ${RR} == ${gitolite_path}/*  ]]; then
+            local r=$(basename ${RR})
+            local destination="${base}/${r}"
+            # Does the local directory already exist?
+            if [[ ! -e "${destination}" ]]; then
+                # Clone repository
+                git clone "${gitolite_clone_url_base}/${r}" "${destination}"
+            fi
+        fi
+    done
+}
+
+
+function maybe_add_public_github_git_remotes {
+    if [[ -n ${HSADMIN_GH_PUBLISH} ]]; then 
+        for repo in ${HSADMIN_GH_PUBLISH}; do
+            if [ -d "${base}/${repo}" ]; then
+                cd "${base}/${repo}"
+                # add remote gh-publish if not already enabled
+                git config --local --get remote.gh-publish.url > /dev/null || \
+                    git remote add --track=master \
+                        "gh-publish" \
+                        "git@github.com:${HSADMIN_GH_USER}/${HSADMIN_GH_PREFIX}${repo}.git"
+            fi
+        done
+    fi 
+}
+
+
+# Run dotfiles syncrhonization and/or source INSTALLER script if found
+function install_repositories {
+    local all=${base}/*
+    for d in ${all}; do
+        cd ${d}
+        [ -e .dotfilesrc ] && dotfiles -s ${force_opt} -R .
+        [ -e "INSTALLER" ] && source INSTALLER
+        true
+    done
+}
+
+
+# Should installations be forced?
+force_opt=""
+if [[ ${1} == "-f" ]]; then
+    force_opt="-f"
+    shift 1
+fi 
+
+if [[ ${1} == "init" ]]; then
+    gitolite_ssh=${2:?}
+    gitolite_path=${3:?}
+    base=${4:?}
+else
+    base=${HSADMIN_REPOS_PATH:?}
+    gitolite_ssh=${HSADMIN_GITOLITE_SSH:?}
+    gitolite_path=${HSADMIN_GITOLITE_PATH:?}
+fi 
+
+# Local directory where repositores are located
+gitolite_clone_url_base="${gitolite_ssh}:${gitolite_path}"
+
+case ${1} in
+    # Git add all changes in all repositories
+    add)
+        for d in ${base}/*; do
+            cd ${d}
+            git add -A
+        done 
+        ;;
+    # Git diff all repositories
+    diff)
+        for d in ${base}/*; do
+            cd ${d}
+            git diff
+        done 
+        ;;
+    # Fetch new repositories
+    fetch)
+        clone_available_repositories_from_gitolite
+        install_repositories
+        ;;
+    # Initial fetch of home synchronization
+    # Same as fetch except that it reads
+    # gitolite configuration as arguments
+    init)
+        clone_available_repositories_from_gitolite
+        install_repositories
+        ;;
+    # Install/symlink all repositories to ~
+    install)
+        install_repositories 
+        ;;
+    # Add/commit/pull/push all repositories
+    outburst)
+        for d in ${base}/*; do
+            cd ${d}
+            echo "##### $(basename ${d}) ######"
+            git add -A || true 
+            git commit -m"**outburst commit**" || true 
+            git pull origin || true 
+            git push origin || true 
+        done
+        ;;
+    # Push all repositories
+    push)
+        for d in ${base}/*; do
+            cd ${d}
+            git push origin
+        done
+        ;;
+    # Pull all repositores
+    pull)
+        for d in ${base}/*; do
+            cd ${d}
+            git pull origin
+            install_repositories 
+        done 
+        ;;
+    # Push gh-publish remotes if available
+    publish)
+        maybe_add_public_github_git_remotes
+        for d in ${base}/*; do
+            cd ${d}
+            (
+                a=$(git config --local --get remote.gh-publish.url) && \
+                    echo "pushing $a" && \
+                    git push gh-publish
+            ) || true 
+        done 
+        ;;
+    # Git status of all repositories
+    status)
+        for d in ${base}/*; do 
+            cd ${d}
+            if [[ ! $(git status --porcelain) = "" ]]; then
+                echo "##### $(basename ${d}) ######"
+                git status --short
+            fi 
+        done
+        ;;
+    # Run tig on all unclean repositories
+    tig)
+        for d in ${base}/*; do
+            cd ${d}
+            [[ ! $(git status --porcelain) = "" ]] && tig status
+        done 
+        ;;
+    *)
+        echo "Invalid argument!"
+        exit 1
+        ;;
+esac
