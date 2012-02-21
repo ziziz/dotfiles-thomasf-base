@@ -120,22 +120,22 @@ case ${1} in
             echo "##### $(basename ${d}) ######"
             git add -A || true 
             git commit -m"**outburst commit**" || true 
-            git pull origin || true 
-            git push origin || true 
+            git pull origin master || true 
+            git push origin master || true 
         done
         ;;
     # Push all repositories
     push)
         for d in ${base}/*; do
             cd ${d}
-            git push origin
+            git push origin master
         done
         ;;
     # Pull all repositores
     pull)
         for d in ${base}/*; do
             cd ${d}
-            git pull origin
+            git pull origin master
             install_repositories 
         done 
         ;;
