@@ -121,7 +121,11 @@ case ${1} in
 
                 status=$green
                 o=$(git pull origin master ) || status=$red
-                echo "${status}###### ${yelllow}PULL ${magenta}${n}: ${reset}${o}"
+                o=$(git add -A) || status=$red
+                for l in $o; do
+                    echo "${status}###### ${yelllow}PULL ${magenta}${n}: ${reset}${l}"
+                done 
+                
 
                 status=$green
                 o=$(git push origin master ) || status=$red
