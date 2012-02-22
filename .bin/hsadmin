@@ -103,10 +103,13 @@ case ${1} in
             ( 
                 cd ${d}
                 n=$(basename ${d})
-
+                IFS=$'\n'
+                
                 status=$green
                 o=$(git add -A) || status=$red
-                echo "${status}###### ${yelllow}ADD ${magenta}${n}: ${reset}${o}"
+                for l in $o; do
+                    echo "${status}###### ${yelllow}ADD ${magenta}${n}: ${reset}${l}"
+                done 
 
                 status=$green
                 o=$(git commit -m"*** burst commit ***" ) || status=$red
