@@ -106,23 +106,23 @@ case ${1} in
 
                 status=$green
                 o=$(git add -A) || status=$red
-                echo "${status}###### ${yelllow}ADD ${magenta}${m}: ${reset}${o}"
+                echo "${status}###### ${yelllow}ADD ${magenta}${n}: ${reset}${o}"
 
                 status=$green
                 o=$(git commit -m"*** burst commit ***" ) || status=$red
-                echo "${status}###### ${yelllow}COMMIT ${magenta}${m}: ${reset}${o}"
+                echo "${status}###### ${yelllow}COMMIT ${magenta}${n}: ${reset}${o}"
 
                 status=$green
                 o=$(git commit -m"*** burst commit ***" ) || status=$red
-                echo "${status}###### ${yelllow}COMMIT ${magenta}${m}: ${reset}${o}"
+                echo "${status}###### ${yelllow}COMMIT ${magenta}${n}: ${reset}${o}"
 
                 status=$green
                 o=$(git pull origin master ) || status=$red
-                echo "${status}###### ${yelllow}PULL ${magenta}${m}: ${reset}${o}"
+                echo "${status}###### ${yelllow}PULL ${magenta}${n}: ${reset}${o}"
 
                 status=$green
                 o=$(git push origin master ) || status=$red
-                echo "${status}###### ${yelllow}PUSH ${magenta}${m}: ${reset}${o}"
+                echo "${status}###### ${yelllow}PUSH ${magenta}${n}: ${reset}${o}"
 
                 #echo "${green}##### $(basename ${d})  DONE"               
             ) &
