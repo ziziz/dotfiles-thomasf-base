@@ -128,7 +128,9 @@ case ${1} in
 
                 status=$green
                 o=$(git push origin master ) || status=$red
-                echo "${status}###### ${yelllow}PUSH ${magenta}${n}: ${reset}${o}"
+                for l in $o; do
+                    echo "${status}###### ${yelllow}PUSH ${magenta}${n}: ${reset}${l}"
+                done 
 
                 #echo "${green}##### $(basename ${d})  DONE"               
             ) &
