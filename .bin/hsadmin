@@ -90,6 +90,17 @@ case ${1} in
             git add -A
         done 
         ;;
+    # Add/commit/pull/push all repositories
+    burst)
+        for d in ${base}/*; do
+            cd ${d}
+            echo "##### $(basename ${d}) ######"
+            git add -A || true 
+            git commit -m"*** BURST COMMIT ***" || true 
+            git pull origin master || true 
+            git push origin master || true 
+        done
+        ;;
     # Git diff all repositories
     diff)
         for d in ${base}/*; do
@@ -112,17 +123,6 @@ case ${1} in
     # Install/symlink all repositories to ~
     install)
         install_repositories 
-        ;;
-    # Add/commit/pull/push all repositories
-    outburst)
-        for d in ${base}/*; do
-            cd ${d}
-            echo "##### $(basename ${d}) ######"
-            git add -A || true 
-            git commit -m"**outburst commit**" || true 
-            git pull origin master || true 
-            git push origin master || true 
-        done
         ;;
     # Push all repositories
     push)
@@ -147,7 +147,7 @@ case ${1} in
             (
                 a=$(git config --local --get remote.gh-publish.url) && \
                     echo "pushing $a" && \
-                    git push gh-publish
+                    git push gh-publish master
             ) || true 
         done 
         ;;
