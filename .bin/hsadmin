@@ -100,7 +100,7 @@ case ${1} in
                 git commit -m"*** burst commit ***" || true 
                 git pull origin master || true 
                 git push origin master || true
-            )
+            ) &
         done
         ;;
     # Git diff all repositories
