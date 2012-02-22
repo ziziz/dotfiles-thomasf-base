@@ -102,8 +102,12 @@ case ${1} in
         for d in ${base}/*; do
             ( 
                 cd ${d}
-                o=$(git add -A)
-                echo "${yellow}###### ${green}ADD $(basename ${d}): ${o}"
+                n=$(basename ${d})
+
+                status=$green
+                o=$(git add -A) || status=$red
+                echo "${status}###### ${yelllow}ADD ${magenta}${m}: ${reset}${o}"
+
                 echo "###### $(basename ${d}) ###### COMMIT"
                 git commit -m"*** burst commit ***" || true 
                 echo "###### $(basename ${d}) ###### PULL"
