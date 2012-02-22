@@ -110,11 +110,7 @@ case ${1} in
 
                 status=$green
                 o=$(git commit -m"*** burst commit ***" ) || status=$red
-                echo "${status}###### ${yelllow}COMMIT ${magenta}${n}: ${reset}${o}"
-
-                status=$green
-                o=$(git commit -m"*** burst commit ***" ) || status=$red
-                echo "${status}###### ${yelllow}COMMIT ${magenta}${n}: ${reset}${o}"
+                [[ $status == $green ]] && echo "${status}###### ${yelllow}COMMIT ${magenta}${n}: ${reset}${o}"
 
                 status=$green
                 o=$(git pull origin master ) || status=$red
