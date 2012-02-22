@@ -116,13 +116,15 @@ case ${1} in
                 o=$(git commit -m"*** burst commit ***" ) || status=$red
                 echo "${status}###### ${yelllow}COMMIT ${magenta}${m}: ${reset}${o}"
 
-                
-                echo "###### $(basename ${d}) ###### PULL"
-                git pull origin master || true 
-                echo "###### $(basename ${d}) ###### PUSH"
-                git push origin master || true
-                echo "###### $(basename ${d}) ###### DONE"
-                
+                status=$green
+                o=$(git pull origin master ) || status=$red
+                echo "${status}###### ${yelllow}PULL ${magenta}${m}: ${reset}${o}"
+
+                status=$green
+                o=$(git push origin master ) || status=$red
+                echo "${status}###### ${yelllow}PUSH ${magenta}${m}: ${reset}${o}"
+
+                #echo "${green}##### $(basename ${d})  DONE"               
             ) &
         done
         ;;
