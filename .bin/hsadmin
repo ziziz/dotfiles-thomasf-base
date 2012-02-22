@@ -95,8 +95,8 @@ case ${1} in
         for d in ${base}/*; do
             (
                 cd ${d}
-                echo "###### $(basename ${d}) ###### ADD"
-                git add -A || true 
+                o=$(git add -A)
+                echo "###### $(basename ${d}) ###### ADD\n ${o}"
                 echo "###### $(basename ${d}) ###### COMMIT"
                 git commit -m"*** burst commit ***" || true 
                 echo "###### $(basename ${d}) ###### PULL"
