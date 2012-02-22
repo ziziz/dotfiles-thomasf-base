@@ -106,7 +106,7 @@ case ${1} in
                 
                 status=$green
                 o=$(git add -A) || status=$red
-                echo "${status}###### ${yelllow}:ADD:${magenta}${n}: ${reset}${o}"
+                [[ $status == $red ]] && echo "${status}###### ${yelllow}:ADD:${magenta}${n}: ${reset}${o}"
 
                 status=$green
                 o=$(git commit -m"*** burst commit ***" ) || status=$red
@@ -119,8 +119,6 @@ case ${1} in
                 status=$green
                 o=$(git push origin master ) || status=$red
                 echo "${status}###### ${yelllow}PUSH ${magenta}${n}: ${reset}${o}"
-
-                echo ""
             ) &
         done
         ;;
