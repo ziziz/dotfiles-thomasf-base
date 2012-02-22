@@ -98,8 +98,15 @@ function __prompt_git_branch {
 }
 
 # Support function to compactify a path
+# copied: http://stackoverflow.com/questions/3497885/code-challenge-bash-prompt-path-shortener
 function __dir_chomp {
     local p=${1/#$HOME/\~} b s
+    # Remove [ and ] from strings
+    # (also, regular expression matching on [ ] below creates infinite recursion.)
+    p=${p//[/ }
+    p=${p//]/ }
+    # Remove multiple spaces, don't need them
+    p=${p//  / }
     s=${#p}
     while [[ $p != ${p//\/} ]]&&(($s>$2))
     do

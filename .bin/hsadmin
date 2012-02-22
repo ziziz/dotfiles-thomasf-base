@@ -93,12 +93,14 @@ case ${1} in
     # Add/commit/pull/push all repositories
     burst)
         for d in ${base}/*; do
-            cd ${d}
-            echo "##### $(basename ${d}) ######"
-            git add -A || true 
-            git commit -m"*** burst commit ***" || true 
-            git pull origin master || true 
-            git push origin master || true 
+            (
+                cd ${d}
+                echo "##### $(basename ${d}) ######"
+                git add -A || true 
+                git commit -m"*** burst commit ***" || true 
+                git pull origin master || true 
+                git push origin master || true
+            )
         done
         ;;
     # Git diff all repositories
@@ -143,12 +145,12 @@ case ${1} in
     publish)
         maybe_add_public_github_git_remotes
         for d in ${base}/*; do
-            cd ${d}
             (
-                a=$(git config --local --get remote.gh-publish.url) && \
-                    echo "pushing $a" && \
+                cd ${d}
+                remote=$(git config --local --get remote.gh-publish.url) && \
+                    echo "pushing $remote" && \
                     git push gh-publish master
-            ) || true 
+            )
         done 
         ;;
     # Git status of all repositories
