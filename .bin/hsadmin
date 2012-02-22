@@ -95,13 +95,13 @@ case ${1} in
         for d in ${base}/*; do
             (
                 cd ${d}
-                echo "###### $(basename ${d}) ###### BEGIN"
+                echo "###### $(basename ${d}) ###### ADD"
                 git add -A || true 
-                echo "###### $(basename ${d}) ######"
+                echo "###### $(basename ${d}) ###### COMMIT"
                 git commit -m"*** burst commit ***" || true 
-                echo "###### $(basename ${d}) ######"
+                echo "###### $(basename ${d}) ###### PULL"
                 git pull origin master || true 
-                echo "###### $(basename ${d}) ######"
+                echo "###### $(basename ${d}) ###### PUSH"
                 git push origin master || true
                 echo "###### $(basename ${d}) ###### DONE"
                 
