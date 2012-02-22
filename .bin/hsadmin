@@ -108,8 +108,15 @@ case ${1} in
                 o=$(git add -A) || status=$red
                 echo "${status}###### ${yelllow}ADD ${magenta}${m}: ${reset}${o}"
 
-                echo "###### $(basename ${d}) ###### COMMIT"
-                git commit -m"*** burst commit ***" || true 
+                status=$green
+                o=$(git commit -m"*** burst commit ***" ) || status=$red
+                echo "${status}###### ${yelllow}COMMIT ${magenta}${m}: ${reset}${o}"
+
+                status=$green
+                o=$(git commit -m"*** burst commit ***" ) || status=$red
+                echo "${status}###### ${yelllow}COMMIT ${magenta}${m}: ${reset}${o}"
+
+                
                 echo "###### $(basename ${d}) ###### PULL"
                 git pull origin master || true 
                 echo "###### $(basename ${d}) ###### PUSH"
