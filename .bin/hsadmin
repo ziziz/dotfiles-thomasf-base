@@ -124,7 +124,7 @@ case ${1} in
                 o=$(git push origin master ) || status=$red
                 echo "${status}###### ${yelllow}PUSH ${magenta}${n}: ${reset}${o}"
 
-                #echo "${green}##### $(basename ${d})  DONE"               
+                echo ""
             ) &
         done
         ;;
