@@ -121,7 +121,6 @@ case ${1} in
 
                 status=$green
                 o=$(git pull origin master ) || status=$red
-                o=$(git add -A) || status=$red
                 for l in $o; do
                     echo "${status}###### ${yelllow}PULL ${magenta}${n}: ${reset}${l}"
                 done 
