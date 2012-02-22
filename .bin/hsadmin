@@ -175,7 +175,7 @@ case ${1} in
                 remote=$(git config --local --get remote.gh-publish.url) && \
                     echo "pushing $remote" && \
                     git push gh-publish master
-            )
+            ) &
         done 
         ;;
     # Git status of all repositories
