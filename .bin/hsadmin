@@ -103,13 +103,10 @@ case ${1} in
             ( 
                 cd ${d}
                 n=$(basename ${d})
-                IFS=$'\n'
                 
                 status=$green
                 o=$(git add -A) || status=$red
-                for l in $o; do
-                    echo "${status}###### ${yelllow}ADD ${magenta}${n}: ${reset}${l}"
-                done 
+                echo "${status}###### ${yelllow}:ADD:${magenta}${n}: ${reset}${o}"
 
                 status=$green
                 o=$(git commit -m"*** burst commit ***" ) || status=$red
@@ -121,16 +118,11 @@ case ${1} in
 
                 status=$green
                 o=$(git pull origin master ) || status=$red
-                for l in $o; do
-                    echo "${status}###### ${yelllow}PULL ${magenta}${n}: ${reset}${l}"
-                done 
-                
+                echo "${status}###### ${yelllow}PULL ${magenta}${n}: ${reset}${o}"
 
                 status=$green
                 o=$(git push origin master ) || status=$red
-                for l in $o; do
-                    echo "${status}###### ${yelllow}PUSH ${magenta}${n}: ${reset}${l}"
-                done 
+                echo "${status}###### ${yelllow}PUSH ${magenta}${n}: ${reset}${o}"
 
                 #echo "${green}##### $(basename ${d})  DONE"               
             ) &
