@@ -96,7 +96,7 @@ case ${1} in
             cd ${d}
             echo "##### $(basename ${d}) ######"
             git add -A || true 
-            git commit -m"*** BURST COMMIT ***" || true 
+            git commit -m"*** burst commit ***" || true 
             git pull origin master || true 
             git push origin master || true 
         done
