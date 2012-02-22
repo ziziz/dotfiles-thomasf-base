@@ -96,7 +96,7 @@ case ${1} in
             (
                 cd ${d}
                 o=$(git add -A)
-                echo "###### $(basename ${d}) ###### ADD\n ${o}"
+                echo "###### git ADD $(basename ${d}): ${o}"
                 echo "###### $(basename ${d}) ###### COMMIT"
                 git commit -m"*** burst commit ***" || true 
                 echo "###### $(basename ${d}) ###### PULL"
