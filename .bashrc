@@ -87,15 +87,21 @@ function __prompt_ssh {
     fi
 }
 
-# Show GIT status in the prompt
-# (This feature is provided by the ubuntu debian git package)
+# Show version controlled repository status.
+# vcprompt is used if installed, otherwise __git_ps1 will be tried as well.
+# Install vcsprompt -> hg clone https://bitbucket.org/mitsuhiko/vcprompt
 export GIT_PS1_SHOWDIRTYSTATE="yes"
-export GIT_PS1_SHOWUPSTREAM="auto"
+export GIT_PS1_SHOWUPSTREAM="no"
 export GIT_PS1_SHOWUNTRACKEDFILES="yes"
-
-function __prompt_git_branch {
-    __git_ps1 "(%s)"
+function __prompt_vcs {
+    if [[ $(which vcprompt) ]]; then
+        vcprompt -f "(%n:%b%m%u)"
+    elif [[ $(type -t __git_ps1) == "function" ]]; then
+        __git_ps1 "(%s)"
+    fi
 }
+
+
 
 # Support function to compactify a path
 # copied: http://stackoverflow.com/questions/3497885/code-challenge-bash-prompt-path-shortener
@@ -206,7 +212,7 @@ function __prompt_activate {
 PS1="${TITLEBAR}\
 ${red}\$(__prompt_date) \
 ${yellow}\$(__prompt_username)${redH}@${HOST_COLOR}\$(__prompt_hostname)\
-${cyan}\$(__prompt_pwd)${green}\$(__prompt_git_branch) \
+${cyan}\$(__prompt_pwd)${green}\$(__prompt_vcs) \
 ${white}${magentaB}\$(__prompt_ssh_agent)${black}${magentaB}\$(__prompt_ssh)\
 ${magenta}\$(__prompt_last) \
 ${resetFormating}"
