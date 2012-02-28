@@ -117,7 +117,7 @@ case ${1} in
                 fi
 
                 status=$green
-                o=$(git pull origin master ) || status=$re
+                o=$(git pull origin master ) || status=$red
                 if [[ $status == $green ]]; then
                     echo "${status}###### ${yelllow}PULL ${magenta}${n}${reset}"
                 else
@@ -125,7 +125,7 @@ case ${1} in
                 fi 
 
                 status=$green
-                o=$(git push origin master ) || status=$red
+                o=$(git push --porcelain origin master ) || status=$red
                 if [[ $status == $green ]]; then
                     echo "${status}###### ${yelllow}PUSH ${magenta}${n}${reset}"
                 else
