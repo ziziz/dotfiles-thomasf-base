@@ -110,20 +110,34 @@ case ${1} in
 
                 status=$green
                 o=$(git commit -m"*** burst commit ***" ) || status=$red
-                [[ $status == $green ]] && echo "${status}###### ${yelllow}COMMIT ${magenta}${n}: ${reset}${o}"
+                if [[ $status == $green ]]; then
+                    echo "${status}###### ${yelllow}COMMIT ${magenta}${n}${reset}"
+                else
+                    echo "${status}###### ${yelllow}COMMIT ${magenta}${n}: ${reset}${o}"
+                fi
 
                 status=$green
-                o=$(git pull origin master ) || status=$red
-                echo "${status}###### ${yelllow}PULL ${magenta}${n}: ${reset}${o}"
+                o=$(git pull origin master ) || status=$re
+                if [[ $status == $green ]]; then
+                    echo "${status}###### ${yelllow}PULL ${magenta}${n}${reset}"
+                else
+                    echo "${status}###### ${yelllow}PULL ${magenta}${n}: ${reset}${o}"
+                fi 
 
                 status=$green
                 o=$(git push origin master ) || status=$red
-                echo "${status}###### ${yelllow}PUSH ${magenta}${n}: ${reset}${o}"
+                if [[ $status == $green ]]; then
+                    echo "${status}###### ${yelllow}PUSH ${magenta}${n}${reset}"
+                else
+                    echo "${status}###### ${yelllow}PUSH ${magenta}${n}: ${reset}${o}"
+                fi
+
+
             ) &
         done
         ;;
     # Git diff all repositories
-    diff)
+    d|diff)
         for d in ${base}/*; do
             cd ${d}
             git diff
@@ -173,7 +187,7 @@ case ${1} in
         done 
         ;;
     # Git status of all repositories
-    status)
+    s|status)
         for d in ${base}/*; do 
             cd ${d}
             if [[ ! $(git status --porcelain) = "" ]]; then
