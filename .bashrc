@@ -327,8 +327,6 @@ mkcd() {
 [ -e "${HOME}/.bashrc-private" ] && . "${HOME}/.bashrc-private"
 [ -e "${HOME}/.bashrc-local" ] && . "${HOME}/.bashrc-local"
 
-
-
 # ------------------------------------------------------------------------------
 # HACKS :/
 #
