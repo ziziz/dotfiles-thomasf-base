@@ -36,4 +36,7 @@ if  [ "${1}" = "o" ]; then
     # Haskell/Cabal
     [ -d "${HOME}/.cabal" ] && sudo chown -R ${USER} "${HOME}/.cabal"
     [ -d "${HOME}/.ghc" ] && sudo chown -R ${USER} "${HOME}/.ghc"
+    # emacs
+    [ -d "${HOME}/.emacs.d" ] && sudo chown -R ${USER} "${HOME}/.emacs.d"
+
 fi
