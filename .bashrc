@@ -16,6 +16,7 @@ VIRTUAL_ENV_DISABLE_PROMPT=1 && export VIRTUAL_ENV_DISABLE_PROMPT
 
 # Maybe load Ruby version manager
 [ -f "${HOME}/.rvm/scripts/rvm" ] && source "${HOME}/.rvm/scripts/rvm"
+[[ -r $rvm_path/scripts/completion ]] && . $rvm_path/scripts/completion
 
 
 # ------------------------------------------------------------------------------
