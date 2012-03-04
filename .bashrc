@@ -41,7 +41,7 @@ shopt -s checkwinsize
 #
 
 [ -f "/etc/bash_completion" ] && ! shopt -oq posix && . "/etc/bash_completion"
-for file in $(find $HOME/.bash_completion.d/ -not -type d); do
+for file in $(find $HOME/.bash_completion.d/ -not -type d -name \*.bash); do
     source $file 2>/dev/null
 done
   
@@ -340,3 +340,5 @@ fi
 
 
 __prompt_activate
+
+PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
