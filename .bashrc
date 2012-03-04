@@ -37,11 +37,12 @@ shopt -s histappend
 shopt -s checkwinsize
 
 # ------------------------------------------------------------------------------
-# BASH COMPLETION
+# BASH
 #
 
 [ -f "/etc/bash_completion" ] && ! shopt -oq posix && . "/etc/bash_completion"
-for file in $(find $HOME/.bash_completion.d/ -not -type d -name \*.bash); do
+
+for file in $(find $HOME/.bash.d/ -not -type d -name \*.bash); do
     source $file 2>/dev/null
 done
   
