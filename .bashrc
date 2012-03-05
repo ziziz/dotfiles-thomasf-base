@@ -18,13 +18,11 @@ VIRTUAL_ENV_DISABLE_PROMPT=1 && export VIRTUAL_ENV_DISABLE_PROMPT
 [ -f "${HOME}/.rvm/scripts/rvm" ] && source "${HOME}/.rvm/scripts/rvm"
 [[ -r $rvm_path/scripts/completion ]] && . $rvm_path/scripts/completion
 
-
 # ------------------------------------------------------------------------------
 # NON INTERACTIVE RETURN POINT
 #
 
 [ -z "$PS1" ] && return 
-
 
 # ------------------------------------------------------------------------------
 # BASH OPTIONS
@@ -32,9 +30,11 @@ VIRTUAL_ENV_DISABLE_PROMPT=1 && export VIRTUAL_ENV_DISABLE_PROMPT
 
 HISTCONTROL=$HISTCONTROL${HISTCONTROL+,}ignoredups
 #HISTCONTROL=ignoreboth
-
+HISTSIZE=1200
 shopt -s histappend
 shopt -s checkwinsize
+stty -ixon
+setterm -bfreq 0
 
 # ------------------------------------------------------------------------------
 # BASH
