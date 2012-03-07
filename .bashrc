@@ -16,7 +16,6 @@ VIRTUAL_ENV_DISABLE_PROMPT=1 && export VIRTUAL_ENV_DISABLE_PROMPT
 
 # Maybe load Ruby version manager
 [ -f "${HOME}/.rvm/scripts/rvm" ] && source "${HOME}/.rvm/scripts/rvm"
-[[ -r $rvm_path/scripts/completion ]] && . $rvm_path/scripts/completion
 
 # ------------------------------------------------------------------------------
 # NON INTERACTIVE RETURN POINT
@@ -37,14 +36,16 @@ stty -ixon
 setterm -bfreq 0
 
 # ------------------------------------------------------------------------------
-# BASH
+# COMPLETION AND EXTENSIONS
 #
 
 [ -f "/etc/bash_completion" ] && ! shopt -oq posix && . "/etc/bash_completion"
+[[ -r $rvm_path/scripts/completion ]] && source $rvm_path/scripts/completion
 
 for file in $(find $HOME/.bash.d/ -not -type d -name \*.bash); do
-    source $file 2>/dev/null
+    source $file # 2>/dev/null
 done
+
   
 # ------------------------------------------------------------------------------
 # Bash PROMPT
@@ -150,7 +151,7 @@ function __prompt_last {
 }
 
 
-PROMPT_COMMAND='export RET=$?;'
+PROMPT_COMMAND="export RET=\$?;${PROMPT_COMMAND}"
 
 # Set up prompt
 function __prompt_activate {
