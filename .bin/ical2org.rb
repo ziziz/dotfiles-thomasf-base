@@ -35,9 +35,8 @@ FILTER_SPAN = [Date.today - 7, Date.today + 400]
 
 # org-mode ignores weekdays, but it should match for convenience
 # WEEKDAYS = %w{So Mo Di Mi Do Fr Sa} # german weekdays
-WEEKDAYS = %w{Sön Mån Tis Ons Tors Fre Lör} # swedish weekdays
 # WEEKDAYS = %w{Su Mo Tu We Th Fr Sa} # english weekdays
-
+WEEKDAYS = %w{Sön Mån Tis Ons Tors Fre Lör} # swedish weekdays
 
 # org date (ISO 8601)
 def orgDate(t)
@@ -84,7 +83,7 @@ def orgTimeSpan(tstart, tend, repeaterClause = nil)
     if (repeaterClause.nil?) then
       res += "--" + orgDateTime(tend) if !tend.nil?
     else
-      warn "omission of end time to allow repeater"
+      warn "omission of end time to allow repeater: " + orgDateTime(tstart, repeaterClause) + "--" + orgDateTime(tend)
     end
     res
   end
@@ -131,6 +130,39 @@ end
 
 OrgEventTemplate = ERB.new <<-'EOT', nil, "%<>"
 <%#-*- coding: UTF-8 -*-%>
+* <%= ev.summary %><%= !ev.status.nil? ? ( " (" + ev.status + ")" ) : "" %>
+  :PROPERTIES:
+  :ID: <%= ev.uid %>
+  :icalCategories: <%= ev.categories.join(" ") %>
+  :END:
+% if (!ev.recurs?)
+  <%= orgTimeSpanTZ(ev.dtstart, ev.dtend) %>
+% end
+% if (!ev.location.nil?)
+  Location: <%= ev.location %>
+% end
+  <%= result[:description] %>
+% if (!ev.organizer.nil?)
+  Organizer: <%= ev.organizer %>
+% end
+% if (!ev.url.nil?)
+  <%= ev.url %>
+% end
+% if (ev.recurs?) then
+%   if (isOrgCompatRepeater?(ev))
+  Recurs: <%= orgTimeSpan(ev.dtstart, ev.dtend, orgRepeaterClause(ev)) %>
+%   else
+  Occurrences: <% ev.occurrences(:overlapping => FILTER_SPAN).each { |occ| %><%= orgTimeSpan(occ.dtstart, occ.dtend) %> <% } %>
+%   end
+% end
+  <%# uncomment if you have an edit link: = "[[edit:%s][edit %s]]" % [ev.uid, ev.summary]  %>
+  :ICALENDAR:
+<%= ev %>
+  :END:
+EOT
+
+ThomasOrgEventTemplate = ERB.new <<-'EOT', nil, "%<>"
+<%#-*- coding: UTF-8 -*-%>
 ** <%= ev.summary %><%= !ev.status.nil? ? ( " (" + ev.status + ")" ) : "" %>
 :PROPERTIES:
 :ID: <%= ev.uid %>
@@ -164,12 +196,6 @@ Occurrences: <% ev.occurrences(:overlapping => FILTER_SPAN).each { |occ| %><%= o
 
 RRULE: <%= ev.rrule  %>
 % end
-<%# uncomment if you have an edit link: = "[[edit:%s][edit %s]]" % [ev.uid, ev.summary]  %>
-<%#
-:ICALENDAR:
- ev 
-:END:
-%>
 EOT
 
 # this can be used to fix up stuff before the template processing starts
@@ -182,21 +208,51 @@ end
 
 def orgEventSection(ev)
   result = evaluateEvent(ev)
-  OrgEventTemplate.result(binding)
+  ThomasOrgEventTemplate.result(binding)
 rescue StandardError => e
   putError(e, ev)
 end
 
 # filter events (e.g. by date)
 def includeEvent?(ev)
-  # no, this isn't perfect by no means.
-  return true if (ev.recurs?)
+  begin
+    return true if (ev.recurs? && ev.occurrences(:overlapping => FILTER_SPAN).count > 0)
+  rescue
+    warn "Omitting event with incomprehensible recurrence:"
+    warn ev
+    return false
+  end
   return true if (!ev.dtend.nil? && dateInRange(ev.dtend))
   return true if (dateInRange(ev.dtstart))
   false
 end
 
 OrgTodoTemplate = ERB.new <<-'EOT', nil, "%<>"
+<%#-*- coding: UTF-8 -*-%>
+* <%= results[:orgKeyword] %> <%= todo.summary %>
+  <% if (!todo.due.nil?) then %>DEADLINE: <%= orgDateTime(todo.finish_time) %><% end %><% if (!todo.dtstart.nil?) then %> SCHEDULED: <%= orgDateTime(todo.dtstart) %><% end %>
+  :PROPERTIES:
+  :ID: <%= todo.uid %>
+  :icalCategories: <%= todo.categories.join(" ") %>
+  :icalPriority:  <%= todo.priority %>
+  :END:
+% if (!todo.location.nil?)
+  Location: <%= todo.location %>
+% end
+% if (!todo.organizer.nil?)
+  Organizer: <%= todo.organizer %>
+% end
+% if (!todo.url.nil?)
+  <%= todo.url %>
+% end
+  <%= todo.description %>
+  <%# uncomment this if you have an edit link: = "[[edit:%s][edit]]" % [todo.uid]  %>
+  :ICALENDAR:
+<%= todo %>
+  :END:
+EOT
+
+ThomasOrgTodoTemplate = ERB.new <<-'EOT', nil, "%<>"
 <%#-*- coding: UTF-8 -*-%>
 ** <%= results[:orgKeyword] %> <%= todo.summary %>
 <% if (!todo.due.nil?) then %>DEADLINE: <%= orgDateTime(todo.finish_time) %><% end %><% if (!todo.dtstart.nil?) then %> SCHEDULED: <%= orgDateTime(todo.dtstart) %><% end %>
@@ -218,12 +274,6 @@ Organizer: <%= todo.organizer %>
 <%= todo.url %>
 % end
 <%= todo.description %>
-<%# uncomment this if you have an edit link: = "[[edit:%s][edit]]" % [todo.uid]  %>
-<%#
-:ICALENDAR:
- todo 
-:END:
-%>
 EOT
 
 # org keywords for ical completion states (see the RFC)
@@ -246,7 +296,7 @@ end
 # return org TODO section
 def orgTodoSection(todo)
   results = evaluateTodo(todo)
-  OrgTodoTemplate.result(binding)
+  ThomasOrgTodoTemplate.result(binding)
 rescue StandardError => e
   putError(e, todo)
 end
