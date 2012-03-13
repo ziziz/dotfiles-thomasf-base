@@ -18,44 +18,15 @@ VIRTUAL_ENV_DISABLE_PROMPT=1 && export VIRTUAL_ENV_DISABLE_PROMPT
 [ -f "${HOME}/.rvm/scripts/rvm" ] && source "${HOME}/.rvm/scripts/rvm"
 
 # -------------------------------------------------------------------------------
-# GPG/SSH AGENT 
+# Connect to gpg agent if possible
 #
-keys_agent_start() {
-    # Something seems wrong with Ubuntu
-    # session + gpg agent rig1ht now.
-    # Enforcing things a bit
-    killall -q gpg-agent
-    killall -q ssh-agent
-    killall -q gnome-keyring-daemon
-    sleep 0.3
-    unset GPG_AGENT_INFO
-    unset SSH_AUTH_SOCK
-    unset SSH_AGENT_PID
-
-    local PID_FILE="$HOME/.gnupg/gpg-agent-info-$(hostname)"
-    rm -f "$PID_FILE"
-    
-    if [ $(which gpg-agent) ]; then
-        eval `gpg-agent --daemon --sh --enable-ssh-support --write-env-file=$PID_FILE`
-    elif [ $(which ssh-agent) ]; then
-        eval `ssh-agent -s`
-    fi
-    export GPG_AGENT_INFO
-    export SSH_AUTH_SOCK
-    export SSH_AGENT_PID
-}
-
-keys_agent_connect() {
-    local PID_FILE="$HOME/.gnupg/gpg-agent-info-$(hostname)"
-    if [ -r "$PID_FILE" ] && kill -0 $(grep GPG_AGENT_INFO "$PID_FILE" | cut -d: -f 2) 2>/dev/null; then
-        source "$PID_FILE"
-        export GPG_AGENT_INFO
-        export SSH_AUTH_SOCK
-        export SSH_AGENT_PID
-    fi
-    GPG_TTY=$(tty)
-    export GPG_TTY
-}
+agent_file="$HOME/.gnupg/gpg-agent-info-$(hostname)"
+if [ -r "$agent_file" ] && kill -0 $(grep GPG_AGENT_INFO "$agent_file" | cut -d: -f 2) 2>/dev/null; then
+    source "$agent_file"
+    export GPG_AGENT_INFO; export SSH_AUTH_SOCK; export SSH_AGENT_PID
+fi
+GPG_TTY=$(tty)
+export GPG_TTY
 
 keys_agent_connect
 
