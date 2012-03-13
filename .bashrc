@@ -28,8 +28,6 @@ fi
 GPG_TTY=$(tty)
 export GPG_TTY
 
-keys_agent_connect
-
 # ------------------------------------------------------------------------------
 # NON INTERACTIVE RETURN POINT
 #
