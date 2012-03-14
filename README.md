@@ -29,23 +29,25 @@ Bash related features are:
  
 ### Configuration for tools
 
- * []
- * []
- * []
+ * [.tigrc] - Tig is as nice and simple Git gui-like text mode based tool
+ * [.tmux.conf] - Tmux is a terminal multiplexer (like the more famous screen).
+ * [.ackrc] - ack (ack-grep) is a programmers grep to search source code without too much hassle
 
 ### Utility scripts 
-A bunch of scripts in [.bin].
-Both general scripts and for git.
+A bunch of scripts in [.bin]. Both general scripts things specifically targeting git.
 
 
+[.profile]:       https://github.com/thomasf/dotfiles-thomasf-base/blob/master/.profile   ".profile"
+
+[.bashrc]:        https://github.com/thomasf/dotfiles-thomasf-base/blob/master/.bashrc    ".bashrc"
+[.bash.d]:        https://github.com/thomasf/dotfiles-thomasf-base/tree/master/.bash.d/   "bash.d/"
 [.dircolors]:     https://github.com/thomasf/dotfiles-thomasf-base/blob/master/.dircolors ".dircolors"
 [.inputrc]:       https://github.com/thomasf/dotfiles-thomasf-base/blob/master/.inputrc   ".inputrc"
-[.profile]:       https://github.com/thomasf/dotfiles-thomasf-base/blob/master/.profile   ".profile"
+
 [.tigrc]:         https://github.com/thomasf/dotfiles-thomasf-base/blob/master/.tigrc     ".tigrc"
 [.tmux.conf]:     https://github.com/thomasf/dotfiles-thomasf-base/blob/master/.tmux.conf ".tmux-conf"
 [.ackrc]:         https://github.com/thomasf/dotfiles-thomasf-base/blob/master/.ackrc     ".ackrc"
-[.bashrc]:        https://github.com/thomasf/dotfiles-thomasf-base/blob/master/.bashrc    ".bashrc"
-[.bash.d]:        https://github.com/thomasf/dotfiles-thomasf-base/tree/master/.bash.d/   "bash.d/"
+
 [.bin]:           https://github.com/thomasf/dotfiles-thomasf-base/tree/master/.bin/      ".bin/"
 
 [prompt-article]: http://datamaskinen.medeltiden.org/tools/bash-prompt-v2.html           "My bash prompt revisited"
