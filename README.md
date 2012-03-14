@@ -16,12 +16,14 @@ that my configuration requires bash 4 but I'm not sure.
 
 Among other things:
 
- * [Minimalistic but feature packed prompt][prompt-article]
- * Small collection of aliases -  [.bashrc]
- * Extra tab completions - [.bash.d]
+ * in [.bashrc]
+   * [Minimalistic but feature packed prompt][prompt-article] 
+   * Small collection of aliases
+ * in [.bash.d]
+   * Extra tab completions
+   * z
  * ...
- * ...
-
+ 
 ### Configuration for tools
 
  * tmux
@@ -31,7 +33,6 @@ Among other things:
 ### Utility scripts 
 A bunch of scripts in [.bin].
 Both general scripts and for git.
-
 
 
  [.bashrc]:  https://github.com/thomasf/dotfiles-thomasf-base/blob/master/.bashrc ".bashrc"
