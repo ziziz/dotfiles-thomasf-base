@@ -8,7 +8,10 @@ shell environment.
 
 ## Whats included
 
-( notice: draft )
+**This section is a working draft**
+
+### Shell
+
 
 ###  Bash
 Bash is a great shell and available in most *nix based OSes. I belive
@@ -25,17 +28,16 @@ Bash related features are:
    * z
  * [.dircolors]
  * [.inputrc]
- * 
+ * ...
  
-### Configuration for tools
+### Individual tool configurations
 
- * [.tigrc] - Tig is as nice and simple Git gui-like text mode based tool
- * [.tmux.conf] - Tmux is a terminal multiplexer (like the more famous screen).
- * [.ackrc] - ack (ack-grep) is a programmers grep to search source code without too much hassle
+ * [.tigrc] - [Tig] is as nice and simple Git gui-like text mode based tool.
+ * [.tmux.conf] - [tmux] is a terminal multiplexer (like the more famous screen).
+ * [.ackrc] - [ack] is a programmers grep to search source code without too much hassle
 
 ### Utility scripts 
-A bunch of scripts in [.bin]. Both general scripts things specifically targeting git.
-
+A bunch of scripts in /[.bin]/. Both general scripts things specifically targeting git.
 
 [.profile]:       https://github.com/thomasf/dotfiles-thomasf-base/blob/master/.profile   ".profile"
 
@@ -51,6 +53,10 @@ A bunch of scripts in [.bin]. Both general scripts things specifically targeting
 [.bin]:           https://github.com/thomasf/dotfiles-thomasf-base/tree/master/.bin/      ".bin/"
 
 [prompt-article]: http://datamaskinen.medeltiden.org/tools/bash-prompt-v2.html           "My bash prompt revisited"
+
+[Tig]: http://jonas.nitro.dk/tig/screenshots/ "Tig"
+[ack]: http://betterthangrep.com/ "Ack"
+[tmux]: http://tmux.sourceforge.net/ "tmux"
 
 ## Installation 
 
