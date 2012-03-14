@@ -10,9 +10,6 @@ shell environment.
 
 **This section is a working draft**
 
-### Shell
-
-
 ###  Bash
 Bash is a great shell and available in most *nix based OSes. I belive
 that my configuration requires bash 4 but I'm not sure.
@@ -28,35 +25,28 @@ Bash related features are:
    * z
  * [.dircolors]
  * [.inputrc]
- * ...
  
 ### Individual tool configurations
-
  * [.tigrc] - [Tig] is as nice and simple Git gui-like text mode based tool.
  * [.tmux.conf] - [tmux] is a terminal multiplexer (like the more famous screen).
- * [.ackrc] - [ack] is a programmers grep to search source code without too much hassle
+ * [.ackrc] - [ack] is a programmers grep for searching source code without too much hassle.
 
 ### Utility scripts 
 A bunch of scripts in /[.bin]/. Both general scripts things specifically targeting git.
 
 [.profile]:       https://github.com/thomasf/dotfiles-thomasf-base/blob/master/.profile   ".profile"
-
 [.bashrc]:        https://github.com/thomasf/dotfiles-thomasf-base/blob/master/.bashrc    ".bashrc"
 [.bash.d]:        https://github.com/thomasf/dotfiles-thomasf-base/tree/master/.bash.d/   "bash.d/"
 [.dircolors]:     https://github.com/thomasf/dotfiles-thomasf-base/blob/master/.dircolors ".dircolors"
 [.inputrc]:       https://github.com/thomasf/dotfiles-thomasf-base/blob/master/.inputrc   ".inputrc"
-
 [.tigrc]:         https://github.com/thomasf/dotfiles-thomasf-base/blob/master/.tigrc     ".tigrc"
 [.tmux.conf]:     https://github.com/thomasf/dotfiles-thomasf-base/blob/master/.tmux.conf ".tmux-conf"
 [.ackrc]:         https://github.com/thomasf/dotfiles-thomasf-base/blob/master/.ackrc     ".ackrc"
-
 [.bin]:           https://github.com/thomasf/dotfiles-thomasf-base/tree/master/.bin/      ".bin/"
-
-[prompt-article]: http://datamaskinen.medeltiden.org/tools/bash-prompt-v2.html           "My bash prompt revisited"
-
-[Tig]: http://jonas.nitro.dk/tig/screenshots/ "Tig"
-[ack]: http://betterthangrep.com/ "Ack"
-[tmux]: http://tmux.sourceforge.net/ "tmux"
+[prompt-article]: http://datamaskinen.medeltiden.org/tools/bash-prompt-v2.html            "My bash prompt revisited"
+[Tig]:            http://jonas.nitro.dk/tig/screenshots/                                  "Tig"
+[ack]:            http://betterthangrep.com/                                              "Ack"
+[tmux]:           http://tmux.sourceforge.net/                                            "tmux"
 
 ## Installation 
 
