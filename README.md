@@ -34,9 +34,9 @@ Both general scripts and for git.
 
 
 
- [.bashrc]: blob/master/.bashrc ".bashrc"
- [.bash.d]: tree/master/.bash.d/ "bash.d/"
- [.bin]: tree/master/.bin/ ".bin/"
+ [.bashrc]:  https://github.com/thomasf/dotfiles-thomasf-base/blob/master/.bashrc ".bashrc"
+ [.bash.d]:  https://github.com/thomasf/dotfiles-thomasf-base/tree/master/.bash.d/ "bash.d/"
+ [.bin]:     https://github.com/thomasf/dotfiles-thomasf-base/tree/master/.bin/ ".bin/"
 
  [prompt-article]:  http://datamaskinen.medeltiden.org/tools/bash-prompt-v2.html "My bash prompt revisited"
 
