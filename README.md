@@ -15,6 +15,7 @@ Bash is a great shell and available in most *nix based OSes. I belive
 that my configuration requires bash 4 but I'm not sure.
 
 Among other things:
+
  * [Minimalistic but feature packed prompt][prompt-article]
  * Small collection of aliases -  [.bashrc]
  * Extra tab completions - [.bash.d]
@@ -22,6 +23,7 @@ Among other things:
  * ...
 
 ### Configuration for tools
+
  * tmux
  * tig
  * ack
