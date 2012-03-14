@@ -14,12 +14,13 @@ shell environment.
 Bash is a great shell and available in most *nix based OSes. I belive
 that my configuration requires bash 4 but I'm not sure.
 
-Among other things:
+Bash related features are:
 
- * in [.bashrc]
+ * /[.bashrc]/
+   * Detection and activation of default environment for rvm/nvm/venvburrito 
    * [Minimalistic but feature packed prompt][prompt-article] 
    * Small collection of aliases
- * in [.bash.d]
+ * /[.bash.d]
    * Extra tab completions
    * z
  * ...
