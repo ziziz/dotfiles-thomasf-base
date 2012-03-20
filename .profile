@@ -19,6 +19,10 @@ for D in $(find $HOME -maxdepth 1 -name ".bin-*" -o -name ".bin" | sort); do
     ppath ${D}
 done
 
+# Music player daemon client host and ports
+MPD_PORT=6205 && export MPD_PORT
+MPD_HOST=localhost && export MPD_HOST
+
 # ------------------------------------------------------------------------------
 # PRIVATE AND LOCAL
 #
