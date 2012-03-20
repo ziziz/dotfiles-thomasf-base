@@ -5,14 +5,17 @@
 
 alias df='df -h'
 
-alias clean='echo -n "Really clean this directory?";
-        read yorn;
-        if test "$yorn" = "y"; then
-           rm -f \#* *~ .*~ *.bak .*.bak  *.tmp .*.tmp core a.out;
-           echo "Cleaned.";
-        else
-           echo "Not cleaned.";
-        fi'
+rm_clean() {
+    echo -n "Really clean $(pwd)?"
+    read -n 1 yorn;
+    if test "$yorn" = "y"; then
+        echo
+        rm -f \#* *~ .*~ *.bak .*.bak  *.tmp .*.tmp core a.out;
+    else
+        echo
+        return 1
+    fi
+}
 
 
 function eless {
