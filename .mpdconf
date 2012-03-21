@@ -26,6 +26,13 @@ audio_output {
   enabled             "no"
 }
 
+audio_output {
+  type                "fifo"
+  name                "My FIFO"
+  path                "/tmp/mpd.fifo"
+  format              "44100:16:1"
+}
+
 gapless_mp3_playback  "yes"
 max_command_list_size "16384"
 auto_update           "yes"
