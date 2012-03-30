@@ -69,7 +69,7 @@ fi
 # ------------------------------------------------------------------------------
 # Misc
 #
-[ -f "${HOME}/.bash.d/z" ] && ! shopt -oq posix && . "${HOME}/.bash.d/z.bash"
+[ -f "${HOME}/.bash.d/z.bash" ] && ! shopt -oq posix && . "${HOME}/.bash.d/z.bash"
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 [ -f "${HOME}/.bash.d/functions.bash" ] && ! shopt -oq posix && . "${HOME}/.bash.d/functions.bash"
 [ -f "${HOME}/.bash.d/prompt.bash" ] && ! shopt -oq posix && . "${HOME}/.bash.d/prompt.bash"

@@ -104,7 +104,7 @@ _z() {
     } else {
      for( i in fnd ) $1 !~ fnd[i] && $1 = ""
     }
-    if( $1 ) print "\"" $1 "\""
+    if( $1 ) print $1
    }
   ' "$datafile" 2>/dev/null
 
@@ -213,7 +213,7 @@ if complete &> /dev/null; then
  complete -C '_z --complete "$COMP_LINE"' ${_Z_CMD:-z}
  # populate directory list. avoid clobbering other PROMPT_COMMANDs.
  echo $PROMPT_COMMAND | grep -q "_z --add"
- [ $? -gt 0 ] && PROMPT_COMMAND='_z --add "$(pwd -P 2>/dev/null)" 2>/dev/null;'"$PROMPT_COMMAND"
+ [ $? -gt 0 ] && PROMPT_COMMAND='_z --add "$(pwd -P 2>/dev/null | sed -e "s!^/u01/home!/home!")" 2>/dev/null;'"$PROMPT_COMMAND"
 elif compctl &> /dev/null; then
  # zsh tab completion
  _z_zsh_tab_completion() {
