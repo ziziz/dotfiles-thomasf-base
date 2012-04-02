@@ -69,15 +69,37 @@ def orgTimeSpanShort(st, et, repeaterClause = nil)
   res + ">"
 end
 
+# subtract one day if end is a new day's beginning
+def fixupEndTime(tend)
+  if (!hasHour?(tend) || (tend.hour == 0 && tend.minute==0)) then
+    tend - 1
+  else
+    tend
+  end
+end
+
+# single-day ical time span?
+def simpleTimeSpan?(tstart, tend)
+  tend = fixupEndTime(tend)  
+  # test date equality
+  if (tstart.day == tend.day &&
+      tstart.month == tend.month &&
+      tstart.year == tend.year) then
+    return true
+  end
+  false
+end
+
 # time span, possibly several days
 def orgTimeSpan(tstart, tend, repeaterClause = nil)
-  # start and end on same date, use short notation
-  if (tstart.year == tend.year &&
-      tstart.month == tend.month &&
-      tstart.day == tend.day) then
+  # start and end on same date -> use short notation
+  if (simpleTimeSpan?(tstart, tend)) then
     orgTimeSpanShort(tstart, tend, repeaterClause)
   else
+    # long notation
     res = orgDateTime(tstart, repeaterClause)
+    
+    tend = fixupEndTime(tend)
     # use of repeater in spanning date seems impossible in org-mode
     # alterntively, this case could be unfolded
     if (repeaterClause.nil?) then
@@ -229,7 +251,7 @@ end
 
 OrgTodoTemplate = ERB.new <<-'EOT', nil, "%<>"
 <%#-*- coding: UTF-8 -*-%>
-* <%= results[:orgKeyword] %> <%= todo.summary %>
+* <%= results[:orgKeyword] %><%= results[:orgPrio] %><%= todo.summary %>
   <% if (!todo.due.nil?) then %>DEADLINE: <%= orgDateTime(todo.finish_time) %><% end %><% if (!todo.dtstart.nil?) then %> SCHEDULED: <%= orgDateTime(todo.dtstart) %><% end %>
   :PROPERTIES:
   :ID: <%= todo.uid %>
@@ -254,7 +276,7 @@ EOT
 
 ThomasOrgTodoTemplate = ERB.new <<-'EOT', nil, "%<>"
 <%#-*- coding: UTF-8 -*-%>
-** <%= results[:orgKeyword] %> <%= todo.summary %>
+** <%= results[:orgKeyword] %><%= results[:orgPrio] %><%= todo.summary %>
 <% if (!todo.due.nil?) then %>DEADLINE: <%= orgDateTime(todo.finish_time) %><% end %><% if (!todo.dtstart.nil?) then %> SCHEDULED: <%= orgDateTime(todo.dtstart) %><% end %>
 :PROPERTIES:
 :ID: <%= todo.uid %>
@@ -289,7 +311,7 @@ OrgKeywordForCompleted = {
 def evaluateTodo(todo)
   { 
     :orgKeyword => OrgKeywordForCompleted[todo.completed],
-    :orgPrio => (!todo.priority.nil? && todo.priority > 1) ? "#C" : "" 
+    :orgPrio => (!todo.priority.nil? && todo.priority > 1) ? "#C " : " " 
   }
 end
 
