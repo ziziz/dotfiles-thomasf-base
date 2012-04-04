@@ -18,4 +18,5 @@ rdoc=.rdoc
 --markdown
 --actionscript
 --objc
+--php
 --ignore-dir=.idea
