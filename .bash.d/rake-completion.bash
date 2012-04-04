@@ -40,7 +40,6 @@ export COMP_WORDBREAKS=${COMP_WORDBREAKS/\:/}
 function _rakecomplete() {
   # error if no Rakefile
   if [ ! -e Rakefile ]; then
-    echo "missing Rakefile"
     return 1
   fi
 
