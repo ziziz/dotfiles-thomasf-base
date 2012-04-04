@@ -60,18 +60,6 @@
 #       per-repository basis by setting the bash.showUpstream config
 #       variable.
 #
-#
-# To submit patches:
-#
-#    *) Read Documentation/SubmittingPatches
-#    *) Send all patches to the current maintainer:
-#
-#       "Shawn O. Pearce" <spearce@spearce.org>
-#
-#    *) Always CC the Git mailing list:
-#
-#       git@vger.kernel.org
-#
 
 if [[ -n ${ZSH_VERSION-} ]]; then
 	autoload -U +X bashcompinit && bashcompinit
@@ -106,9 +94,10 @@ __gitdir ()
 __git_ps1_show_upstream ()
 {
 	local key value
-	local svn_remote=() svn_url_pattern count n
+	local svn_remote svn_url_pattern count n
 	local upstream=git legacy="" verbose=""
 
+	svn_remote=()
 	# get some config options from git-config
 	local output="$(git config -z --get-regexp '^(svn-remote\..*\.url|bash\.showupstream)$' 2>/dev/null | tr '\0\n' '\n ')"
 	while read -r key value; do
@@ -149,7 +138,7 @@ __git_ps1_show_upstream ()
 			svn_upstream=${svn_upstream[ ${#svn_upstream[@]} - 2 ]}
 			svn_upstream=${svn_upstream%@*}
 			local n_stop="${#svn_remote[@]}"
-			for ((n=1; n <= n_stop; ++n)); do
+			for ((n=1; n <= n_stop; n++)); do
 				svn_upstream=${svn_upstream#${svn_remote[$n]}}
 			done
 
@@ -178,10 +167,8 @@ __git_ps1_show_upstream ()
 			for commit in $commits
 			do
 				case "$commit" in
-				"<"*) let ++behind
-					;;
-				*)    let ++ahead
-					;;
+				"<"*) ((behind++)) ;;
+				*)    ((ahead++))  ;;
 				esac
 			done
 			count="$behind	$ahead"
@@ -298,13 +285,13 @@ __git_ps1 ()
 				fi
 			fi
 			if [ -n "${GIT_PS1_SHOWSTASHSTATE-}" ]; then
-			        git rev-parse --verify refs/stash >/dev/null 2>&1 && s="$"
+				git rev-parse --verify refs/stash >/dev/null 2>&1 && s="$"
 			fi
 
 			if [ -n "${GIT_PS1_SHOWUNTRACKEDFILES-}" ]; then
-			   if [ -n "$(git ls-files --others --exclude-standard)" ]; then
-			      u="%"
-			   fi
+				if [ -n "$(git ls-files --others --exclude-standard)" ]; then
+					u="%"
+				fi
 			fi
 
 			if [ -n "${GIT_PS1_SHOWUPSTREAM-}" ]; then
@@ -313,7 +300,7 @@ __git_ps1 ()
 		fi
 
 		local f="$w$i$s$u"
-		printf "${1:- (%s)}" "$c${b##refs/heads/}${f:+ $f}$r$p"
+		printf -- "${1:- (%s)}" "$c${b##refs/heads/}${f:+ $f}$r$p"
 	fi
 }
 
@@ -738,6 +725,9 @@ __git_complete_remote_or_refspec ()
 {
 	local cur_="$cur" cmd="${words[1]}"
 	local i c=2 remote="" pfx="" lhs=1 no_complete_refspec=0
+	if [ "$cmd" = "remote" ]; then
+		((c++))
+	fi
 	while [ $c -lt $cword ]; do
 		i="${words[c]}"
 		case "$i" in
@@ -755,7 +745,7 @@ __git_complete_remote_or_refspec ()
 		-*) ;;
 		*) remote="$i"; break ;;
 		esac
-		c=$((++c))
+		((c++))
 	done
 	if [ -z "$remote" ]; then
 		__gitcomp_nl "$(__git_remotes)"
@@ -788,7 +778,7 @@ __git_complete_remote_or_refspec ()
 			__gitcomp_nl "$(__git_refs)" "$pfx" "$cur_"
 		fi
 		;;
-	pull)
+	pull|remote)
 		if [ $lhs = 1 ]; then
 			__gitcomp_nl "$(__git_refs "$remote")" "$pfx" "$cur_"
 		else
@@ -995,7 +985,7 @@ __git_find_on_cmdline ()
 				return
 			fi
 		done
-		c=$((++c))
+		((c++))
 	done
 }
 
@@ -1006,7 +996,7 @@ __git_has_doubledash ()
 		if [ "--" = "${words[c]}" ]; then
 			return 0
 		fi
-		c=$((++c))
+		((c++))
 	done
 	return 1
 }
@@ -1129,7 +1119,7 @@ _git_branch ()
 		-d|-m)	only_local_ref="y" ;;
 		-r)	has_r="y" ;;
 		esac
-		c=$((++c))
+		((c++))
 	done
 
 	case "$cur" in
@@ -2103,6 +2093,7 @@ _git_config ()
 		core.whitespace
 		core.worktree
 		diff.autorefreshindex
+		diff.statGraphWidth
 		diff.external
 		diff.ignoreSubmodules
 		diff.mnemonicprefix
@@ -2289,7 +2280,7 @@ _git_config ()
 
 _git_remote ()
 {
-	local subcommands="add rename rm show prune update set-head"
+	local subcommands="add rename rm set-head set-branches set-url show prune update"
 	local subcommand="$(__git_find_on_cmdline "$subcommands")"
 	if [ -z "$subcommand" ]; then
 		__gitcomp "$subcommands"
@@ -2297,8 +2288,11 @@ _git_remote ()
 	fi
 
 	case "$subcommand" in
-	rename|rm|show|prune)
+	rename|rm|set-url|show|prune)
 		__gitcomp_nl "$(__git_remotes)"
+		;;
+	set-head|set-branches)
+		__git_complete_remote_or_refspec
 		;;
 	update)
 		local i c='' IFS=$'\n'
@@ -2512,7 +2506,7 @@ _git_svn ()
 			__gitcomp "
 				--merge --strategy= --verbose --dry-run
 				--fetch-all --no-rebase --commit-url
-				--revision $cmt_opts $fc_opts
+				--revision --interactive $cmt_opts $fc_opts
 				"
 			;;
 		set-tree,--*)
@@ -2580,7 +2574,7 @@ _git_tag ()
 			f=1
 			;;
 		esac
-		c=$((++c))
+		((c++))
 	done
 
 	case "$prev" in
@@ -2633,7 +2627,7 @@ _git ()
 		--help) command="help"; break ;;
 		*) command="$i"; break ;;
 		esac
-		c=$((++c))
+		((c++))
 	done
 
 	if [ -z "$command" ]; then
