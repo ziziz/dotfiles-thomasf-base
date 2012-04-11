@@ -50,6 +50,7 @@ setterm -bfreq 0
 #
 [ -f "/etc/bash_completion" ] && ! shopt -oq posix && . "/etc/bash_completion"
 [[ -r $rvm_path/scripts/completion ]] && source $rvm_path/scripts/completion
+[[ -r "${HOME}/.nvm/bash_completion" ]] && source "${HOME}/.nvm/bash_completion"
 
 for file in $(find $HOME/.bash.d/ -not -type d -name \*-completion.bash); do
     source $file # 2>/dev/null
