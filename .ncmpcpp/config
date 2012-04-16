@@ -34,7 +34,7 @@ mpd_music_dir = "~/Music"
 ## }
 ##
 #
-visualizer_fifo_path = "/tmp/mpd.fifo"
+## visualizer_fifo_path = "/tmp/mpd.fifo"
 #
 ##
 ## Note: Below parameter is needed for ncmpcpp
@@ -246,11 +246,11 @@ now_playing_suffix = "$/u"
 # playlist_separate_albums = "no"
 #
 #playlist_display_mode = "classic" (classic/columns)
-playlist_display_mode = "columns" 
+playlist_display_mode = "columns"
 #
-browser_display_mode = "classic" 
+browser_display_mode = "classic"
 #
-search_engine_display_mode = "columns" 
+search_engine_display_mode = "columns"
 #
 discard_colors_if_item_is_selected = "yes"
 #
@@ -270,7 +270,7 @@ progressbar_look = "*+"
 #
 #default_place_to_search_in = "database" (database/playlist)
 #
-#user_interface = "classic" (classic/alternative)
+user_interface = "alternative"
 #
 #media_library_left_column = "a" (possible values: a,y,g,c,p, legend above)
 #
