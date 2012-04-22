@@ -1,20 +1,26 @@
 #!/bin/bash
 
-# SVTGet v0.1.1
+# SVTGet v0.1.2
 # Updates can be found at http://svtget.se/
 # Support the project with Flattr: https://flattr.com/thing/300374/SVT-Get-a-local-cache-tool-for-SVT-Play
 #
 # Description: The script can download the RTMP streams available from the
 # online streaming service "SVT Play", managed by Sveriges Television
 #
-# Original author: Mikael "MMN-o" Nordfeldth
+# Original author: Mikael "MMN-o" Nordfeldth <mmn@hethane.se>
+# Additional authors: sikevux DomeDan
 # License: GPLv3
 # http://www.gnu.org/licenses/gpl-3.0.txt
 #
-# URL: http://blog.mmn-o.se/
-# Flattr: https://flattr.com/thing/188162/MMN-o-on-Flattr
+# URL: http://svtget.se/
+# Flattr: http://flattr.com/thing/300374/SVT-Get-a-local-cache-tool-for-SVT-Play
 
 # Changelog:
+# -- v0.1.2
+#    * deb package removed (...maintenance...)
+#    * DomeDan added Öppna Arkivet support
+#    * DomeDan added subtitle download support
+#    * script can now choose to play clips directly
 # -- v0.1.1
 #    * deb package created by sikevux, small fixes on other stuff
 # -- v0.1
@@ -23,7 +29,18 @@
 # Sample usage:
 # ./svtget http://svtplay.se/v/2440756/k_special/presspauseplay
 
-DEPENDENCIES="rtmpdump curl sed cut bash"
+if [ `uname` == "Darwin" ]; then
+    SED=gsed
+else
+    SED=sed
+fi
+
+# actions
+play=0
+subtitles=0
+
+DEPENDENCIES="rtmpdump curl $SED cut bash"
+PLAYERS="mplayer vlc"
 for DEP in $DEPENDENCIES; do
 	if [ -z "`which $DEP`" ]; then
 		echo "ERROR: Missing dependency '$DEP'." >&2
@@ -54,7 +71,22 @@ function get_tcUrls {
 	if [ $? -gt 0 ] || [ -z "$bitrate" ] || [ "$bitrate" -eq 0 ]; then
 		bitrate='[0-9]\+'
 	fi
-	echo $html | sed "s/\(rtmp[e]\?:[^|&]*\),bitrate:\($bitrate\)/\\n\2|\1\\n/g" | grep -E '^[[:digit:]]+\|' | sort -n | uniq 
+	#normal clip
+	tcUrls=`echo $html | $SED "s/\(rtmp[e]\?:[^|&]*\),bitrate:\($bitrate\)/\\n\2|\1\\n/g" | grep -E '^[[:digit:]]+\|' | sort -n | uniq`
+	if [ -z "$tcUrls" ]; then
+	 	#from öppet arkiv
+		tcUrls=`echo $html | $SED "s/\(rtmp[e]\?:[^|&]*\)&amp;/\\n320|\1\\n/g" | grep -E '^[[:digit:]]+\|' | sort -n | uniq`
+	fi
+	if [ -z "$tcUrls" ]; then
+		#flv-files
+		tcUrls=`echo $html | $SED "s/\(http\?:[^|&]*\.flv\)&amp;/\\n320|\1\\n/g" | grep -E '^[[:digit:]]+\|' | sort -n | uniq`
+	fi
+	echo $tcUrls
+}
+
+function get_sub {
+	local html=$1
+	echo $html | $SED "s/subtitle\=\(http:[^|&]*\)\&amp/\\n\-\-sub\-file \1\\n/g"| grep "\-\-sub\-file " | uniq
 }
 
 function pick_tcUrl {
@@ -82,10 +114,44 @@ function pick_tcUrl {
 	tcUrl=${Streams[$stream]}
 }
 
-while getopts "q:" opt; do
+function askOverwrite {
+    echo  "The file \"$1\" exists already!"
+    while true; do
+	read -p "Do you want to overwrite? [y/n] " yesno
+	case $yesno in
+	    y* | Y* )
+		break
+		;;
+	    n* | N* | q )
+		exit 1
+		;;
+	    *)
+		;;
+	esac
+    done
+}
+
+function print_help {
+	echo -e "Usage: $0 -q [l|m|n|h|320|850|1400|2400] -m -s http://svtplay.se/v/..."
+	echo -e " -q\tquality of the stream"
+	echo -e " -p\tplay output"
+	echo -e " -s\tfetch subtitles"
+}
+
+while getopts "q:psh" opt; do
 	case $opt in
 	q)
 		set_bitrate $OPTARG
+		;;
+	p)
+		play=1
+		;;
+	s)
+		subtitles=1
+		;;
+	h)
+		print_help
+		exit 0
 		;;
 	\?)
 		echo "invalid option: -$OPTARG" >&2
@@ -95,8 +161,8 @@ while getopts "q:" opt; do
 done
 
 pageUrl=${!#}
-if [ -z "$pageUrl" ]; then
-	echo "Usage: $0 [-q l|m|n|h] http://svtplay.se/v/..." >&2
+if [ -z "$pageUrl" ] || [ "$pageUrl" == $0 ]; then
+	print_help
 	exit 1
 fi
 
@@ -105,8 +171,10 @@ if [[ ! "$pageUrl" =~ http://svtplay.se ]]; then
 	exit 1
 fi
 
+pageUrl=`echo $pageUrl | $SED 's/^\([^?]*\).*/\1/'` 
+
 HTML=`curl -s "$pageUrl"`
-swfUrl="http://svtplay.se$(echo $HTML | sed 's/.*x-shockwave-flash" data="\([^"]\+\)\".*/\1/')"
+swfUrl="http://svtplay.se"`echo $HTML | $SED 's/.*x-shockwave-flash" data="\([^"]\+\)\".*/\1/'`
 tcUrls=$(get_tcUrls "$HTML" "$BITRATE")
 if [ -z "$tcUrls" ]; then
 	echo "ERROR: No rtmp streams found. No clip in that quality?
@@ -116,11 +184,61 @@ fi
 
 pick_tcUrl $tcUrls
 
-extension="mp4"
-if [ "$extension" != "${tcUrl##*.}" ]; then
+if [ "${tcUrl##*.}" == "flv" ]; then
 	extension="flv"
+else
+	extension="mp4"
 fi
 filename="$(basename $pageUrl).$extension"
-echo Running RTMPDump for "$tcUrl" and saving to "$filename"
+prefix="$(basename $(dirname $pageUrl))"
+if echo "$prefix" | grep -qE '[^0-9]+' ; then
+	filename="${prefix}_${filename}"
+fi
 
-rtmpdump -r "$tcUrl" --swfVfy="$swfUrl" -o "$filename"
+if [ "1" != "$play" ] && [ "1" == "$subtitle" ]; then
+	subUrl=$(get_sub "$HTML")
+	if [ -z "$subUrl" ]; then
+		echo "No subtitle found."
+		subtitle="n"
+	else
+		sub_filename="$(basename $pageUrl).srt"
+		sub_prefix="$(basename $(dirname $pageUrl))"
+		if echo "$sub_prefix" | grep -qE '[^0-9]+' ; then
+			sub_filename="${sub_prefix}_${sub_filename}"
+		fi
+	fi
+else
+	subUrl=""
+fi
+
+if [ "1" != "$play" ] && [ -e "$filename" ]; then
+    askOverwrite $filename
+fi
+
+if [ "1" != "$play" ]; then
+	if [ "1" == "$subtitles" ]; then
+		subUrl=`echo "$subUrl" | $SED 's/\-\-sub\-file //g'`
+		curl "$subUrl" -o "$sub_filename"
+	fi
+	if [ "$extension" == "mp4" ]; then
+		rtmpdump -r "$tcUrl" --swfVfy="$swfUrl" -o "$filename"
+	elif [ $extension == "flv" ]; then
+		curl "$tcUrl" -o "$filename"
+	fi
+else
+	for i in $PLAYERS; do
+		mediaplayer=`which "$i"`
+		if [ -n "$mediaplayer" ]; then
+			break;
+		fi
+	done
+	if [ -z "$mediaplayer" ]; then
+		echo "No media player found (tried: $PLAYERS)"
+	fi
+	
+	if [ $extension == "mp4" ]; then
+		rtmpdump -r "$tcUrl" --swfVfy="$swfUrl" -o - | $mediaplayer - "$subUrl" &>/dev/null
+	elif [ $extension == "flv" ]; then
+		$mediaplayer "$tcUrl" "$subUrl" &>/dev/null
+	fi
+fi
