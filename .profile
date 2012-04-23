@@ -13,6 +13,7 @@ ppath() {
 ppath "/var/lib/gems/1.8/bin"
 ppath "/var/lib/gems/1.9/bin"
 ppath "${HOME}/.cabal/bin"
+ppath "${HOME}/.go/bin"
 
 # Add all ~/.bin and all ~/.bin-* directories to path
 for D in $(find $HOME -maxdepth 1 -name ".bin-*" -o -name ".bin" | sort); do
