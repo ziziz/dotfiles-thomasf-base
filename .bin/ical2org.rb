@@ -25,7 +25,7 @@ require 'erb'
 require 'ri_cal'
 
 # e.g. output will be suppressed if default is specified
-DEFAULT_TZ = 'Europe/Berlin'
+DEFAULT_TZ = 'Europe/Stockholm'
 
 # see the RiCal docs if Timezones don't work out for you
 ::RiCal::PropertyValue::DateTime::default_tzid = DEFAULT_TZ # :floating
