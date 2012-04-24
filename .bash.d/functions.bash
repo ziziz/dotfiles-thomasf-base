@@ -44,25 +44,26 @@ ffmpeg-for-phone () {
 }
 
 ex () {
-  if [[ -f $1 ]]; then
-    case $1 in
-      *.tar.gz)            tar -xf $1     ;;
-      *.tar)               tar -xf $1     ;;
-      *.tgz)               tar -xf $1     ;;
-      *.bz2)               bunzip2 $1     ;;
-      *.rar)               unrar x $1     ;;
-      *.gz)                gunzip $1      ;;
-      *.lzma)              unxz $1        ;;
-      *.rpm)               bsdtar xf $1   ;;
-      *.zip)               unzip $1       ;;
-      *.Z)                 uncompress $1  ;;
-      *.7z)                7z x $1        ;;
-      *.exe)               cabextract $1  ;;
-      *)                   echo "'$1': unrecognized file compression" ;;
-    esac
-  else
-    echo "'$1' is not a valid file"
-  fi
+    if [[ -f $1 ]]; then
+        case $1 in
+            *.tar.bz2)           tar xjf $1     ;;
+            *.tar.gz)            tar xzf $1     ;;
+            *.tar)               tar xf $1      ;;
+            *.tgz)               tar xf $1      ;;
+            *.bz2)               bunzip2 $1     ;;
+            *.rar)               unrar x $1     ;;
+            *.gz)                gunzip $1      ;;
+            *.lzma)              unxz $1        ;;
+            *.rpm)               bsdtar xf $1   ;;
+            *.zip)               unzip $1       ;;
+            *.Z)                 uncompress $1  ;;
+            *.7z)                7z x $1        ;;
+            *.exe)               cabextract $1  ;;
+            *)                   echo "'$1': unrecognized file compression" ;;
+        esac
+    else
+        echo "'$1' is not a valid file"
+    fi
 }
 
 #ghclone() {
@@ -77,4 +78,10 @@ mkcd() {
 }
 
 [[ -d ${HSYNC_REPOS_PATH} ]] && alias cdhs='cd $HSYNC_REPOS_PATH'
+
+
+du_dir () {
+    du -sk ./* | sort -n | awk 'BEGIN{ pref[1]="K"; pref[2]="M"; pref[3]="G";} { total = total + $1; x = $1; y = 1; while( x > 1024 ) { x = (x + 1023)/1024; y++; } printf("%g%s\t%s\n",int(x*10)/10,pref[y],$2); } END { y = 1; while( total > 1024 ) { total = (total + 1023)/1024; y++; } printf("Total: %g%s\n",int(total*10)/10,pref[y]); }'
+}
+
 
