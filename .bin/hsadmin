@@ -162,8 +162,10 @@ case ${1} in
     # Push all repositories
     push)
         for d in ${base}/*; do
-            cd ${d}
-            git push origin master
+            (
+                cd ${d}
+                git push origin master
+            ) &
         done
         ;;
     # Pull all repositores
