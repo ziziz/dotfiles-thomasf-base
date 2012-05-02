@@ -38,11 +38,12 @@ alias agent='exec ssh-agent ${SHELL} -c "ssh-add; ${SHELL}"'
 
 alias apt-update-upgrade='sudo apt-get update && sudo apt-get dist-upgrade'
 
-
+# ffmpeg - for - phone
 ffmpeg-for-phone () {
     for A in $@; do ffmpeg -i ${A} -s qvga -vcodec mpeg4 -acodec libfaac ${A}.mp4 ;done
 }
 
+# Extract wrapper for a number of archive formats
 ex () {
     if [[ -f $1 ]]; then
         case $1 in
@@ -66,22 +67,27 @@ ex () {
     fi
 }
 
-#ghclone() {
-#  (( $# == 2 )) || return 1
-#  git clone git://github.com/$1/${2%.git}.git
-#}
-
+# Make directory and change to it
 mkcd() {
   [[ $1 ]] || return 0
   [[ ! -d $1 ]] && mkdir -vp "$1"
   [[ -d $1 ]] && builtin cd "$1"
 }
 
-[[ -d ${HSYNC_REPOS_PATH} ]] && alias cdhs='cd $HSYNC_REPOS_PATH'
+# Change directory to homesync directory
+[[ -d ${HSADMIN_REPOS_PATH} ]] && alias cdhs='builtin cd $HSADMIN_REPOS_PATH'
 
 
+# Disk usage - recursive for each child folder
 du_dir () {
     du -sk ./* | sort -n | awk 'BEGIN{ pref[1]="K"; pref[2]="M"; pref[3]="G";} { total = total + $1; x = $1; y = 1; while( x > 1024 ) { x = (x + 1023)/1024; y++; } printf("%g%s\t%s\n",int(x*10)/10,pref[y],$2); } END { y = 1; while( total > 1024 ) { total = (total + 1023)/1024; y++; } printf("Total: %g%s\n",int(total*10)/10,pref[y]); }'
 }
 
+# Change directory to git repository root
+cdg () {
+    local dir=$(git rev-parse --show-toplevel) && builtin cd $dir
+}
+
+# Git status
+alias s='git status --short'
 
