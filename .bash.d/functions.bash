@@ -90,4 +90,11 @@ cdg () {
 
 # Git status
 alias s='git status --short'
-
+octopress-create () {
+    local name="${1}"
+    mkdir $name &&
+    cd $name &&
+    git init . &&
+    git remote add octopress https://github.com/imathis/octopress &&
+    git pull octopress master
+}
