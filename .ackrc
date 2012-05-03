@@ -2,8 +2,8 @@
 ruby=.haml,.builder,.rake
 --type-add
 css=.sass,.scss
---type-add
-js=.coffee
+--type-set
+coffeescript=.coffee
 --type-set
 markdown=.markdown,.md,.mdown
 --type-set
@@ -15,10 +15,10 @@ rdoc=.rdoc
 --type-add
 html=.hb
 --ruby
---css
---js
 --markdown
 --actionscript
---objc
 --php
+--elisp
+--coffeescript
 --ignore-dir=.idea
+--go
