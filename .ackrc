@@ -12,6 +12,8 @@ actionscript=.as
 cucumber=.feature
 --type-set
 rdoc=.rdoc
+--type-add
+html=.hb
 --ruby
 --css
 --js
