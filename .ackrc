@@ -7,6 +7,8 @@ coffeescript=.coffee
 --type-set
 markdown=.markdown,.md,.mdown
 --type-set
+org=.org,.org_archive
+--type-set
 actionscript=.as
 --type-set
 cucumber=.feature
@@ -14,6 +16,8 @@ cucumber=.feature
 rdoc=.rdoc
 --type-add
 html=.hb
+--type-add
+css=.styl
 --ruby
 --markdown
 --actionscript
