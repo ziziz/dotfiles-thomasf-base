@@ -26,3 +26,4 @@ css=.styl
 --coffeescript
 --ignore-dir=.idea
 --go
+--python
