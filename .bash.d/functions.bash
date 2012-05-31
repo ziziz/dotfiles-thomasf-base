@@ -34,6 +34,8 @@ alias t='tree'
 alias t2='tree -d -L 2'
 alias t3='tree -d -L 3'
 
+alias py='python'
+
 alias agent='exec ssh-agent ${SHELL} -c "ssh-add; ${SHELL}"'
 
 alias apt-update-upgrade='sudo apt-get update && sudo apt-get dist-upgrade'
