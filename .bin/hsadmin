@@ -207,10 +207,12 @@ case ${1} in
     ;;
     # Run magit-status on all unclean repositories
     magit)
+        el=""
         for d in ${base}/*; do
             cd ${d}
-            [[ ! $(git status --porcelain) = "" ]] && git magit
+            [[ ! $(git status --porcelain) = "" ]] && el="${el} (magit-status \"${d}\")"
         done
+        emacs -eval "(progn() ${el} )"
         ;;
     *)
         echo "Invalid argument!"
