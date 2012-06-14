@@ -1,7 +1,7 @@
---type-add
-ruby=.haml,.builder,.rake
---type-add
-css=.sass,.scss
+### added ignores
+--ignore-dir=.idea
+
+### new types
 --type-set
 coffeescript=.coffee
 --type-set
@@ -14,16 +14,25 @@ actionscript=.as
 cucumber=.feature
 --type-set
 rdoc=.rdoc
+
+### type adds
+--type-add
+ruby=.haml,.builder,.rake
+--type-add
+css=.sass,.scss
 --type-add
 html=.hb
 --type-add
 css=.styl
+
+### added default search types
 --ruby
 --markdown
 --actionscript
 --php
 --elisp
 --coffeescript
---ignore-dir=.idea
 --go
 --python
+--cpp
+--cc
