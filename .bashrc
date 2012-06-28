@@ -4,6 +4,10 @@
 # HOME DIR LOCAL ENVIRONMENTS
 #
 
+# pip cache
+mkdir -p $HOME/.cache/pip_download
+export PIP_DOWNLOAD_CACHE=$HOME/.cache/pip_download
+
 # Maybe load Node version manager
 [ -f "${HOME}/.nvm/nvm.sh" ] && source "${HOME}/.nvm/nvm.sh"
 
