@@ -10,6 +10,7 @@
 # Maybe load virtualenvburruto or else pythonbrew
 if [ -f "${HOME}/.venvburrito/startup.sh" ]; then
     VIRTUAL_ENV_DISABLE_PROMPT=1 && export VIRTUAL_ENV_DISABLE_PROMPT
+    VIRTUALENVWRAPPER_HOOK_DIR="${HOME}/.virtualenvwrapper-hooks" && export VIRTUALENVWRAPPER_HOOK_DIR
     source "${HOME}/.venvburrito/startup.sh" && workon default
 elif  [ -f "${HOME}/.pythonbrew/etc/bashrc" ]; then
     source "${HOME}/.pythonbrew/etc/bashrc"
