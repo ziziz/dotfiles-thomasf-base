@@ -184,7 +184,7 @@ function __prompt_activate {
 # Set the prompt 
 PS1="${TITLEBAR}\
 ${red}▶\$(__prompt_h) \
-${magentaH}\$(__prompt_pwd) \
+${blue}\$(__prompt_pwd) \
 ${yellow}\$(__prompt_vcs)\
 ${cyan}\$(__prompt_venv)\
 ${green}\$(__prompt_rvm)\
