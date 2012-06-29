@@ -17,7 +17,7 @@ function __prompt_venv {
 }
 
 function __prompt_rvm {
-    which rvm-prompt >/dev/null 2>/dev/null && echo -n "(r:$(rvm-prompt 2>/dev/null)) "
+    which rvm-prompt >/dev/null 2>/dev/null && echo -n "(r:$(rvm-prompt v g 2>/dev/null)) "
 }
 
 # Username or alias
