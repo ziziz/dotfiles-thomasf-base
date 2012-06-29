@@ -10,6 +10,15 @@ function __prompt_date {
     echo -n `date +%H%M`
 }
 
+function __prompt_h {
+    echo -n `date +%H`
+}
+
+function __prompt_m {
+    echo -n `date +%M`
+}
+
+
 function __prompt_venv {
     # [[ -n ${VIRTUAL_ENV} ]] && [ "${VIRTUAL_ENV##*/}" != "default" ] && echo -n " p:${VIRTUAL_ENV##*/} "
     [[ -n ${VIRTUAL_ENV} ]] && echo -n "(p:${VIRTUAL_ENV##*/}) "
@@ -174,12 +183,12 @@ function __prompt_activate {
 
 # Set the prompt 
 PS1="${TITLEBAR}\
-${red}\$(__prompt_date) \
+${red}▶\$(__prompt_h) \
 ${magentaH}\$(__prompt_pwd) \
 ${yellow}\$(__prompt_vcs)\
 ${cyan}\$(__prompt_venv)\
 ${green}\$(__prompt_rvm)\
-${white}${resetFormatting}\n     \
+\n${red}:\$(__prompt_m) \
 ${yellow}\$(__prompt_username)${redH}@${HOST_COLOR}\$(__prompt_hostname) \
 ${white}${magentaB}\$(__prompt_ssh_agent)${black}${magentaB}\$(__prompt_ssh)\
 ${magenta}\$(__prompt_last) \
