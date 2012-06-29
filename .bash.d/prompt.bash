@@ -189,8 +189,7 @@ ${yellow}\$(__prompt_vcs)\
 ${cyan}\$(__prompt_venv)\
 ${green}\$(__prompt_rvm)\
 \n${red}:\$(__prompt_m) \
-${yellow}\$(__prompt_username)${redH}@${HOST_COLOR}\$(__prompt_hostname) \
-${white}${magentaB}\$(__prompt_ssh_agent)${black}${magentaB}\$(__prompt_ssh)\
+${yellow}\$(__prompt_username)${redH}@${HOST_COLOR}\$(__prompt_hostname)${white}${magentaB}\$(__prompt_ssh_agent)${black}${magentaB}\$(__prompt_ssh)\
 ${magenta}\$(__prompt_last) \
 ${resetFormating}"
 PS2='> '
