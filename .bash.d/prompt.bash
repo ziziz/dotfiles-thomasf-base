@@ -10,6 +10,16 @@ function __prompt_date {
     echo -n `date +%H%M`
 }
 
+function __prompt_venv {
+    # [[ -n ${VIRTUAL_ENV} ]] && [ "${VIRTUAL_ENV##*/}" != "default" ] && echo -n " p:${VIRTUAL_ENV##*/} "
+    [[ -n ${VIRTUAL_ENV} ]] && echo -n "(p:${VIRTUAL_ENV##*/}) "
+
+}
+
+function __prompt_rvm {
+    which rvm-prompt >/dev/null 2>/dev/null && echo -n "(r:$(rvm-prompt 2>/dev/null)) "
+}
+
 # Username or alias
 function __prompt_username {
     if [ "$(type -t __user_alias)" == "function" ]; then
@@ -50,13 +60,11 @@ export GIT_PS1_SHOWUPSTREAM="no"
 export GIT_PS1_SHOWUNTRACKEDFILES="yes"
 function __prompt_vcs {
     if [[ $(which vcprompt) ]]; then
-        vcprompt -f "(%n:%b%m%u)"
+        vcprompt -f "(%n:%b%m%u) "
     elif [[ $(type -t __git_ps1) == "function" ]]; then
-        __git_ps1 "(%s)"
+        __git_ps1 "(%s) "
     fi
 }
-
-
 
 # Support function to compactify a path
 # copied: http://stackoverflow.com/questions/3497885/code-challenge-bash-prompt-path-shortener
@@ -82,7 +90,8 @@ function __dir_chomp {
 
 # Compact version of current working directory
 function __prompt_pwd {
-    echo -n $(__dir_chomp  "$(pwd)" 25)
+    local w=$(($(tput cols)-50))
+    echo -n $(__dir_chomp  "$(pwd)" $w)
 }
 
 # 
@@ -166,8 +175,12 @@ function __prompt_activate {
 # Set the prompt 
 PS1="${TITLEBAR}\
 ${red}\$(__prompt_date) \
-${yellow}\$(__prompt_username)${redH}@${HOST_COLOR}\$(__prompt_hostname)\
-${cyan}\$(__prompt_pwd)${green}\$(__prompt_vcs) \
+${magentaH}\$(__prompt_pwd) \
+${yellow}\$(__prompt_vcs)\
+${cyan}\$(__prompt_venv)\
+${green}\$(__prompt_rvm)\
+${white}${resetFormatting}\n     \
+${yellow}\$(__prompt_username)${redH}@${HOST_COLOR}\$(__prompt_hostname) \
 ${white}${magentaB}\$(__prompt_ssh_agent)${black}${magentaB}\$(__prompt_ssh)\
 ${magenta}\$(__prompt_last) \
 ${resetFormating}"
