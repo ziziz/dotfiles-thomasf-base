@@ -4,26 +4,31 @@
 # HOME DIR LOCAL ENVIRONMENTS
 #
 
-# pip cache
-mkdir -p $HOME/.cache/pip_download
-export PIP_DOWNLOAD_CACHE=$HOME/.cache/pip_download
+# Pip download cache
+mkdir -p "${HOME}/.cache/pip_download" && export PIP_DOWNLOAD_CACHE="${HOME}/.cache/pip_download"
 
-# Maybe load Node version manager
-[ -f "${HOME}/.nvm/nvm.sh" ] && source "${HOME}/.nvm/nvm.sh"
+# Don't let virtualenv change the prompt
+export VIRTUAL_ENV_DISABLE_PROMPT=1
 
-# maybe set virtualenv hook dir
-[ -e "${HOME}/.virtualenvwrapper-hooks" ] && VIRTUALENVWRAPPER_HOOK_DIR="${HOME}/.virtualenvwrapper-hooks" && export VIRTUALENVWRAPPER_HOOK_DIR
+# Only do this automatically if not root
+if [ $UID != 0 ]; then
 
-# Maybe load virtualenvburruto or else pythonbrew
-if [ -f "${HOME}/.venvburrito/startup.sh" ]; then
-    VIRTUAL_ENV_DISABLE_PROMPT=1 && export VIRTUAL_ENV_DISABLE_PROMPT
-    source "${HOME}/.venvburrito/startup.sh" && workon default
-elif  [ -f "${HOME}/.pythonbrew/etc/bashrc" ]; then
-    source "${HOME}/.pythonbrew/etc/bashrc"
+    # Maybe load Node version manager
+    [ -f "${HOME}/.nvm/nvm.sh" ] && source "${HOME}/.nvm/nvm.sh"
+
+    # Set virtualenvwrapper hooks dir
+    [ -e "${HOME}/.virtualenvwrapper-hooks" ] && VIRTUALENVWRAPPER_HOOK_DIR="${HOME}/.virtualenvwrapper-hooks" && export VIRTUALENVWRAPPER_HOOK_DIR
+
+    # Maybe load virtualenvburruto or else pythonbrew
+    if [ -f "${HOME}/.venvburrito/startup.sh" ]; then
+        source "${HOME}/.venvburrito/startup.sh" && [ -z "${VIRTUAL_ENV}" ] && workon default
+    elif  [ -f "${HOME}/.pythonbrew/etc/bashrc" ]; then
+        source "${HOME}/.pythonbrew/etc/bashrc"
+    fi
+
+    # Maybe load Ruby version manager
+    [ -f "${HOME}/.rvm/scripts/rvm" ] && source "${HOME}/.rvm/scripts/rvm"
 fi
-
-# Maybe load Ruby version manager
-[ -f "${HOME}/.rvm/scripts/rvm" ] && source "${HOME}/.rvm/scripts/rvm"
 
 # -------------------------------------------------------------------------------
 # Connect to gpg agent if possible
