@@ -18,15 +18,19 @@ function __prompt_m {
     echo -n `date +%M`
 }
 
-
 function __prompt_venv {
     # [[ -n ${VIRTUAL_ENV} ]] && [ "${VIRTUAL_ENV##*/}" != "default" ] && echo -n " p:${VIRTUAL_ENV##*/} "
     [[ -n ${VIRTUAL_ENV} ]] && echo -n "(p:${VIRTUAL_ENV##*/}) "
-
 }
 
 function __prompt_rvm {
     which rvm-prompt >/dev/null 2>/dev/null && echo -n "(r:$(rvm-prompt v g 2>/dev/null)) "
+}
+
+function __prompt_nvm {
+     if [ "$(type -t nvm_version)" == "function" ]; then
+         echo -n "(n:$(nvm_version)) "
+     fi
 }
 
 # Username or alias
@@ -188,6 +192,7 @@ ${blue}\$(__prompt_pwd) \
 ${yellow}\$(__prompt_vcs)\
 ${cyan}\$(__prompt_venv)\
 ${green}\$(__prompt_rvm)\
+${cyan}\$(__prompt_nvm)\
 \n${red}:\$(__prompt_m) \
 ${yellow}\$(__prompt_username)${redH}@${HOST_COLOR}\$(__prompt_hostname)${white}${magentaB}\$(__prompt_ssh_agent)${black}${magentaB}\$(__prompt_ssh)\
 ${magenta}\$(__prompt_last) \
