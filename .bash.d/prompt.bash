@@ -6,10 +6,6 @@
 # ref: http://www.reddit.com/r/programming/comments/697cu/bash_users_what_do_you_have_for_your_ps1/
 #
 
-function __prompt_date {
-    echo -n `date +%H%M`
-}
-
 function __prompt_h {
     echo -n `date +%H`
 }
