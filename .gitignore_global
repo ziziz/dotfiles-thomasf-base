@@ -1,19 +1,17 @@
-# PYTHON
+##### Misc
+*.log
+
+#### Python
 *.pot
 *.py[co]
 
-# RANDOM
-*.log
-
-# Java #
+#### Java
 *.class
-
-# Package Files #
 *.jar
 *.war
 *.ear
 
-# Haskell
+#### Haskell
 dist
 cabal-dev
 *.o
@@ -21,11 +19,17 @@ cabal-dev
 *.chi
 *.chs.h
 
-# EMACS
+#### Ruby
+.rake_t_cache
+
+#### Emacs
 .\#*
-*.elc 
+*.elc
 \#*\#
 .\#*
+.emacs.desktop
+.emacs.desktop.lock
+.ropeproject/
 
-# RUBY #
-.rake_t_cache
+#### Idea - Intellij/Pycharm...
+.idea/
