@@ -29,6 +29,7 @@ cabal-dev
 .\#*
 .emacs.desktop
 .emacs.desktop.lock
+.emacs.bm
 .ropeproject/
 
 #### Idea - Intellij/Pycharm...
