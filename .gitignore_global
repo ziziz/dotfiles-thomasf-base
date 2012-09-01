@@ -7,9 +7,6 @@
 
 #### Java
 *.class
-*.jar
-*.war
-*.ear
 
 #### Haskell
 dist
