@@ -29,6 +29,7 @@ css=.styl
 --ruby
 --markdown
 --actionscript
+--haskell
 --php
 --elisp
 --coffeescript
