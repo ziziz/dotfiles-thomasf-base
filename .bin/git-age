@@ -5,7 +5,7 @@
 
 set -e
 
-VERSION="1"
+VERSION="2"
 
 SUBDIRECTORY_OK=Yes
 OPTIONS_KEEPDASHDASH=""
@@ -13,7 +13,7 @@ OPTIONS_SPEC="\
 git age"
 
 version_print() {
-    echo "git magit version ${VERSION}"
+    echo "git age version ${VERSION}"
 }
 
 git ls-files | xargs -n1 -i{} git log -1 --pretty=format:"%ci {}%n" -- {}
