@@ -14,6 +14,8 @@ actionscript=.as
 cucumber=.feature
 --type-set
 rdoc=.rdoc
+--type-set
+pcss=.sass,.scss,.styl
 
 ### type adds
 --type-add
@@ -21,9 +23,9 @@ ruby=.haml,.builder,.rake
 --type-add
 css=.sass,.scss
 --type-add
-html=.hb
---type-add
 css=.styl
+--type-add
+html=.hb
 
 ### added default search types
 --ruby
@@ -39,3 +41,4 @@ css=.styl
 --cpp
 --cc
 --html
+--pcss
