@@ -56,7 +56,7 @@ function install_repositories {
     for d in ${all}; do
         cd ${d}
         [ -e .dotfilesrc ] && dotfiles -s ${force_opt} -R .
-        [ -e "INSTALLER" ] && source INSTALLER
+        [ -e "INSTALLER" ] && source ./INSTALLER
         true
     done
 }
