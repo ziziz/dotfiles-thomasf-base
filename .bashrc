@@ -44,7 +44,7 @@ export GPG_TTY
 # ------------------------------------------------------------------------------
 # NON INTERACTIVE RETURN POINT
 #
-[ -z "$PS1" ] && return 
+[ -z "$PS1" ] && return
 
 # ------------------------------------------------------------------------------
 # BASH OPTIONS
@@ -55,7 +55,7 @@ HISTSIZE=1200
 shopt -s histappend
 shopt -s checkwinsize
 stty -ixon
-setterm -bfreq 0
+[ $(which setterm) ] && setterm -bfreq 0
 
 # ------------------------------------------------------------------------------
 # COMPLETION
@@ -92,14 +92,6 @@ fi
 #
 [ -e "${HOME}/.bashrc-private" ] && . "${HOME}/.bashrc-private"
 [ -e "${HOME}/.bashrc-local" ] && . "${HOME}/.bashrc-local"
-
-# ------------------------------------------------------------------------------
-# HACKS :/
-#
-# if runnung under osx, make some changes
-if [ "$OSTYPE" == "darwin10.0" ]; then
-    unalias ls
-fi
 
 # Activate the prompt
 __prompt_activate
