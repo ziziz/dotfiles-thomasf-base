@@ -31,3 +31,6 @@ cabal-dev
 
 #### Idea - Intellij/Pycharm...
 .idea/
+
+#### osx
+.DS_Store
