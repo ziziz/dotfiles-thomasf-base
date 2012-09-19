@@ -9,7 +9,7 @@
 set -e
 
 # if runnung under osx, make some changes
-if [ "z$OSTYPE" = "zdarwin10.0" ]; then
+if [ "${OSTYPE:0:6}" = "darwin" ]; then
     if [ -x "/Applications/Emacs.app/Contents/MacOS/Emacs" ]; then
       exec /Applications/Emacs.app/Contents/MacOS/Emacs $*
     fi
