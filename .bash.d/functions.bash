@@ -24,9 +24,9 @@ function eless {
 
 alias j="jobs -l"
 if [ ${OSTYPE:0:5} = darwin ]; then
-    alias ls="ls --group-directories-first --color"
-else
     alias ls="ls -G"
+else
+    alias ls="ls --group-directories-first --color"
 fi
 alias l="ls -l "
 alias la='ls -A'
