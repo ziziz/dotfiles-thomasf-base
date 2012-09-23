@@ -10,6 +10,11 @@
 ppath() {
  [ -d "${1}" ] && PATH="${1}:${PATH}" && export PATH
 }
+
+ppath "/sbin"
+ppath "/bin"
+ppath "/usr/sbin"
+ppath "/usr/bin"
 ppath "/var/lib/gems/1.8/bin"
 ppath "/var/lib/gems/1.9/bin"
 ppath "${HOME}/.cabal/bin"
@@ -37,4 +42,3 @@ EDITOR="editor" && export EDITOR
 VISUAL="${EDITOR}" && export VISUAL
 ALTERNATE_EDITOR="${EDITOR}" && export ALTERNATE_EDITOR
 [ $(which less) ] && PAGER="$(which less)" && export PAGER
-
