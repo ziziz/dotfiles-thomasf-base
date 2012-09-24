@@ -47,17 +47,34 @@ export GPG_TTY
 [ -z "$PS1" ] && return
 
 # ------------------------------------------------------------------------------
-# BASH OPTIONS
+# BASH
 #
+shopt -s checkwinsize
+shopt -s checkjobs
+shopt -s cdspell
+shopt -s dirspell
+# bash history
+
+if [ $UID != 0 ]; then
+    export HISTFILE=~/.bash_history
+else
+    export HISTFILE=~/.bash_history_root
+fi
+shopt -s histappend
 export HISTCONTROL=ignoreboth
 export HISTSIZE=5000
 export HISTTIMEFORMAT='%F %T '
-export HISTIGNORE="&:[bf]g:exit:pwd:clear:mount:umount:?"
-shopt -s histappend
-shopt -s checkwinsize
-stty -ixon
-[ $(which setterm) ] && setterm -bfreq 0
+export HISTIGNORE="&:ls:cd:[bf]g:exit:pwd:clear:mount:umount:?"
 PROMPT_COMMAND="history -a;${PROMPT_COMMAND}"
+
+# ------------------------------------------------------------------------------
+#
+# TERMINAL OPTIONS
+#
+# enable xon/xoff flow control
+stty -ixon
+# set bell frequency to 0
+[ $(which setterm) ] && setterm -bfreq 0
 
 # ------------------------------------------------------------------------------
 # COMPLETION
