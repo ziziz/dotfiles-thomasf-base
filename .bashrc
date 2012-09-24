@@ -49,13 +49,15 @@ export GPG_TTY
 # ------------------------------------------------------------------------------
 # BASH OPTIONS
 #
-HISTCONTROL=$HISTCONTROL${HISTCONTROL+,}ignoredups
-#HISTCONTROL=ignoreboth
-HISTSIZE=1200
+export HISTCONTROL=ignoreboth
+export HISTSIZE=5000
+export HISTTIMEFORMAT='%F %T '
+export HISTIGNORE="&:[bf]g:exit:pwd:clear:mount:umount:?"
 shopt -s histappend
 shopt -s checkwinsize
 stty -ixon
 [ $(which setterm) ] && setterm -bfreq 0
+PROMPT_COMMAND="history -a;${PROMPT_COMMAND}"
 
 # ------------------------------------------------------------------------------
 # COMPLETION
