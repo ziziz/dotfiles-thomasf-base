@@ -4,17 +4,14 @@
 # HOME DIR LOCAL ENVIRONMENTS
 #
 
-log_level=1
 bash_start_time=$(date +%s)
 bash_uptime() {
     echo "$(($(date +%s)-${bash_start_time})) seconds"
 }
 log() {
     [ ! -z "$PS1" ] \
-        && echo "$1..."
+        && echo "$1... "
 }
-
-log "bashrc begin"
 
 # Don't let virtualenv change the prompt
 export VIRTUAL_ENV_DISABLE_PROMPT=1
@@ -29,8 +26,8 @@ if [ $UID != 0 ]; then
     # Maybe load Node version manager
     [ ! "$(type -t nvm)" = "function" ] \
         && [ -f "${HOME}/.nvm/nvm.sh" ] \
-        && source "${HOME}/.nvm/nvm.sh" \
-        && log "nvm loaded"
+        && log "nvm" \
+        && source "${HOME}/.nvm/nvm.sh"
 
     # Set virtualenvwrapper hooks dir
     [ -e "${HOME}/.virtualenvwrapper-hooks" ] \
@@ -39,31 +36,31 @@ if [ $UID != 0 ]; then
 
     # Maybe load virtualenvburruto or else pythonbrew
     if [ -f "${HOME}/.venvburrito/startup.sh" ]; then
-        source "${HOME}/.venvburrito/startup.sh" \
+        log "virtualenvburrito" \
+            && source "${HOME}/.venvburrito/startup.sh" \
             && [ -z "${VIRTUAL_ENV}" ] \
-            && workon default \
-            && log "virtualenvburrito loaded"
+            && workon default
     elif  [ -f "${HOME}/.pythonbrew/etc/bashrc" ]; then
-        source "${HOME}/.pythonbrew/etc/bashrc" \
-            && log "pytonbrew loaded"
+        log "pythonbrew" \
+            && source "${HOME}/.pythonbrew/etc/bashrc"
     fi
 
     # Maybe load Ruby version manager
     [ -f "${HOME}/.rvm/scripts/rvm" ] \
-        && source "${HOME}/.rvm/scripts/rvm" \
-        && log "rvm loaded"
+        && log "rvm" \
+        && source "${HOME}/.rvm/scripts/rvm"
 fi
 
 # -------------------------------------------------------------------------------
 # Connect to gpg agent if possible
 #
+log "gpg-agent"
 agent_file="$HOME/.gnupg/gpg-agent-info-$(hostname)"
 if [ -r "$agent_file" ] && kill -0 $(grep GPG_AGENT_INFO "$agent_file" | cut -d: -f 2) 2>/dev/null; then
     source "$agent_file"
     export GPG_AGENT_INFO;
     export SSH_AUTH_SOCK;
     export SSH_AGENT_PID
-    log "gpg agent config finished"
 fi
 GPG_TTY=$(tty)
 export GPG_TTY
@@ -77,7 +74,7 @@ export GPG_TTY
 # ------------------------------------------------------------------------------
 # BASH
 #
-log "bash config begin"
+log "bash config"
 shopt -s checkwinsize
 shopt -s checkjobs
 shopt -s cdspell
@@ -95,7 +92,6 @@ export HISTSIZE=5000
 export HISTTIMEFORMAT='%F %T '
 export HISTIGNORE="&:ls:cd:[bf]g:exit:pwd:clear:mount:umount:?"
 PROMPT_COMMAND="history -a;${PROMPT_COMMAND}"
-log "bash config end"
 
 # ------------------------------------------------------------------------------
 #
@@ -111,28 +107,31 @@ log "bash config end"
 # ------------------------------------------------------------------------------
 # COMPLETION
 #
-log "bash completion start"
+
 [ -f "/etc/bash_completion" ] \
     && ! shopt -oq posix \
-    && . "/etc/bash_completion" \
-    && log "/etc/bash_completion"
+    && log "bash_completion" \
+    && . "/etc/bash_completion"
 
 [[ -r $rvm_path/scripts/completion ]] \
-    && source $rvm_path/scripts/completion \
-    && log "rvm completion"
+    && ! shopt -oq posix \
+    && log "rvm completion" \
+    && source $rvm_path/scripts/completion
+
 [[ -r "${HOME}/.nvm/bash_completion" ]] \
-    && source "${HOME}/.nvm/bash_completion" \
-    && log "nvm completion"
+    && ! shopt -oq posix \
+    && log "nvm completion" \
+    && source "${HOME}/.nvm/bash_completion"
 
 for file in $(find $HOME/.bash.d/ -not -type d -name \*-completion.bash); do
-    source $file # 2>/dev/null
     log `basename $file`
+    source $file # 2>/dev/null
 done
-log "bash completion end"
 
 # ------------------------------------------------------------------------------
 # DIRCOLORS
 #
+log "dircolors"
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
     alias ls='ls --color=auto'
@@ -147,18 +146,20 @@ fi
 
 [ -f "${HOME}/.bash.d/z.bash" ] \
     && ! shopt -oq posix \
-    && . "${HOME}/.bash.d/z.bash" \
-    && log "loaded z"
+    && log "z" \
+    && . "${HOME}/.bash.d/z.bash"
+
 [ -x /usr/bin/lesspipe ] \
     && eval "$(SHELL=/bin/sh lesspipe)"
 [ -f "${HOME}/.bash.d/functions.bash" ] \
-    && ! shopt -oq posix \
-    && . "${HOME}/.bash.d/functions.bash" \
-    && log "loaded functions.bash"
+    && log "functions.bash" \
+    && . "${HOME}/.bash.d/functions.bash"
+
 [ -f "${HOME}/.bash.d/prompt.bash" ] \
     && ! shopt -oq posix \
-    && . "${HOME}/.bash.d/prompt.bash" \
-    && log "loaded prompt.bash"
+    && log "prompt.bash" \
+    && . "${HOME}/.bash.d/prompt.bash"
+
 
 # ------------------------------------------------------------------------------
 # PRIVATE AND LOCAL
@@ -171,10 +172,9 @@ fi
     && log "loaded .bashrc-local"
 
 # Activate the prompt
-log "activate prompt begin"
+log "activate prompt"
 __prompt_activate
-log "activate prompt end"
 
 unset -f log
 unset log_level
-clear
+# clear
