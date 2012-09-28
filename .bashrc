@@ -10,7 +10,8 @@ bash_uptime() {
 }
 log() {
     [ ! -z "$PS1" ] \
-        && echo "$1... "
+        && echo -n "■"
+    return 0
 }
 
 # Don't let virtualenv change the prompt
@@ -39,7 +40,7 @@ if [ $UID != 0 ]; then
         log "virtualenvburrito" \
             && source "${HOME}/.venvburrito/startup.sh" \
             && [ -z "${VIRTUAL_ENV}" ] \
-            && workon default
+            && workon default1
     elif  [ -f "${HOME}/.pythonbrew/etc/bashrc" ]; then
         log "pythonbrew" \
             && source "${HOME}/.pythonbrew/etc/bashrc"
@@ -156,7 +157,6 @@ fi
     && . "${HOME}/.bash.d/functions.bash"
 
 [ -f "${HOME}/.bash.d/prompt.bash" ] \
-    && ! shopt -oq posix \
     && log "prompt.bash" \
     && . "${HOME}/.bash.d/prompt.bash"
 
@@ -176,5 +176,4 @@ log "activate prompt"
 __prompt_activate
 
 unset -f log
-unset log_level
-# clear
+echo -e -n '\r'
