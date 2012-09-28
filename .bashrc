@@ -40,7 +40,7 @@ if [ $UID != 0 ]; then
         log "virtualenvburrito" \
             && source "${HOME}/.venvburrito/startup.sh" \
             && [ -z "${VIRTUAL_ENV}" ] \
-            && workon default1
+            && workon default
     elif  [ -f "${HOME}/.pythonbrew/etc/bashrc" ]; then
         log "pythonbrew" \
             && source "${HOME}/.pythonbrew/etc/bashrc"
