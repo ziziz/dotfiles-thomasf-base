@@ -79,9 +79,12 @@ export GPG_TTY
 #
 log "bash config"
 shopt -s checkwinsize
-shopt -s checkjobs
-shopt -s cdspell
-shopt -s dirspell
+
+if [ ! ${OSTYPE:0:6} = darwin ]; then
+    shopt -s checkjobs
+    shopt -s cdspell
+    shopt -s dirspell
+fi
 # bash history
 
 if [ $UID != 0 ]; then
