@@ -10,6 +10,8 @@ bash_uptime() {
 }
 log() {
     [ ! -z "$PS1" ] \
+        && [ ! "$TERM" = "eterm" ] \
+        && [ ! "$TERM" = "eterm-color" ] \
         && echo -n "■"
     return 0
 }
