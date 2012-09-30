@@ -10,8 +10,6 @@ bash_uptime() {
 }
 log() {
     [ ! -z "$PS1" ] \
-        && [ ! "$TERM" = "eterm" ] \
-        && [ ! "$TERM" = "eterm-color" ] \
         && echo -n "■"
     return 0
 }
@@ -181,4 +179,10 @@ log "activate prompt"
 __prompt_activate
 
 unset -f log
-echo -e -n '\r'
+
+if  [ ! "$TERM" = "eterm" ] \
+    && [ ! "$TERM" = "eterm-color" ]; then
+    echo -e -n '\r'
+else
+    echo ""
+fi
