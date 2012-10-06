@@ -6,19 +6,30 @@
 
 #set -x
 
-# Prepend path
+# Prepend path function
 ppath() {
  [ -d "${1}" ] && PATH="${1}:${PATH}" && export PATH
 }
 
+# Common system paths
 ppath "/sbin"
 ppath "/bin"
 ppath "/usr/sbin"
 ppath "/usr/bin"
 ppath "/var/lib/gems/1.8/bin"
 ppath "/var/lib/gems/1.9/bin"
+# common user paths
 ppath "${HOME}/.cabal/bin"
 ppath "${HOME}/.go/bin"
+# my paths
+ppath "${HOME}/programming/applib/gradle/bin"
+ppath "${HOME}/programming/applib/groovy/bin"
+ppath "${HOME}/programming/applib/android-sdks/tools"
+ppath "${HOME}/programming/applib/android-sdks/platform-tools"
+ppath "${HOME}/Library/Haskell/bin"
+ppath "/Applications/AdobeAIRSDK/bin"
+
+unset -f ppath
 
 # Add all ~/.bin and all ~/.bin-* directories to path
 for D in $(find $HOME -maxdepth 1 -name ".bin-*" -o -name ".bin" | sort); do
@@ -34,8 +45,6 @@ MPD_HOST=localhost && export MPD_HOST
 #
 [ -e "${HOME}/.profile-private" ] && . "${HOME}/.profile-private"
 [ -e "${HOME}/.profile-local" ] && . "${HOME}/.profile-local"
-
-unset -f ppath
 
 # Application configuration
 EDITOR="editor" && export EDITOR
