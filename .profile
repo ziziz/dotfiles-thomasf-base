@@ -28,13 +28,13 @@ ppath "${HOME}/programming/applib/android-sdks/tools"
 ppath "${HOME}/programming/applib/android-sdks/platform-tools"
 ppath "${HOME}/Library/Haskell/bin"
 ppath "/Applications/AdobeAIRSDK/bin"
-
-unset -f ppath
-
 # Add all ~/.bin and all ~/.bin-* directories to path
 for D in $(find $HOME -maxdepth 1 -name ".bin-*" -o -name ".bin" | sort); do
     ppath ${D}
 done
+
+unset -f ppath
+
 
 # Music player daemon client host and ports
 MPD_PORT=6205 && export MPD_PORT
