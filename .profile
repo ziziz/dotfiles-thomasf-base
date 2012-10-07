@@ -22,8 +22,8 @@ ppath "${HOME}/.opt/groovy/bin"
 ppath "${HOME}/.opt/gradle/bin"
 ppath "${HOME}/.opt/android-sdks/tools"
 ppath "${HOME}/.opt/android-sdks/platform-tools"
+ppath "${HOME}/.opt/AdobeAIRSDK/bin"
 ppath "${HOME}/Library/Haskell/bin"
-ppath "/Applications/AdobeAIRSDK/bin"
 # Add all ~/.bin and all ~/.bin-* directories to path
 for D in $(find $HOME -maxdepth 1 -name ".bin-*" -o -name ".bin" | sort); do
     ppath ${D}
