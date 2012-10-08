@@ -50,6 +50,9 @@ if [ $UID != 0 ]; then
     [ -f "${HOME}/.rvm/scripts/rvm" ] \
         && log "rvm" \
         && source "${HOME}/.rvm/scripts/rvm"
+
+    [ -d "${HOME}/.opt/flex_sdk" ] \
+        && export FLEX_HOME="${HOME}/.opt/flex_sdk"
 fi
 
 # -------------------------------------------------------------------------------

@@ -8,6 +8,9 @@
 #### Java
 *.class
 
+#### Gradle
+.gradle/
+
 #### Haskell
 dist
 cabal-dev
