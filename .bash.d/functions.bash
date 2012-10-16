@@ -40,6 +40,52 @@ alias t3='tree -d -L 3'
 
 alias py='python'
 
+function sshmnt {
+    local MOUNT_POINT_PREFIX=
+    local MOUNT_POINT_HOME=~/media
+    local NODE=$1
+    local VOL
+    local HOST
+    local MOUNT_POINT
+
+	# is hostname fully qualified?
+	if [ ${NODE%%.*} == $NODE ]
+	then
+		VOL=${NODE%:}
+	else
+		VOL=${NODE%%.*}
+	fi
+	# remove username if present
+	VOL=${VOL#*@}
+	# removing trailing slash
+	NODE=${NODE%/}
+	# is slash in $NODE? (are we mounting a non-default folder?)
+	if [ "${NODE#*/}" == "$NODE" ]
+	then
+		# no slash. set the folder
+		# making sure NODE ends with colon
+		if [ "${NODE%:}" == "$NODE" ]
+		then
+			NODE=$NODE:
+		fi
+	else
+		# use the folder name as volumn name
+		VOL=${NODE##*/}
+		# also making sure colon is present
+		HOST=${NODE%%/*}
+		NODE=${HOST%:}:/${NODE#*/}
+	fi
+
+	MOUNT_POINT=$MOUNT_POINT_HOME/$MOUNT_POINT_PREFIX$VOL
+	echo "mounting $NODE on $MOUNT_POINT..."
+
+	if ! (stat $MOUNT_POINT 2>/dev/null | grep staff &> /dev/null)
+	then
+		mkdir -p $MOUNT_POINT
+		sshfs $NODE $MOUNT_POINT 2>&1 | grep -v 'nodelay'
+	fi
+}
+
 alias agent='exec ssh-agent ${SHELL} -c "ssh-add; ${SHELL}"'
 
 alias apt-update-upgrade='sudo apt-get update && sudo apt-get dist-upgrade'
