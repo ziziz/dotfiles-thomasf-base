@@ -18,7 +18,7 @@ rmclean() {
 }
 
 
-function eless {
+eless() {
     zless $(which ${1})
 }
 
@@ -40,7 +40,7 @@ alias t3='tree -d -L 3'
 
 alias py='python'
 
-function sshmnt {
+sshmnt() {
     local MOUNT_POINT_PREFIX=
     local MOUNT_POINT_HOME=~/media
     local NODE=$1
@@ -91,7 +91,7 @@ alias agent='exec ssh-agent ${SHELL} -c "ssh-add; ${SHELL}"'
 alias apt-update-upgrade='sudo apt-get update && sudo apt-get dist-upgrade'
 
 # ffmpeg - for - phone
-ffmpeg-for-phone () {
+ffmpeg-for-phone() {
     for A in $@; do ffmpeg -i ${A} -s qvga -vcodec mpeg4 -acodec libfaac ${A}.mp4 ;done
 }
 
@@ -131,7 +131,7 @@ mkcd() {
 
 
 # Disk usage - recursive for each child folder
-du_dir () {
+dudir() {
     du -sk ./* | sort -n | awk 'BEGIN{ pref[1]="K"; pref[2]="M"; pref[3]="G";} { total = total + $1; x = $1; y = 1; while( x > 1024 ) { x = (x + 1023)/1024; y++; } printf("%g%s\t%s\n",int(x*10)/10,pref[y],$2); } END { y = 1; while( total > 1024 ) { total = (total + 1023)/1024; y++; } printf("Total: %g%s\n",int(total*10)/10,pref[y]); }'
 }
 
@@ -139,20 +139,20 @@ du_dir () {
 # Git or possibly other repositories or possibly anything.
 
 # cd to repository root
-cdr () {
+cdr() {
     local dir=$(git rev-parse --show-toplevel) && builtin cd $dir
 }
 
-s () {
+s() {
     git status --short
 }
 
-d () {
+d() {
     git diff
 }
 
 
-octopress-create () {
+octopresscreate () {
     local name="${1}"
     mkdir $name &&
     cd $name &&
