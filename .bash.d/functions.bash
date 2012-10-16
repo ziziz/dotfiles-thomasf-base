@@ -5,7 +5,7 @@
 
 alias df='df -h'
 
-rm_clean() {
+rmclean() {
     echo -n "Really clean $(pwd)?"
     read -n 1 yorn;
     if test "$yorn" = "y"; then
