@@ -1,0 +1,19 @@
+[general]
+metadata = ~/.config/offlineimap
+accounts = myGmail
+pythonfile = ~/.offlineimap.py
+
+[Account myGmail]
+localrepository = Local
+remoterepository = Remote
+
+[Repository Local]
+type = Maildir
+localfolders = ~/.config/myGmail-maildir
+
+[Repository Remote]
+type = Gmail
+remoteusereval = get_username("myGmail")
+remotepasseval = get_password("myGmail")
+cert_fingerprint = 6d1b5b5ee0180ab493b71d3b94534b5ab937d042
+maxconnections = 5
