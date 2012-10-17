@@ -1,5 +1,6 @@
 ### added ignores
 --ignore-dir=.idea
+--ignore-dir=.ropeproject
 
 ### new types
 --type-set
