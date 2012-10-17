@@ -13,6 +13,9 @@ if [ -d "${HOME}/.ssh" ]; then
     chmod 700 ~/.ssh
     chmod 600 ~/.ssh/*
 fi
+if [ -d "${HOME}/.gnupg" ]; then
+    chmod 700 -R ~/.gnupg
+fi
 
 [ -d "${HOME}/.subversion" ] && chmod 700 "${HOME}/.subversion"
 
