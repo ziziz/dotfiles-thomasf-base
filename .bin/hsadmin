@@ -11,6 +11,9 @@
 
 set -e
 
+
+base="${HOME}/.config/dotfiles/"
+
 # Uses SSH to fetch a list of available repositories of
 # xa gitolite service
 function clone_available_repositories_from_gitolite {
@@ -79,9 +82,7 @@ fi
 if [[ ${1} == "init" ]]; then
     gitolite_ssh=${2:?}
     gitolite_path=${3:?}
-    base=${4:?}
 else
-    base=${HSADMIN_REPOS_PATH:?}
     gitolite_ssh=${HSADMIN_GITOLITE_SSH:?}
     gitolite_path=${HSADMIN_GITOLITE_PATH:?}
 fi
