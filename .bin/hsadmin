@@ -102,15 +102,14 @@ case ${1} in
         for d in ${base}/*; do
             (
                 cd ${d}
-                git push origin master
-                remote=$(git config --local --get remote.gh-publish.url) && \
-                    echo "pushing $remote" && \
-                    git push gh-publish master
-                remote=$(git config --local --get remote.publish.url) && \
-                    echo "pushing $remote" && \
-                    git push publish master
-
-
+                remote=$(git config --local --get remote.origin.url) && \
+                    echo "PUSH $remote" && \
+                    git push -q origin master && \
+                    echo "DONE $remote" && \
+                    remote=$(git config --local --get remote.publish.url) && \
+                    echo "PUSH $remote" && \
+                    git push -q publish master && \
+                    echo "DONE $remote"
             ) &
         done
         ;;
