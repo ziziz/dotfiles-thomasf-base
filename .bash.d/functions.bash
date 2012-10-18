@@ -127,7 +127,7 @@ mkcd() {
 }
 
 # Change directory to homesync directory
-[[ -d ${HSADMIN_REPOS_PATH} ]] && alias cdhs='builtin cd $HSADMIN_REPOS_PATH'
+[[ -d ~/.config/dotfiles ]] && alias cdhs='builtin cd ~/.config/dotfiles'
 
 
 # Disk usage - recursive for each child folder
