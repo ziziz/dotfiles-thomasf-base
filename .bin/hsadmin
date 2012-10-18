@@ -145,7 +145,7 @@ case ${1} in
             cd ${d}
             [[ ! $(git status --porcelain) = "" ]] && el="${el} (magit-status \"${d}\")"
         done
-        emacs -eval "(progn() ${el} )"
+        emacs -eval "(progn() ${el} (delete-other-windows) )"
         ;;
     *)
         echo "Invalid argument!"
