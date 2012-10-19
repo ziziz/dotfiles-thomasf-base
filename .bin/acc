@@ -1,36 +1,56 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+__author__ = 'Thomas Frössman'
 
 from subprocess import Popen, PIPE
 import os
 import json
+import argparse
+from pprint import pprint
+
+# todo general features:
+#  - argument parsing
+#  - clipboard
+#  - bash completion
+# todo commands:
+#  - find
+#  - get account [key]
+#  - view account
+#  - clip account [key]
 
 def load_gpg_json_dict():
-    data =""
+    data = None
     try:
-        data=Popen(["gpg","--quiet","--no-tty","--decrypt",
-                    os.path.expanduser("~/.accounts.json.gpg")],
-                   stdout=PIPE).communicate()[0]
+        data = Popen(["gpg",
+                      "--quiet",
+                      "--no-tty",
+                      "--decrypt",
+                      os.path.expanduser("~/.accounts.json.gpg")],
+                     stdout=PIPE).communicate()[0]
     except Exception:
         print("error retreiving data")
     return json.loads(data)
 
+def list_accounts():
+    accounts = load_gpg_json_dict()
+    for account in accounts:
+        result = "%s:  " % account
+        for key in accounts[account]:
+            result += "%s:*** " % key
+    print result
+
+
 def get_value(account, key):
     return load_gpg_json_dict()[account][key]
 
+
 def get_username(account):
     return get_value(account, "username")
+
 
 def get_password(account):
     return get_value(account, "password")
 
 
-if __name__ == "__main__":
-    try:
-        import argparse
-        parser = argparse.ArgumentParser()
-        parser.add_argument("account", help="account name")
-        parser.add_argument("key", help="key")
-        args = parser.parse_args()
-        print get_value(args.account, args.key)
-    except:
-        pass
+list_accounts()
+#print get_value(args.account, args.key)
