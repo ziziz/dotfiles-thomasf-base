@@ -8,7 +8,7 @@
 
 # Prepend paths
 ppath() {
- [ -d "${1}" ] && PATH="${1}:${PATH}" && export PATH
+ [ -d "${1}" ] && PATH="${1}:${PATH}"
 }
 ppath "/sbin"
 ppath "/bin"
@@ -17,7 +17,9 @@ ppath "/usr/bin"
 ppath "/var/lib/gems/1.8/bin"
 ppath "/var/lib/gems/1.9/bin"
 ppath "${HOME}/.cabal/bin"
-ppath "${HOME}/.opt/go/bin"
+ppath "${HOME}/.opt/go/bin" \
+    && GOROOT="${HOME}/.opt/go/" \
+    && export GOROOT
 ppath "${HOME}/.opt/groovy/bin"
 ppath "${HOME}/.opt/gradle/bin"
 ppath "${HOME}/.opt/apache-maven/bin"
@@ -30,7 +32,7 @@ for D in $(find $HOME -maxdepth 1 -name ".bin-*" -o -name ".bin" | sort); do
     ppath ${D}
 done
 unset -f ppath
-
+export PATH
 
 # Music player daemon client host and ports
 MPD_PORT=6205 && export MPD_PORT
