@@ -47,45 +47,6 @@ case ${1} in
             git add -A
         done
         ;;
-    # Add/commit/pull/push all repositories
-    burst)
-        for d in ${base}/*; do
-            (
-                cd ${d}
-                n=$(basename ${d})
-
-                status=$green
-                o=$(git add -A) || status=$red
-                [[ $status == $red ]] && echo "${status}###### ${yelllow}:ADD:${magenta}${n}: ${reset}${o}"
-
-                status=$green
-                o=$(git commit -m"*** burst commit ***" ) || status=$red
-                if [[ $status == $green ]]; then
-                    echo "${status}###### ${yelllow}COMMIT ${magenta}${n}${reset}"
-                else
-                    echo "${status}###### ${yelllow}COMMIT ${magenta}${n}: ${reset}${o}"
-                fi
-
-                status=$green
-                o=$(git pull origin master ) || status=$red
-                if [[ $status == $green ]]; then
-                    echo "${status}###### ${yelllow}PULL ${magenta}${n}${reset}"
-                else
-                    echo "${status}###### ${yelllow}PULL ${magenta}${n}: ${reset}${o}"
-                fi
-
-                status=$green
-                o=$(git push --porcelain origin master ) || status=$red
-                if [[ $status == $green ]]; then
-                    echo "${status}###### ${yelllow}PUSH ${magenta}${n}${reset}"
-                else
-                    echo "${status}###### ${yelllow}PUSH ${magenta}${n}: ${reset}${o}"
-                fi
-
-
-            ) &
-        done
-        ;;
     # Git diff all repositories
     d|diff)
         for d in ${base}/*; do
