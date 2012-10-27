@@ -26,9 +26,9 @@ if [ $UID != 0 ]; then
 
     # Maybe load Node version manager
     [ ! "$(type -t nvm)" = "function" ] \
-        && [ -f "${HOME}/.nvm/nvm.sh" ] \
+        && [ -f "${HOME}/.opt/nvm/nvm.sh" ] \
         && log "nvm" \
-        && source "${HOME}/.nvm/nvm.sh"
+        && source "${HOME}/.opt/nvm/nvm.sh"
 
     # Set virtualenvwrapper hooks dir
     [ -e "${HOME}/.virtualenvwrapper-hooks" ] \
@@ -125,10 +125,10 @@ PROMPT_COMMAND="history -a;${PROMPT_COMMAND}"
     && log "rvm completion" \
     && source $rvm_path/scripts/completion
 
-[[ -r "${HOME}/.nvm/bash_completion" ]] \
+[[ -r "${HOME}/.opt/nvm/bash_completion" ]] \
     && ! shopt -oq posix \
     && log "nvm completion" \
-    && source "${HOME}/.nvm/bash_completion"
+    && source "${HOME}/.opt/nvm/bash_completion"
 
 for file in $(find $HOME/.bash.d/ -not -type d -name \*-completion.bash); do
     log `basename $file`
