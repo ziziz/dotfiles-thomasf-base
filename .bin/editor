@@ -8,21 +8,29 @@
 
 set -e
 
+cmd=$(basename ${0})
+
+[ -z ${1} ] \
+    && emacsargs="${emacsargs} ."
+
 # if runnung under osx, make some changes
-if [ "${OSTYPE:0:6}" = "darwin" ]; then
-    if [ -x "/Applications/Emacs.app/Contents/MacOS/Emacs" ]; then
-      exec /Applications/Emacs.app/Contents/MacOS/Emacs $*
+[ "${OSTYPE:0:6}" = "darwin" ] \
+    && [ -x "/Applications/Emacs.app/Contents/MacOS/Emacs" ] \
+    exec /Applications/Emacs.app/Contents/MacOS/Emacs $emacsargs $*
+
+if [ $(which emacs) ]; then
+    if [ -n ${DISPLAY} ] && [ ${cmd} != editor-nobg ]; then
+        exec emacs $emacsargs $* &
+        exit
+    else
+        exec emacs $emacsargs $*
     fi
 fi
 
-if [ $(which emacs) ]; then
-    args=""
-    [ ! "z" = "z$TERM" ] && args="-nw"
-    exec emacs $args $*
-elif [ $(which vim) ]; then
-    exec vim $*
-elif [ $(which vi) ]; then
-    exec vi $*
-else
-    echo "no suitable editor found"
-fi
+[ $(which vim) ] \
+    && exec vim $*
+
+[ $(which vi) ] \
+    && exec vi $*
+
+echo "no suitable editor found"
