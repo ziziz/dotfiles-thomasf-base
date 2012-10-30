@@ -11,6 +11,7 @@ set -e
 cmd=$(basename ${0})
 
 [ -z ${1} ] \
+    && ( [ -z ${TERM} ] || [ ${TERM} != dumb  ] ) \
     && emacsargs="${emacsargs} ."
 
 # if runnung under osx, make some changes
@@ -20,7 +21,7 @@ cmd=$(basename ${0})
 
 if [ $(which emacs) ]; then
     if [ -n ${DISPLAY} ] && [ ${cmd} != editor-nobg ]; then
-        exec emacs $emacsargs $* &
+        emacs $emacsargs $* &
         exit
     else
         exec emacs $emacsargs $*
