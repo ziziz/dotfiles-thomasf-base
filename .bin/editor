@@ -20,11 +20,12 @@ cmd=$(basename ${0})
     exec /Applications/Emacs.app/Contents/MacOS/Emacs $emacsargs $*
 
 if [ $(which emacs) ]; then
-    if [ -n ${DISPLAY} ] && [ ${cmd} != editor-nobg ]; then
+    if [ -v DISPLAY ] && [ ${cmd} != editor-nobg ]; then
+        echo hello
         emacs $emacsargs $* &
         exit
     else
-        exec emacs $emacsargs $*
+        exec emacs -nw $emacsargs $*
     fi
 fi
 
