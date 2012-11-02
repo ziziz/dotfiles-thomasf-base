@@ -21,7 +21,6 @@ cmd=$(basename ${0})
 
 if [ $(which emacs) ]; then
     if [ -v DISPLAY ] && [ ${cmd} != editor-nobg ]; then
-        echo hello
         emacs $emacsargs $* &
         exit
     else
