@@ -34,6 +34,10 @@ done
 unset -f ppath
 export PATH
 
+
+IPYTHONDIR="${HOME}/.ipython"
+export IPYTHONDIR
+
 # Music player daemon client host and ports
 MPD_PORT=6205 && export MPD_PORT
 MPD_HOST=localhost && export MPD_HOST
