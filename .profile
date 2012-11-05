@@ -35,7 +35,7 @@ unset -f ppath
 export PATH
 
 
-IPYTHONDIR="${HOME}/.ipython"
+IPYTHONDIR="${HOME}/.config-base/ipython"
 export IPYTHONDIR
 
 # Music player daemon client host and ports
