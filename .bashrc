@@ -55,6 +55,10 @@ if [ $UID != 0 ]; then
     [ -d "${HOME}/.opt/flex_sdk" ] \
         && export FLEX_HOME="${HOME}/.opt/flex_sdk"
 
+    # Set android sdk home
+    [ -d "${HOME}/.opt/android-sdks" ] \
+        && export ANDROID_SDK="${HOME}/.opt/android-sdks"
+
 fi
 
 # -------------------------------------------------------------------------------
