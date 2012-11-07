@@ -5,6 +5,36 @@
 
 alias df='df -h'
 
+indirs() {
+    [[ -n $* ]] \
+        && find \
+        -L . \
+        -mindepth 1 \
+        -maxdepth 1 \
+        -type d \
+        -execdir bash -e -c \
+        "cd '{}';
+d=\"\`basename \"\$PWD\"\`\";
+echo '';
+echo \" ---- [ \$d ] ---- \";
+${*};
+echo '';" \;
+}
+
+ingitdirs() {
+    [[ -n $* ]] \
+        && find \
+        -L . \
+        -name .git \
+        -execdir bash -e -c \
+        "gitdir='{}';
+cd \"\${gitdir%%.git}\";
+echo '';
+echo \"[ \$PWD ] ---- \";
+${*};
+echo '';" \;
+}
+
 rmclean() {
     echo -n "Really clean $(pwd)?"
     read -n 1 yorn;
