@@ -35,6 +35,20 @@ ${*};
 echo '';" \;
 }
 
+rmosx() {
+    echo -n "recursivley delete all __MACOSX, .DS_Store files?"
+    read -n 1 yorn;
+    if test "$yorn" = "y"; then
+        echo
+        find . \
+            -name __MACOSX -type d -execdir rm -r {} \; -prune  \
+            -o \( -name .DS_Store -type f -execdir rm {} \; -prune \)
+    else
+        echo
+        return 1
+    fi
+}
+
 rmclean() {
     echo -n "Really clean $(pwd)?"
     read -n 1 yorn;
