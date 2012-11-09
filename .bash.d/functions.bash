@@ -75,6 +75,8 @@ fi
 alias l="ls -l "
 alias la='ls -A'
 alias ll="ls -l"
+alias lsnew="find . -mindepth 1 -maxdepth 1 -mtime 0"
+
 alias pu="pushd"
 alias po="popd"
 
