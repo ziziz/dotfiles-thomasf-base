@@ -173,12 +173,12 @@ fi
     && . "${HOME}/.bash.d/prompt.bash"
 
 # clipboard paste
-if [ -n "$DISPLAY" ] && [ -x /usr/bin/xclip ] ; then
+if [ -n "$DISPLAY" ] && [ -x /usr/bin/xsel ] ; then
     # Work around a bash bug: \C-@ does not work in a key binding
     bind '"\C-x\C-m": set-mark'
     # The '#' characters ensure that kill commands have text to work on; if
     # not, this binding would malfunction at the start or end of a line.
-    bind 'Control-v: "#\C-b\C-k#\C-x\C-?\"$(xclip -out -selection clipboard)\"\e\C-e\C-x\C-m\C-a\C-y\C-?\C-e\C-y\ey\C-x\C-x\C-d"'
+    bind 'Control-v: "#\C-b\C-k#\C-x\C-?\"$(xsel -ob --clipboard)\"\e\C-e\C-x\C-m\C-a\C-y\C-?\C-e\C-y\ey\C-x\C-x\C-d"'
 fi
 
 # ------------------------------------------------------------------------------
