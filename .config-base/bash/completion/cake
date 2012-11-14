@@ -1,3 +1,4 @@
+# -*- mode: bash -*-
 # Task name completion for cake files.
 function _cake() {
     local cur tasks

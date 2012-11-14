@@ -1,4 +1,4 @@
-#!/bin/bash
+# -*- mode: bash -*-
 
 # ------------------------------------------------------------------------------
 # HOME DIR LOCAL ENVIRONMENTS
@@ -136,7 +136,7 @@ PROMPT_COMMAND="history -a;${PROMPT_COMMAND}"
     && log "nvm completion" \
     && source "${HOME}/.opt/nvm/bash_completion"
 
-for file in $(find $HOME/.bash.d/ -not -type d -name \*-completion.bash); do
+for file in $(find $HOME/.config-base/bash/completion/ -not -type d); do
     log `basename $file`
     source $file # 2>/dev/null
 done
