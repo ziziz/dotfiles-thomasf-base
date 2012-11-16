@@ -135,9 +135,9 @@ load-module module-filter-heuristics
 load-module module-filter-apply
 
 ### Load DBus protocol
-#.ifexists module-dbus-protocol.so
-#load-module module-dbus-protocol
-#.endif
+.ifexists module-dbus-protocol.so
+load-module module-dbus-protocol
+.endif
 
 # X11 modules should not be started from default.pa so that one daemon
 # can be shared by multiple sessions.
