@@ -1,2 +1,2 @@
 [dotfiles]
-ignore = ['.git', 'README.md', '.dotfilesrc' ]
+ignore = [ '.git', '.gitignore', 'README.md', 'INSTALLER', '.dotfilesrc', '.#.*' ]
