@@ -16,6 +16,7 @@ ppath "/usr/sbin"
 ppath "/usr/bin"
 ppath "/var/lib/gems/1.8/bin"
 ppath "/var/lib/gems/1.9/bin"
+ppath "/usr/local/git/bin"
 ppath "${HOME}/.cabal/bin"
 ppath "${HOME}/.opt/go/bin" \
     && GOROOT="${HOME}/.opt/go/" \
