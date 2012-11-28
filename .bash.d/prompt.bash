@@ -33,9 +33,9 @@ function __prompt_nvm {
 function __prompt_username {
     if [ "$(type -t __user_alias)" == "function" ]; then
         __user_alias
-    else 
+    else
         echo -n "$(whoami | cut -c1-4)"
-    fi 
+    fi
 }
 
 # Hostname or alias
@@ -44,7 +44,7 @@ function __prompt_hostname {
        echo -n ${HOST_ALIAS}
    else
        echo -n "$(hostname | cut -c1-4)"
-   fi 
+   fi
 }
 
 # SSH agent indicator
@@ -103,7 +103,12 @@ function __prompt_pwd {
     echo -n $(__dir_chomp  "$(pwd)" $w)
 }
 
-# 
+# Compact version of current working directory
+function __title_pwd {
+    echo -n $(__dir_chomp  "$(pwd)" 40)
+}
+
+#
 function __prompt_last {
   if [[ $EUID -eq 0 ]]; then
       if [[ ${RET} = "0" ]]; then
@@ -127,7 +132,7 @@ PROMPT_COMMAND="export RET=\$?;${PROMPT_COMMAND}"
 function __prompt_activate {
 
     local resetFormating="\[\033[0m\]"     # reset text format
-    
+
     # regular colors
     local black="\[\033[0;30m\]"
     local red="\[\033[0;31m\]"
@@ -147,7 +152,7 @@ function __prompt_activate {
     local magentaH="\[\033[0;95m\]"
     local cyanH="\[\033[0;96m\]"
     local whiteH="\[\033[0;97m\]"
-    
+
     # background colors
     local blackB="\[\033[40m\]"
     local redB="\[\033[41m\]"
@@ -170,19 +175,21 @@ function __prompt_activate {
             local HOST_COLOR=${white}${blackB}
             ;;
     esac
-    
+
     # Set title in xterm*
     case $TERM in
         xterm*|rxvt*)
-            TITLEBAR='\[\033]0;\u@\h:\w\007\]'
+            TITLEBAR='\[\033]0;$(__prompt_username)@$(__prompt_hostname):$(__title_pwd)\007\]'
+            trap '[[ $BASH_SOURCE ]] ||
+                 printf "\e]0;%s\a" "$(__prompt_username)@$(__prompt_hostname): $BASH_COMMAND : $(__title_pwd)" >/dev/tty' DEBUG
             ;;
         *)
             TITLEBAR=""
             ;;
     esac
 
-# Set the prompt 
-PS1="${TITLEBAR}\
+    # Set the prompt
+    PS1="${TITLEBAR}\
 ${red}▶\$(__prompt_h) \
 ${blue}\$(__prompt_pwd) \
 ${yellow}\$(__prompt_vcs)\
@@ -193,6 +200,6 @@ ${cyan}\$(__prompt_nvm)\
 ${yellow}\$(__prompt_username)${redH}@${HOST_COLOR}\$(__prompt_hostname)${white}${magentaB}\$(__prompt_ssh_agent)${black}${magentaB}\$(__prompt_ssh)\
 ${magenta}\$(__prompt_last) \
 ${resetFormating}"
-PS2='> '
-PS4='+ '
+    PS2='> '
+    PS4='+ '
 }
