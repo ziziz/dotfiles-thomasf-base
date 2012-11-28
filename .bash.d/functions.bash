@@ -62,6 +62,12 @@ rmclean() {
 }
 
 
+awssetcredentials() {
+    local account="aws-$1"
+    export AWS_ACCESS_KEY_ID=$(acc ${account} access-key-id)
+    export AWS_SECRET_ACCESS_KEY=$(acc ${account} secret-access-key)
+}
+
 eless() {
     zless $(which ${1})
 }
