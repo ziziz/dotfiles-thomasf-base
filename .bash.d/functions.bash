@@ -61,11 +61,17 @@ rmclean() {
     fi
 }
 
-
-awssetcredentials() {
+awscredentials() {
     local account="aws-$1"
-    export AWS_ACCESS_KEY_ID=$(acc ${account} access-key-id)
-    export AWS_SECRET_ACCESS_KEY=$(acc ${account} secret-access-key)
+    local access_key=$(acc ${account} access-key-id)
+    local access_key_secret=$(acc ${account} secret-access-key)
+    local url=$(acc ${account} ec2-url)
+    export AWS_ACCESS_KEY_ID=$access_key
+    export AWS_SECRET_ACCESS_KEY=$access_key_secret
+    export AWS_ACCESS_KEY=$access_key
+    export AWS_SECRET_KEY=$access_key_secret
+    export EC2_URL=$url
+    echo " $access_key : $access_key_secret : $url"
 }
 
 eless() {

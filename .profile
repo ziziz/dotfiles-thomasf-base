@@ -22,6 +22,9 @@ ppath "${HOME}/.cabal/bin"
 ppath "${HOME}/.opt/go/bin" \
     && GOROOT="${HOME}/.opt/go/" \
     && export GOROOT
+ppath "${HOME}/.opt/ec2-api-tools/bin" \
+    && EC2_HOME="${HOME}/.opt/ec2-api-tools" \
+    && export EC2_HOME
 ppath "${HOME}/.opt/groovy/bin"
 ppath "${HOME}/.opt/gradle/bin"
 ppath "${HOME}/.opt/apache-maven/bin"
@@ -35,6 +38,15 @@ for D in $(find $HOME -maxdepth 1 -name ".bin-*" -o -name ".bin" | sort); do
 done
 unset -f ppath
 export PATH
+
+# set JAVA_HOME
+if [ $(which javac) ]; then
+    JAVA_HOME=$(readlink -f $(which javac) | sed "s:/bin/javac::")
+    export JAVA_HOME
+elif [ $(which java) ]; then
+    JAVA_HOME=$(readlink -f $(which java) | sed "s:/bin/java::")
+    export JAVA_HOME
+fi
 
 # Locale settings (man page: locale)
 unset LC_ALL
