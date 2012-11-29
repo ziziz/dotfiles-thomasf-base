@@ -181,6 +181,14 @@ if [ -n "$DISPLAY" ] && [ -x /usr/bin/xsel ] ; then
     bind 'Control-v: "#\C-b\C-k#\C-x\C-?\"$(xsel -ob --clipboard)\"\e\C-e\C-x\C-m\C-a\C-y\C-?\C-e\C-y\ey\C-x\C-x\C-d"'
 fi
 
+
+# ------------------------------------------------------------------------------
+# HUB
+#
+
+[ $(which hub) ] && \
+    alias git=hub
+
 # ------------------------------------------------------------------------------
 # PRIVATE AND LOCAL
 #
