@@ -5,6 +5,31 @@
 
 alias df='df -h'
 
+__exec_in_dir() {
+    local ncolors=$(tput colors)
+    if test -n "$ncolors" && test $ncolors -ge 8; then
+        local reset="$(tput sgr0)"
+        local red="$(tput setaf 1)"
+        local gre="$(tput setaf 2)"
+        local yel="$(tput setaf 3)"
+        local mag="$(tput setaf 5)"
+    fi
+
+    local dir="${1}"
+    [[ -d ${dir} ]] || return 0
+    shift
+    local args="${*}"
+    (
+        cd "${dir}"
+        local d=$(basename "${PWD}")
+        echo ''
+        echo "$yel ---- $red [ $mag $d $red ] $yel ---- $reset"
+        ${args}
+        echo ''
+    )
+}
+export -f __exec_in_dir
+
 indirs() {
     [[ -n $* ]] \
         && find \
@@ -13,13 +38,32 @@ indirs() {
         -maxdepth 1 \
         -type d \
         -execdir bash -e -c \
-        "cd '{}';
-d=\"\`basename \"\$PWD\"\`\";
-echo '';
-echo \" ---- [ \$d ] ---- \";
-${*};
-echo '';" \;
+        "__exec_in_dir '{}' ${*}" \;
 }
+
+__exec_in_git_dir() {
+    local ncolors=$(tput colors)
+    if test -n "$ncolors" && test $ncolors -ge 8; then
+        local reset="$(tput sgr0)"
+        local red="$(tput setaf 1)"
+        local gre="$(tput setaf 2)"
+        local yel="$(tput setaf 3)"
+        local mag="$(tput setaf 5)"
+    fi
+    local dir="${1%%.git}"
+    [[ -d ${dir} ]] || return 0
+    shift
+    local args="${*}"
+    (
+        cd "${dir}"
+        git rev-parse 2> /dev/null || return 0
+        echo ''
+        echo "$red [ $mag $PWD $red ] $yel ---- $reset"
+        ${args}
+        echo ''
+    )
+}
+export -f __exec_in_git_dir
 
 ingitdirs() {
     [[ -n $* ]] \
@@ -27,12 +71,7 @@ ingitdirs() {
         -L . \
         -name .git \
         -execdir bash -e -c \
-        "gitdir='{}';
-cd \"\${gitdir%%.git}\";
-echo '';
-echo \"[ \$PWD ] ---- \";
-${*};
-echo '';" \;
+        "__exec_in_git_dir '{}' ${*}" \;
 }
 
 rmosx() {
@@ -202,7 +241,7 @@ cdr() {
 }
 
 zr() {
-    local reporoot=$(git rev-parse --show-toplevel)
+    local reporoot=$(git rev-parse --show-toplevel 2> /dev/null)
     z $reporoot $*
 }
 
