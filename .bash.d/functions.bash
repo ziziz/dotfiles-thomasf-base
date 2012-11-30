@@ -201,6 +201,11 @@ cdr() {
     local dir=$(git rev-parse --show-toplevel) && builtin cd $dir
 }
 
+zr() {
+    local reporoot=$(git rev-parse --show-toplevel)
+    z $reporoot $*
+}
+
 s() {
     git status --short
 }
