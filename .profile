@@ -90,4 +90,4 @@ MPD_HOST=localhost && export MPD_HOST
 EDITOR="editor" && export EDITOR
 VISUAL="${EDITOR}" && export VISUAL
 ALTERNATE_EDITOR="${EDITOR}" && export ALTERNATE_EDITOR
-[ $(which less) ] && PAGER="$(which less)" && export PAGER
+[ $(which less) ] && PAGER="less -R" && export PAGER
