@@ -104,7 +104,7 @@ export HISTCONTROL=ignoreboth
 export HISTSIZE=5000
 export HISTTIMEFORMAT='%F %T '
 export HISTIGNORE="&:ls:cd:[bf]g:exit:pwd:clear:mount:umount:?"
-PROMPT_COMMAND="history -a;${PROMPT_COMMAND}"
+PROMPT_COMMAND="history -a; echo -ne '\a'"
 
 # ------------------------------------------------------------------------------
 #
