@@ -123,7 +123,7 @@ if [ ${OSTYPE:0:6} = darwin ]; then
 else
     alias ls="ls --group-directories-first --color"
 fi
-alias l="ls -l "
+alias l="ls -lh"
 alias la='ls -A'
 alias ll="ls -l"
 alias lsnew="find . -mindepth 1 -maxdepth 1 -mtime 0"
@@ -263,9 +263,28 @@ octopresscreate () {
     git pull octopress master
 }
 
-cdp(){
-    # Go to currently active project root in Emacs
-    EMACS_CWP=$(emacsclient -e "
+# Go to currently active buffer directory in Emacs
+cdb() {
+    local EMACS_CWP=$(emacsclient -a false -e "
+  (let ((current-buffer
+         (nth 1 (assoc 'buffer-list
+                       (nth 1 (nth 1 (current-frame-configuration)))))))
+        (with-current-buffer current-buffer
+          (let ((filename (buffer-file-name)))
+            (if filename
+                (file-name-directory filename)
+              default-directory))))
+    " 2>/dev/null | sed 's/^"\(.*\)"$/\1/')
+    if [ -d "$EMACS_CWP" ]; then
+        cd "$EMACS_CWP"
+    else
+        return 1
+    fi
+}
+
+# Go to currently active project root in Emacs
+cdp() {
+    local EMACS_CWP=$(emacsclient -a false -e "
   (let ((current-buffer
          (nth 1 (assoc 'buffer-list
                        (nth 1 (nth 1 (current-frame-configuration)))))))
@@ -275,8 +294,10 @@ cdp(){
             (if filename
                 (file-name-directory filename)
               default-directory)))))
-    " | sed 's/^"\(.*\)"$/\1/')
-
-    echo "chdir to $EMACS_CWP"
-    cd "$EMACS_CWP"
+    " 2>/dev/null | sed 's/^"\(.*\)"$/\1/')
+    if [ -d "$EMACS_CWP" ]; then
+        cd "$EMACS_CWP"
+    else
+        return 1
+    fi
 }
