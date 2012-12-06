@@ -262,3 +262,21 @@ octopresscreate () {
     git remote add octopress https://github.com/imathis/octopress &&
     git pull octopress master
 }
+
+cdp(){
+    # Go to currently active project root in Emacs
+    EMACS_CWP=$(emacsclient -e "
+  (let ((current-buffer
+         (nth 1 (assoc 'buffer-list
+                       (nth 1 (nth 1 (current-frame-configuration)))))))
+    (or (ignore-errors (eproject-root current-buffer))
+        (with-current-buffer current-buffer
+          (let ((filename (buffer-file-name)))
+            (if filename
+                (file-name-directory filename)
+              default-directory)))))
+    " | sed 's/^"\(.*\)"$/\1/')
+
+    echo "chdir to $EMACS_CWP"
+    cd "$EMACS_CWP"
+}
