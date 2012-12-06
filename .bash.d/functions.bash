@@ -274,7 +274,7 @@ cdb() {
             (if filename
                 (file-name-directory filename)
               default-directory))))
-    " 2>/dev/null | sed 's/^"\(.*\)"$/\1/')
+    " | sed 's/^"\(.*\)"$/\1/')
     if [ -d "$EMACS_CWP" ]; then
         cd "$EMACS_CWP"
     else
@@ -294,7 +294,7 @@ cdp() {
             (if filename
                 (file-name-directory filename)
               default-directory)))))
-    " 2>/dev/null | sed 's/^"\(.*\)"$/\1/')
+    " | sed 's/^"\(.*\)"$/\1/')
     if [ -d "$EMACS_CWP" ]; then
         cd "$EMACS_CWP"
     else
