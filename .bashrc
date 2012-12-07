@@ -101,10 +101,20 @@ else
 fi
 shopt -s histappend
 export HISTCONTROL=ignoreboth
-export HISTSIZE=5000
+export HISTSIZE=20000
 export HISTTIMEFORMAT='%F %T '
-export HISTIGNORE="&:ls:cd:[bf]g:exit:pwd:clear:mount:umount:?"
-PROMPT_COMMAND="history -a; echo -ne '\a'"
+export HISTIGNORE="&:ls:cd*:[bf]g:exit:pwd:clear:mount:umount:?"
+
+# Add faked cd with full paths to log whenever pwd changes
+export __last_logged_pwd="$PWD"
+__pwd_logger() {
+    if [[ ! "$PWD" == "$__last_logged_pwd" ]]; then
+        local HISTIGNORE=""
+        history -s "cd $PWD"
+        __last_logged_pwd="$PWD"
+    fi
+}
+PROMPT_COMMAND="__pwd_logger; history -a; echo -ne '\a'"
 
 # ------------------------------------------------------------------------------
 #
