@@ -141,6 +141,7 @@ PROMPT_COMMAND="__pwd_logger; history -a; echo -ne '\a'"
     && log "rvm completion" \
     && source $rvm_path/scripts/completion
 
+
 [[ -r "${HOME}/.opt/nvm/bash_completion" ]] \
     && ! shopt -oq posix \
     && log "nvm completion" \
@@ -221,3 +222,7 @@ if  [ ! "$TERM" = "eterm" ] \
 else
     echo ""
 fi
+
+[ $(which manpath) ] && \
+    unset MANPATH && \
+    export MANPATH=$(manpath -q)
