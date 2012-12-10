@@ -69,9 +69,14 @@ LC_IDENTIFICATION="sv_SE.utf8" && export LC_IDENTIFICATION
 # Prohibit perl from complaining about missing locales
 PERL_BADLANG=0 && export PERL_BADLANG
 
-# iptyhon configuration directory
-IPYTHONDIR="${HOME}/.config-base/ipython"
-export IPYTHONDIR
+# ptyhon configuration
+[ -d "${HOME}/.config-base/ipython" ] && \
+    IPYTHONDIR="${HOME}/.config-base/ipython" && \
+    export IPYTHONDIR
+[ -e "${HOME}/.config-base/python/pythonrc.py" ] && \
+    PYTHONSTARTUP="${HOME}/.config-base/python/pythonrc.py" && \
+    export PYTHONSTARTUP
+
 
 # coffeelint configuration file
 COFFEELINT_CONFIG="${HOME}/.config-base/coffeelint.json"
