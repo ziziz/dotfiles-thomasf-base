@@ -246,7 +246,7 @@ zr() {
 }
 
 s() {
-    git status --short
+    git status --short --branch
 }
 
 d() {
