@@ -1,3 +1,4 @@
+# -*- mode: conf -*-
 $include /etc/inputrc
 
 "\e[1~": beginning-of-line
@@ -14,6 +15,10 @@ $include /etc/inputrc
 "\e[B": history-search-forward
 "\e[A": history-search-backward
 
+$if Python
+    Tab: complete
+$endif
+
 $if Bash
   # F10 toggles mc on and off
   # Note Ctrl-o toggles panes on and off in mc
@@ -28,7 +33,7 @@ set completion-ignore-case on
 
 # if there are more than 'x' possible completions for a word, ask the
 # user if he wants to see all of them
-set completion-query-items 50
+set completion-query-items 100
 
 # If you have this, you will no longer have to hit the <Tab>
 # key twice to produce a list of all possible completions.
