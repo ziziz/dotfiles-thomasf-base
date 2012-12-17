@@ -64,13 +64,13 @@ case ${1} in
             (
                 cd ${d}
                 remote=$(git config --local --get remote.origin.url) && \
-                    echo "PUSH $remote" && \
+                    echo "${magenta}PUSH${reset} $remote" && \
                     git push -q origin master && \
-                    echo "DONE $remote" && \
+                    echo "${green}DONE${reset} $remote" && \
                     remote=$(git config --local --get remote.publish.url) && \
-                    echo "PUSH $remote" && \
+                    echo "${magenta}PUSH${reset} $remote" && \
                     git push -q publish master && \
-                    echo "DONE $remote"
+                    echo "${green}DONE${reset} $remote"
             ) &
         done
         ;;
@@ -87,8 +87,8 @@ case ${1} in
         for d in ${base}/*; do
             cd ${d}
             if [[ ! $(git status --porcelain) = "" ]]; then
-                echo "##### $(basename ${d}) ######"
-                git status --short
+                echo "${magenta}[- $(basename ${d}) ]"
+                git status --short --branch
             fi
         done
         ;;
