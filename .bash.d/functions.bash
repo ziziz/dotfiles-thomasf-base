@@ -128,8 +128,23 @@ alias la='ls -A'
 alias ll="ls -l"
 alias lsnew="find . -mindepth 1 -maxdepth 1 -mtime 0"
 
-alias pu="pushd"
-alias po="popd"
+if [ -n "$DISPLAY" ] && [ $(which dmenu) ] ; then
+    alias selectline="dmenu -l 50"
+else
+    alias selectline="/bin/false"
+fi
+
+__select_subdir() {
+    local result=$(find . -mindepth 1 -type d -not \( -name ".?*" -prune \) | cut -c 3- | dmenu -l 50 -p dir)
+    [[ -z $result ]] && return 1
+    echo -n "./${result}"
+
+}
+
+function findext {
+    [[ -z $1 ]] && return 1
+    find . -iname \*.${1}
+}
 
 alias t='tree'
 alias t2='tree -d -L 2'
@@ -226,12 +241,17 @@ mkcd() {
 # Change directory to homesync directory
 [[ -d ~/.config/dotfiles ]] && alias cdhs='builtin cd ~/.config/dotfiles'
 
-
 # Disk usage - recursive for each child folder
 dudir() {
     du -sk ./* | sort -n | awk 'BEGIN{ pref[1]="K"; pref[2]="M"; pref[3]="G";} { total = total + $1; x = $1; y = 1; while( x > 1024 ) { x = (x + 1023)/1024; y++; } printf("%g%s\t%s\n",int(x*10)/10,pref[y],$2); } END { y = 1; while( total > 1024 ) { total = (total + 1023)/1024; y++; } printf("Total: %g%s\n",int(total*10)/10,pref[y]); }'
 }
 
+# cd to subdirectory with selection
+cds() {
+    local dir=""
+    dir=$(__select_subdir) || return 1
+    cd "${dir}"
+}
 
 # Git or possibly other repositories or possibly anything.
 
