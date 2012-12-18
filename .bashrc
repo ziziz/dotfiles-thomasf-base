@@ -226,3 +226,6 @@ fi
 [ $(which manpath) ] && \
     unset MANPATH && \
     export MANPATH=$(manpath -q)
+
+# try this
+[ "${PWD}" == "${HOME}" ] && cdd || /bin/true
