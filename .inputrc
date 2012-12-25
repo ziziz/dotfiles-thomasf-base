@@ -1,6 +1,28 @@
 # -*- mode: conf -*-
 $include /etc/inputrc
 
+set editing-mode emacs
+
+# Adds punctuation as word delimiters
+set bind-tty-special-chars off
+
+# Completion
+set completion-ignore-case on
+set completion-query-items 200
+set show-all-if-ambiguous on
+set show-all-if-unmodified on
+set page-completions on
+set visible-stats on
+
+# Useful stuff for UTF-8
+set meta-flag on
+set input-meta on
+set output-meta on
+set convert-meta off
+
+# Bell
+set bell-style none
+
 "\e[1~": beginning-of-line
 "\e[4~": end-of-line
 "\e[5~": beginning-of-history
@@ -27,26 +49,3 @@ $if Bash
   # do history expansion when space entered
   Space: magic-space
 $endif
-
-# completion doesnt care about case
-set completion-ignore-case on
-
-# if there are more than 'x' possible completions for a word, ask the
-# user if he wants to see all of them
-set completion-query-items 100
-
-# If you have this, you will no longer have to hit the <Tab>
-# key twice to produce a list of all possible completions.
-# A single <Tab>  will suffice.
-set show-all-if-ambiguous on
-
-# do not bell on tab-completion
-set bell-style none
-
-# Adding this will result in a character  being appended to
-# any file-names returned by completion, in much the same
-# way as ls -F works.
-# set visible-stats on
-
-# completion as list
-# set completion-display-width 0
