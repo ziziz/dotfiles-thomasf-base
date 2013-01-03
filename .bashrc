@@ -57,7 +57,8 @@ if [ $UID != 0 ]; then
 
     # Set android sdk home
     [ -d "${HOME}/.opt/android-sdks" ] \
-        && export ANDROID_SDK="${HOME}/.opt/android-sdks"
+        && export ANDROID_SDK="${HOME}/.opt/android-sdks" \
+        && export ANDROID_HOME="${ANDROID_SDK}"
 
 fi
 
