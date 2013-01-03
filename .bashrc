@@ -229,4 +229,5 @@ fi
     export MANPATH=$(manpath -q)
 
 # try this
-[ "${PWD}" == "${HOME}" ] && cdd || /bin/true
+[ "${PWD}" == "${HOME}" ] && \
+    cdd && git status --short --branch 2>/dev/null || true
