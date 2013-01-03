@@ -282,9 +282,10 @@ cdr() {
     local dir=$(git rev-parse --show-toplevel) && builtin cd $dir
 }
 
-zr() {
+z() {
+    [[ -z $* ]] && return 1
     local reporoot=$(git rev-parse --show-toplevel 2> /dev/null)
-    z $reporoot $*
+    _z $reporoot $*
 }
 
 s() {

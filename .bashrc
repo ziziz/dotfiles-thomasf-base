@@ -172,6 +172,7 @@ fi
 [ -f "${HOME}/.bash.d/z.bash" ] \
     && ! shopt -oq posix \
     && log "z" \
+    && export _Z_CMD=zz \
     && . "${HOME}/.bash.d/z.bash"
 
 [ -x /usr/bin/lesspipe ] \
