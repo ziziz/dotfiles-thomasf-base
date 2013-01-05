@@ -3,6 +3,8 @@
 # ALIASES AND FUNCTIONS
 #
 
+alias historyreload='history -r'
+
 alias df='df -h'
 
 __exec_in_dir() {
