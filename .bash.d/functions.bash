@@ -296,6 +296,11 @@ d() {
     git diff
 }
 
+man() {
+    local init=""
+    [ -e ~/.emacs.d/init-low.el ] && init="-l ~/.emacs.d/init-low"
+    emacs -q $init -nw -eval "(man \"$*\")"
+}
 
 octopresscreate () {
     local name="${1}"
