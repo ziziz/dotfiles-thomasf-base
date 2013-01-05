@@ -177,7 +177,7 @@ function __prompt_activate {
     # Set title in xterm*
     case $TERM in
         xterm*|rxvt*)
-            TITLEBAR='\[\033]0;$(__prompt_username)@$(__prompt_hostname):$(__title_pwd)\007\]'
+            TITLEBAR='\[\033]0;$(__prompt_username)@$(__prompt_hostname):$(__title_pwd) - terminal\007\]'
             PROMPT_COMMAND="export RET=\$?;export __RUNNING_PROMPT_COMMAND=1;${PROMPT_COMMAND%;};unset __RUNNING_PROMPT_COMMAND"
             trap '[[ ! $BASH_SOURCE ]] && [[ ! $BASH_COMMAND == "export RET="* ]] && [[ ! $BASH_COMMAND == "export __RUNNING_PROMPT_COMMAND=1" ]] && [[ ! $__RUNNING_PROMPT_COMMAND ]] &&
                  printf "\e]0;%s\a" "$(__prompt_username)@$(__prompt_hostname): $BASH_COMMAND : $(__title_pwd)" >/dev/tty' DEBUG
