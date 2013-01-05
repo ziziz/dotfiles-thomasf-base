@@ -48,16 +48,21 @@ done
 
 export PATH
 
-if [ ! ${OSTYPE:0:6} = darwin ]; then
-    # set JAVA_HOME
-    if [ $(which javac) ]; then
-        JAVA_HOME=$(readlink -f $(which javac) | sed "s:/bin/javac::")
-        export JAVA_HOME
-    elif [ $(which java) ]; then
-        JAVA_HOME=$(readlink -f $(which java) | sed "s:/bin/java::")
-        export JAVA_HOME
-    fi
-fi
+case ${OSTYPE} in
+    darwin*)
+        # do nothing
+        ;;
+    *)
+        # set JAVA_HOME
+        if [ $(which javac) ]; then
+            JAVA_HOME=$(readlink -f $(which javac) | sed "s:/bin/javac::")
+            export JAVA_HOME
+        elif [ $(which java) ]; then
+            JAVA_HOME=$(readlink -f $(which java) | sed "s:/bin/java::")
+            export JAVA_HOME
+        fi
+        ;;
+esac
 
 # Prohibit perl from complaining about missing locales
 PERL_BADLANG=0 && export PERL_BADLANG
