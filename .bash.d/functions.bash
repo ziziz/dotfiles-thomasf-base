@@ -131,7 +131,7 @@ alias lsnew="find . -mindepth 1 -maxdepth 1 -mtime 0"
 if [ -n "$DISPLAY" ] && [ $(which dmenu) ] ; then
     alias selectline="dmenu -l 50"
 else
-    alias selectline="/bin/false"
+    alias selectline="false"
 fi
 
 __select_subdir() {
