@@ -60,6 +60,10 @@ if [ $UID != 0 ]; then
         && export ANDROID_SDK="${HOME}/.opt/android-sdks" \
         && export ANDROID_HOME="${ANDROID_SDK}"
 
+    # Set android ndk home
+    [ -d "${HOME}/.opt/android-ndk" ] \
+        && export ANDROID_NDK="${HOME}/.opt/android-ndk"
+
 fi
 
 # -------------------------------------------------------------------------------
