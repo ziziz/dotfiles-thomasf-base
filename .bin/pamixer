@@ -136,12 +136,16 @@ class PAMenu(dict):
 
 	def _dbus_failsafe(method):
 		def dbus_failsafe_method(self, *argz, **kwz):
+			# It doesn't seem to matter how large pa-restart and
+			#  dbus-reconnection delay is - something like UnknownMethod
+			#  will be raised in this pid anyway - only restart works
 			try: return method(self, *argz, **kwz)
 			except dbus.exceptions.DBusException:
 				try:
 					self.refresh()
 					return method(self, *argz, **kwz)
-				except dbus.exceptions.DBusException:
+				except dbus.exceptions.DBusException as err:
+					log.debug('Fatal error accessing dbus: {}'.format(err))
 					if self.fail_hook: self.fail_hook()
 		return dbus_failsafe_method
 
@@ -241,17 +245,7 @@ class PAMenu(dict):
 		except KeyError: val = None
 		ts_chk = time()
 		if val is None or ts < ts_chk - self._cache_time:
-			dbus_err = 0
-			try:
-				while True:
-					try: val = self._get_volume(item)
-					except dbus.exceptions.DBusException:
-						raise
-						self.refresh()
-						if time() > ts_chk + 5: break # max loop time = 5s
-						if dbus_err > 1: sleep(0.1) # introduce at least some delay
-						dbus_err += 1
-					else: break
+			try: val = self._get_volume(item)
 			except KeyError: raise PAUpdate
 			val = tuple(op.truediv(val, optz.max_level) for val in val)
 			self._volume_val_cache[item] = val, ts_chk
@@ -266,11 +260,7 @@ class PAMenu(dict):
 	def set_volume(self, item, val):
 		val = [max(0, min(1, val))] * len(self.get_volume(item, raw=True)) # all channels to the same level
 		val_dbus = list(dbus.UInt32(round(val * optz.max_level)) for val in val)
-		try:
-			try: self._set_volume(item, val_dbus)
-			except dbus.exceptions.DBusException:
-				self.refresh()
-				self._set_volume(item, val_dbus)
+		try: self._set_volume(item, val_dbus)
 		except KeyError: raise PAUpdate
 		self._volume_val_cache[item] = val, time()
 
@@ -285,17 +275,7 @@ class PAMenu(dict):
 		except KeyError: val = None
 		ts_chk = time()
 		if val is None or ts < ts_chk - self._cache_time:
-			dbus_err = 0
-			try:
-				while True:
-					try: val = self._get_mute(item)
-					except dbus.exceptions.DBusException:
-						raise
-						self.refresh()
-						if time() > ts_chk + 5: break # max loop time = 5s
-						if dbus_err > 1: sleep(0.1) # introduce at least some delay
-						dbus_err += 1
-					else: break
+			try: val = self._get_mute(item)
 			except KeyError: raise PAUpdate
 			self._mute_val_cache[item] = val, ts_chk
 		return val
@@ -308,11 +288,7 @@ class PAMenu(dict):
 
 	def set_mute(self, item, val):
 		val_dbus = dbus.Boolean(val)
-		try:
-			try: self._set_mute(item, val_dbus)
-			except dbus.exceptions.DBusException:
-				self.refresh()
-				self._set_mute(item, val_dbus)
+		try: self._set_mute(item, val_dbus)
 		except KeyError: raise PAUpdate
 		self._mute_val_cache[item] = val, time()
 
