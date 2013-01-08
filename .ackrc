@@ -1,7 +1,9 @@
 ### added ignores
 --ignore-dir=.idea
 --ignore-dir=.ropeproject
-
+--ignore-dir=CACHE
+--ignore-dir=node_modules
+--ignore-dir=.sass-cache
 ### new types
 --type-set
 coffeescript=.coffee
