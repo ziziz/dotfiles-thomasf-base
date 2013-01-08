@@ -4,6 +4,7 @@
 --ignore-dir=CACHE
 --ignore-dir=node_modules
 --ignore-dir=.sass-cache
+--ignore-dir=build
 ### new types
 --type-set
 coffeescript=.coffee
