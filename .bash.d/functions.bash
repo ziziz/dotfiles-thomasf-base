@@ -58,7 +58,7 @@ __exec_in_git_dir() {
     local args="${*}"
     (
         cd "${dir}"
-        git rev-parse 2> /dev/null || return 0
+        command git rev-parse 2> /dev/null || return 0
         echo ''
         echo "$red [ $mag $PWD $red ] $yel ---- $reset"
         ${args}
@@ -281,21 +281,21 @@ cds() {
 
 # cd to repository root
 cdr() {
-    local dir=$(git rev-parse --show-toplevel) && builtin cd $dir
+    local dir=$(command git rev-parse --show-toplevel) && builtin cd $dir
 }
 
 z() {
     [[ -z $* ]] && return 1
-    local reporoot=$(git rev-parse --show-toplevel 2> /dev/null)
+    local reporoot=$(command git rev-parse --show-toplevel 2> /dev/null)
     _z $reporoot $*
 }
 
 s() {
-    git status --short --branch
+    command git status --short --branch
 }
 
 d() {
-    git diff
+    command git diff
 }
 
 man() {
