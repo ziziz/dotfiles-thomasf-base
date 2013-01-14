@@ -264,7 +264,7 @@ cdd() {
                 cd ~/Downloads
                 ;;
             *)
-                z "${HOME}" "${name}"
+                z "${HOME}" "${name/-/ }"
                 ;;
         esac
     fi
