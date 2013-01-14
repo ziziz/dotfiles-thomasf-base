@@ -9,7 +9,7 @@ bash_uptime() {
     echo "$(($(date +%s)-${bash_start_time})) seconds"
 }
 log() {
-    [ ! -z "$PS1" ] \
+    [ ! -z "$PS1" ] && [ ! "${TERM}" == "dumb" ]\
         && echo -n "■"
     return 0
 }
@@ -18,7 +18,7 @@ log() {
 export VIRTUAL_ENV_DISABLE_PROMPT=1
 
 # Only do this automatically if not root
-if [ $UID != 0 ]; then
+if [ $UID != 0 ] && [ ! "${TERM}" == "dumb" ]; then
 
     # Pip download cache
     mkdir -p "${HOME}/.cache/pip_download" \
@@ -222,17 +222,23 @@ __prompt_activate
 
 unset -f log
 
-if  [ ! "$TERM" = "eterm" ] \
-    && [ ! "$TERM" = "eterm-color" ]; then
-    echo -e -n '\r'
-else
-    echo ""
-fi
-
 [ $(which manpath) ] && \
     unset MANPATH && \
     export MANPATH=$(manpath -q)
 
-# try this
-[ "${PWD}" == "${HOME}" ] && \
+
+case $TERM in
+    dumb)
+        # do nothing
+        ;;
+    eterm|eterm-color)
+        echo ""
+        ;;
+
+    *)
+        echo -e -n '\r'
+        ;;
+esac
+
+[ ! "${TERM}" == "dumb" ] && [ "${PWD}" == "${HOME}" ] && \
     cdd && git status --short --branch 2>/dev/null || true
