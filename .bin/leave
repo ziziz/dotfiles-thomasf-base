@@ -6,8 +6,11 @@
 # Author: Thomas Frössman  ( thomasf@jossystem.se / http://thomas.jossystem.se )
 # Updates to this file will probably be available at https://github.com/thomasf/dotfiles/
 #
-
-set -e
+#
+# references:
+# - /usr/share/acpi-support/screenblank
+# - /etc/acpi/sleep.sh
+# - /etc/acpi/hibernate.sh
 
 # Unload any loaded agent keys
 [ -n "$GPG_AGENT_INFO" ] \
@@ -25,3 +28,15 @@ if [ -n "${DISPLAY}" ]; then
         && sleep 5 \
         && xset dpms force off
 fi
+
+
+clearAuth
+
+case ${1} in
+    hibernate)
+        sudo /usr/sbin/pm-hibernate
+        ;;
+    suspend)
+        sudo /usr/sbin/pm-suspend
+        ;;
+esac
