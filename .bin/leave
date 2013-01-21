@@ -29,14 +29,11 @@ if [ -n "${DISPLAY}" ]; then
         && xset dpms force off
 fi
 
-
-clearAuth
-
 case ${1} in
     hibernate)
-        sudo /usr/sbin/pm-hibernate
+        gksudo /usr/sbin/pm-hibernate
         ;;
     suspend)
-        sudo /usr/sbin/pm-suspend
+        gksudo /usr/sbin/pm-suspend
         ;;
 esac
