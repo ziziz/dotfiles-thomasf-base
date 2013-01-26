@@ -243,4 +243,7 @@ esac
 [ ! "${TERM}" == "dumb" ] && [ "${PWD}" == "${HOME}" ] && \
     cdd && git status --short --branch 2>/dev/null || true
 
-[ ! -z $SSH_TTY ] && [ $(which tmux) ] && tmux list-sessions 2>/dev/null || true
+[ ! -z $SSH_TTY ] \
+    && [ -z $TMUX ] \
+    && [ $(which tmux) ] \
+    && tmux list-sessions 2>/dev/null || true
