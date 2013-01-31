@@ -76,6 +76,18 @@ ingitdirs() {
         "__exec_in_git_dir '{}' ${*}" \;
 }
 
+mgall() {
+    local dirs=""
+    for dir in $(find -L . -name .git -execdir dirname {} \;); do
+        dirs=$dirs$(builtin cd $dir && command git rev-parse 2>/dev/null && [[ ! $(command git status --porcelain) = "" ]] && echo -n " $dir" )
+    done
+    if [ -n "$dirs" ]; then
+        magit ${dirs}
+    else
+        echo "no uncommited"
+    fi
+}
+
 rmosx() {
     echo -n "recursivley delete all __MACOSX, .DS_Store files?"
     read -n 1 yorn;
