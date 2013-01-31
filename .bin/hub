@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/ruby
 #
 # This file is generated code. DO NOT send patches for it.
 #
@@ -1337,7 +1337,7 @@ module Hub
 
     def clone(args)
       ssh = args.delete('-p')
-      has_values = /^(--(upload-pack|template|depth|origin|branch|reference)|-[ubo])$/
+      has_values = /^(--(upload-pack|template|depth|origin|branch|reference|name)|-[ubo])$/
 
       idx = 1
       while idx < args.length
@@ -1362,17 +1362,7 @@ module Hub
       return unless index = args.index('add')
       args.delete_at index
 
-      branch = args.index('-b') || args.index('--branch')
-      if branch
-        args.delete_at branch
-        branch_name = args.delete_at branch
-      end
-
       clone(args)
-
-      if branch_name
-        args.insert branch, '-b', branch_name
-      end
       args.insert index, 'add'
     end
 
@@ -1670,7 +1660,7 @@ module Hub
             abort "Usage: hub compare [USER] [<START>...]<END>"
           end
         else
-          sha_or_tag = /(\w{1,2}|\w[\w.-]+\w)/
+          sha_or_tag = /((?:#{OWNER_RE}:)?\w[\w.-]+\w)/
           range = args.pop.sub(/^#{sha_or_tag}\.\.#{sha_or_tag}$/, '\1...\2')
           project = if owner = args.pop then github_project(nil, owner)
                     else current_project
