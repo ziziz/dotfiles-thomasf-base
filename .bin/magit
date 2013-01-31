@@ -18,7 +18,7 @@
 
 if test "$1" = "-h" || test "$1" = "--help"; then
     cat <<EOF
-Usage: magit [OPTION] [REPOSITORY]
+Usage: magit [OPTION] [REPOSITORY] [REPOSITORY2]...
 
 Open a Magit session in Emacs visiting the specified repository.  If no
 repository is specified, and the current directory is a Git repository, use the
@@ -45,13 +45,11 @@ if test "$1" = "-e" || test "$1" = "--use-existing"; then
     shift;
 fi
 
-if [ -n "$1" ]; then
-    dir=$(readlink -m "$1")
-fi
-
 runmagit="(progn "
-if [ -n "$dir" ]; then
-    runmagit="$runmagit (magit-status \"$dir\")"
+if [ -n "$1" ]; then
+    for dir in $*; do
+        runmagit="$runmagit (magit-status \"$(readlink -m ${dir})\")"
+    done
 else
     runmagit="$runmagit (let ((default-directory \"$(pwd)\"))
                           (call-interactively 'magit-status))"
