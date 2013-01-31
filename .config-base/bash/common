@@ -1,2 +1,8 @@
 # -*- mode: sh -*-
 # Common functionality..
+
+[ -n "$__common" ] && return 0
+
+
+
+__common="loaded"; export __common
