@@ -59,25 +59,6 @@ except ImportError:
         has_sqlite3 = False
 
 
-# check to make sure the '--without-environment' flag is called first
-# this could be done in a callback, but we'd have to keep a note of every
-# option which is affected by this flag
-if '--without-environment' in sys.argv and \
-   sys.argv[1] != '--without-environment':
-    output = "The '--without-environment' option must come before any "
-    sys.stderr.write('%s other options.\n' % output)
-    sys.exit(1)
-
-# we need to get this in early because callbacks are always called after
-# every other option is already set, regardless of when the callback option
-# is actually used in the script
-if len(sys.argv) > 1 and sys.argv[1] == '--without-environment':
-    for k in os.environ.keys():
-        if k.startswith('VCPROMPT'):
-            del os.environ[k]
-    del sys.argv[1]
-
-
 # user editable options
 FORMAT = os.environ.get('VCPROMPT_FORMAT', '%s:%b')
 UNKNOWN = os.environ.get('VCPROMPT_UNKNOWN', '(unknown)')
@@ -246,21 +227,12 @@ def bzr(options):
 
     The Bazaar version control system
     """
-    branch = revision = sha = modified = untracked = options.unknown
+    branch = revision = modified = untracked = options.unknown
 
     # local revision or global sha
     if re.search('%(r|h)', options.format):
         try:
-            fh = open(options.file, 'r')
-            for line in fh:
-                line = line.strip()
-                revision, sha = line.split(' ', 1)
-                # compensate for empty Bazaar repositories
-                if sha == 'null:':
-                    sha = unknown
-                else:
-                    sha = sha.rsplit('-', 1)[-1][:7]
-                    break
+            revision = open(options.file, 'r').readline().split()[0]
         except IOError:
             pass
 
@@ -269,21 +241,20 @@ def bzr(options):
         output, returncode = popen('bzr status --short')
 
         if returncode == 0:
-            if output == '':
-                modified = ''
-                untracked = ''
-            else:
+            if output:
                 for line in output.splitlines():
                     line = line.strip()
                     if line.startswith('M'):
                         modified = options.modified
                     elif line.startswith('?'):
                         untracked = options.untracked
+            else:
+                modified = ''
+                untracked = ''
 
     # formatting
     return {
         'branch': os.path.basename(options.path),
-        'hash': sha,
         'revision': revision,
         'modified': modified,
         'untracked': untracked,
@@ -464,9 +435,7 @@ def git(options):
             except IOError:
                 return ''
         try:
-            fh = open(ref, 'r')
-            for line in fh:
-                return line.strip()[0:chars]
+            return open(ref, 'r').readline()[0:chars]
         except IOError:
             pass
         return ''
@@ -509,10 +478,10 @@ def git(options):
         output, returncode = popen('git ls-files --other --exclude-standard')
 
         if returncode == 0:
-            if output == '':
-                untracked = ''
-            else:
+            if output:
                 untracked = options.untracked
+            else:
+                untracked = ''
 
     # staged files
     if '%a' in options.format:
@@ -567,10 +536,10 @@ def hg(options):
         output, returncode = popen('hg status --modified')
 
         if returncode == 0:
-            if output == '':
-                modified = ''
-            else:
+            if output:
                 modified = options.modified
+            else:
+                modified = ''
 
     # untracked
     if '%u' in options.format:
