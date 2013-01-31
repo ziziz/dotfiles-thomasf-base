@@ -10,12 +10,10 @@ VERSION="1"
 SUBDIRECTORY_OK=Yes
 OPTIONS_KEEPDASHDASH=""
 OPTIONS_SPEC="\
-git magit [path]"
+git magit"
 
 version_print() {
     echo "git magit version ${VERSION}"
 }
 
-emacs --eval "(init-magit-status \"`pwd`\")" 
-
-
+magit
