@@ -2,7 +2,7 @@ from bottle import route, run, template, static_file, get, post, request
 from subprocess import Popen
 import os
 import sys
-from urllib import quote_plus
+from urllib import quote
 
 root_dir = os.path.dirname(os.path.realpath(__file__))
 files_dir = os.path.join(root_dir, "files")
@@ -27,7 +27,10 @@ def update_file(filepath):
 @post('/url')
 def store_url():
     data = request.json
-    Popen(["emacsclient", "-n", "org-protocol://capture://u/" + quote_plus(data['url'].encode('utf8')) + "/" + quote_plus(data['title'].encode('utf8')) + "/" + quote_plus(data['body'].encode('utf8'))])
+    Popen(["emacsclient", "-n", "org-protocol://capture://u/" +
+           quote(data['url'].encode('utf8'), safe='') + "/" +
+           quote(data['title'].encode('utf8'), safe='') + "/" +
+           quote(data['body'].encode('utf8'), safe='')])
 
 
 @get('/org-protocol/<arg:path>')
