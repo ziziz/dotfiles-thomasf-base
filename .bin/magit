@@ -74,10 +74,10 @@ fi
 
 if test -n "$DISPLAY" && $xsupport; then
     emacsclient --eval "(progn (select-frame (make-frame-on-display \"$DISPLAY\"))
-                               $runmagit)"
+                               $runmagit)" 2>/dev/null
     runemacs=$?
 else
-    emacsclient --tty --eval "$runmagit"
+    emacsclient --tty --eval "$runmagit" 2/dev/null
     runemacs=$?
 fi
 
