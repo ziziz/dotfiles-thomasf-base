@@ -90,6 +90,7 @@ yak.functions.add
 # Since we only have scrolling commands in here so far, we can do
 # everything with precooked functions.
 yak.bindings.add
+  #
   "C-b":
     exclude: yak.textElements
     onkeydown: yak.functions.colLeft
@@ -139,20 +140,39 @@ yak.bindings.add
       eval_ prompt("Eval:")
 
 
+
+miniserv_url = "http://localhost:7345"
+
+loadScriptQueue = []
+
+handleScriptQueue =  ->
+  if loadScriptQueue.length > 0
+    script = document.createElement 'script'
+    script.onload = ->
+      handleScriptQueue() if loadScriptQueue.length > 0
+    script.src = loadScriptQueue.shift()
+    document.getElementsById('head')[0].appendChild(script)
+
+loadScript = (url) ->
+  loadScriptQueue.push url
+  handleScriptQueue()
+
 # other bindings
 #
 yak.bindings.add
-  "C-y":
+  "C-M-r":
     onkeydown: ->
-      url = encodeURIComponent("new/" + window.location)
       r = new XMLHttpRequest()
-      r.open "POST", "http://localhost:7345/url"
+      r.open "POST", "#{miniserv_url}/url"
       r.setRequestHeader "Content-Type", "application/json;charset=UTF-8"
       r.send JSON.stringify {
         url: window.location.toString()
         title: document.title
         body: window.getSelection().toString()
       }
+  "C-M-j":
+    onkeydown: ->
+      loadScript "#{miniserv_url}/files/jquery.js"
 
 
 
