@@ -121,6 +121,11 @@ export COFFEELINT_CONFIG
 MPD_PORT=6205 && export MPD_PORT
 MPD_HOST=localhost && export MPD_HOST
 
+
+[ -e "${HOME}/.config-base/dynamic-colors" ] \
+    && DYNAMIC_COLORS_ROOT="${HOME}/.config-base/dynamic-colors" \
+    && export DYNAMIC_COLORS_ROOT
+
 # ------------------------------------------------------------------------------
 # PRIVATE AND LOCAL
 #
