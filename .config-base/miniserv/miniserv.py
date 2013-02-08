@@ -6,6 +6,7 @@ from urllib import quote
 
 root_dir = os.path.dirname(os.path.realpath(__file__))
 files_dir = os.path.join(root_dir, "files")
+refdoc_dir = os.path.join(os.path.expanduser("~"), ".refdoc")
 port = 7345
 
 
@@ -17,6 +18,10 @@ def index(name='Hello hello'):
 @get('/files/<filepath:path>')
 def server_static(filepath):
     return static_file(filepath, root=files_dir)
+
+@get('/refdoc/<filepath:path>')
+def server_static(filepath):
+    return static_file(filepath, root=refdoc_dir)
 
 
 @post('/files/<filepath:path>')
