@@ -124,6 +124,30 @@ PROMPT_COMMAND="__pwd_logger; history -a; echo -ne '\a'"
 
 # ------------------------------------------------------------------------------
 #
+# TERMINAL COLOR THEME
+
+__darkmode_switcher() {
+    if [ -e ~/.config/darkmode ]; then
+        [ ! $DARKMODE = dark ] && export DARKMODE=dark && termcolors
+    else
+        [ $DARKMODE = dark ] && export DARKMODE=light && termcolors
+    fi
+}
+
+if [ -z $SSH_TTY ] && [ -z $TMUX ] && [ ! -z $DISPLAY ]; then
+    case $TERM in
+        rxvt*|xterm*)
+            [ -e ~/.config/darkmode ] && export DARKMODE=dark || export DARKMODE=light
+            termcolors
+            PROMPT_COMMAND="${PROMPT_COMMAND}; __darkmode_switcher"
+        ;;
+    esac
+fi
+
+
+#
+# ------------------------------------------------------------------------------
+#
 # TERMINAL OPTIONS
 #
 # enable xon/xoff flow control
