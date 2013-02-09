@@ -272,7 +272,7 @@ cdd() {
             emacs)
                 cd ~/.emacs.d
                 ;;
-            www)
+            www|share)
                 cd ~/Downloads
                 ;;
             *)
