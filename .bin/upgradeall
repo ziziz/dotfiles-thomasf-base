@@ -8,7 +8,7 @@ set -x
 runCmd() {
     if [ -n "$DISPLAY" ] && [ `which urxvt` ]; then
         exec urxvt -title upgradeall -name upgradeall -e bash -c \
-            "echo RUN \" $* \";
+            "termcolors; echo RUN \" $* \";
 $*
 echo ;
 echo \"COMPLETED: $* \";
