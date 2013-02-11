@@ -143,20 +143,6 @@ yak.bindings.add
 
 miniserv_url = "http://localhost:7345"
 
-loadScriptQueue = []
-
-handleScriptQueue =  ->
-  if loadScriptQueue.length > 0
-    script = document.createElement 'script'
-    script.onload = ->
-      handleScriptQueue() if loadScriptQueue.length > 0
-    script.src = loadScriptQueue.shift()
-    document.getElementsById('head')[0].appendChild(script)
-
-loadScript = (url) ->
-  loadScriptQueue.push url
-  handleScriptQueue()
-
 # other bindings
 #
 yak.bindings.add
@@ -170,11 +156,6 @@ yak.bindings.add
         title: document.title
         body: window.getSelection().toString()
       }
-  "C-M-j":
-    onkeydown: ->
-      loadScript "#{miniserv_url}/files/jquery.js"
-
-
 
 # Local Variables:
 # eval: (coffee-cos-mode 1)
