@@ -212,7 +212,7 @@ sshmnt() {
 	fi
 }
 
-alias agent='exec ssh-agent ${SHELL} -c "ssh-add; ${SHELL}"'
+alias agent='eval $(ssh-agent); ssh-add;'
 
 alias apt-update-upgrade='sudo apt-get update && sudo apt-get dist-upgrade'
 
