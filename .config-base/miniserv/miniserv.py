@@ -1,4 +1,4 @@
-from bottle import route, run, template, static_file, get, post, request
+from bottle import route, run, template, static_file, get, post, request, redirect
 from subprocess import Popen
 import os
 import sys
@@ -11,22 +11,25 @@ port = 7345
 
 
 @route('/')
-def index(name='Hello hello'):
-    return template('<b>Hello {{name}}</b>!', name=name)
+def index():
+    return redirect("/files/index.html")
 
 
 @get('/files/<filepath:path>')
 def server_static(filepath):
     return static_file(filepath, root=files_dir)
 
+
 @get('/refdoc/<filepath:path>')
-def server_static(filepath):
+def server_refdoc(filepath):
     return static_file(filepath, root=refdoc_dir)
 
 
 @post('/files/<filepath:path>')
-def update_file(filepath):
-    pass
+def edit_file(filepath):
+    Popen(["emacsclient", "-a", "true", "-n", "--eval",
+           "(find-file-in-large-floating-frame \"" + os.path.join(files_dir, filepath) + "\")"])
+    return {"ok": True}
 
 
 @post('/url')
