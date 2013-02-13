@@ -1,3 +1,8 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+__author__ = 'Thomas Frössman'
+
+
 from bottle import route, run, template, static_file, get, post, request, redirect
 from subprocess import Popen
 import os
@@ -13,6 +18,15 @@ port = 7345
 @route('/')
 def index():
     return redirect("/files/index.html")
+
+
+@get('/style.css')
+def style_css():
+    darkmode = os.path.exists(os.path.expanduser("~/.config/darkmode"))
+    if darkmode:
+        return redirect('/files/solarized-dark.min.css')
+    else:
+        return redirect('/files/solarized-light.min.css')
 
 
 @get('/files/<filepath:path>')
