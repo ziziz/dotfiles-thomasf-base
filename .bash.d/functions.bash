@@ -302,6 +302,11 @@ z() {
     _z $reporoot $*
 }
 
+todo() {
+    ack --color-match="black on_green bold" TODO:
+    ack --color-match="black on_yellow bold" FIXME:
+}
+
 s() {
     command git status --short --branch
 }
