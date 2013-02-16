@@ -8,6 +8,10 @@
     return editFile("index.html");
   });
 
+  K.on("g", function() {
+    return window.location = window.location;
+  });
+
   _ref = document.querySelectorAll("a[kb]");
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     element = _ref[_i];

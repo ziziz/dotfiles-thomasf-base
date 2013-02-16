@@ -1,7 +1,11 @@
 K = KeyboardJS
 
+
 K.on "e", ->
   editFile("index.html")
+
+K.on "g", ->
+  window.location = window.location
 
 for element in document.querySelectorAll "a[kb]"
   binding = element.attributes['kb'].value
