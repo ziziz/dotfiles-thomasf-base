@@ -9,7 +9,7 @@
   });
 
   K.on("g", function() {
-    return window.location = window.location;
+    return window.location.reload();
   });
 
   _ref = document.querySelectorAll("a[kb]");
