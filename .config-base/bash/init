@@ -98,8 +98,6 @@ if [ ! ${OSTYPE:0:6} = darwin ]; then
     shopt -s cdspell
     shopt -s dirspell
 fi
-# bash history
-
 if [ $UID != 0 ]; then
     export HISTFILE=~/.bash_history
 else
@@ -229,7 +227,8 @@ fi
 # HUB
 #
 
-[ $(which hub) ] && \
+[ $(which ruby) ] \
+    && [ $(which hub) ] && \
     alias git=hub
 
 # ------------------------------------------------------------------------------
@@ -247,7 +246,10 @@ fi
 log "activate prompt"
 __prompt_activate
 
-unset -f log
+# replace logger with empty stub
+function log() {
+    return 0
+}
 
 [ $(which manpath) ] && \
     unset MANPATH && \
