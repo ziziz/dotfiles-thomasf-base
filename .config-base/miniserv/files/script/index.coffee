@@ -4,7 +4,7 @@ K = KeyboardJS
 K.on "e", ->
   editFile("index.html")
 
-K.on "g", ->
+K.on "r", ->
   window.location.reload()
 
 for element in document.querySelectorAll "a[kb]"

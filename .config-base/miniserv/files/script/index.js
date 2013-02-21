@@ -8,7 +8,7 @@
     return editFile("index.html");
   });
 
-  K.on("g", function() {
+  K.on("r", function() {
     return window.location.reload();
   });
 
