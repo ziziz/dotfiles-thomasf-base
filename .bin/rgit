@@ -1,4 +1,8 @@
 #!/bin/bash
+# rgit - recursive git
+#
+
+# TODO: does not work in osx.
 
 in_git_dir() {
     local ncolors=$(tput colors)
