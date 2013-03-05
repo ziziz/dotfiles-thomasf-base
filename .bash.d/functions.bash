@@ -368,3 +368,7 @@ cdp() {
         return 1
     fi
 }
+
+pwdclip() {
+    pwd | xsel --clipboard
+}
