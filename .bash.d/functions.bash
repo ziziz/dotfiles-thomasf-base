@@ -372,3 +372,9 @@ cdp() {
 pwdclip() {
     pwd | xsel --clipboard
 }
+
+emacs() {
+    t=${TERM}
+    [ "${TERM}" == "rxvt-unicode-256color" ] && t="xterm"
+    command env TERM=$t emacs $*
+}
