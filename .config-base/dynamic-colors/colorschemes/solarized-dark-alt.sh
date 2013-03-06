@@ -1,9 +1,9 @@
-# Solarized colorscheme "light"
+# Solarized colorscheme "dark"
 #
 # See the Solarized homepage for details:
 # http://ethanschoonover.com/solarized
 #
-                   # SOLARIZED HEX     16/8 TERMCOL   L*A*B     
+                   # SOLARIZED HEX     16/8 TERMCOL   L*A*B
                    # --------- ------- ---- --------- ----------
  base03="#002b36"  # base03    #002b36  8/4 brblack   15 -12 -12
  base02="#073642"  # base02    #073642  0/4 black     20 -12 -12
@@ -22,34 +22,34 @@ magenta="#d33682"  # magenta   #d33682  5/5 magenta   50  65 -05
    cyan="#2aa198"  # cyan      #2aa198  6/6 cyan      60 -35 -05
   green="#859900"  # green     #859900  2/2 green     60 -20  65
 
-background="$base3"
-foreground="$base00"
-cursor="$base01"
-mouse_background="$base2"
-mouse_foreground="$base01"
-highlight="$base2"
-border="$base3"
+background="$base03"
+foreground="$base0"
+cursor="$base1"
+mouse_background="$base02"
+mouse_foreground="$base1"
+highlight="$base02"
+border="$base03"
 
- color0="$base2"   # black
+ color0="$base02"  # black
  color8="$base3"   # brblack
 
  color1="$red"     # red
  color9="$orange"  # brred
 
  color2="$green"   # green
-color10="$base1"   # brgreen
+color10="$base01"  # brgreen
 
  color3="$yellow"  # yellow
-color11="$base0"   # bryellow
+color11="$base00"  # bryellow
 
  color4="$blue"    # blue
-color12="$base00"  # brblue
+color12="$base0"   # brblue
 
  color5="$magenta" # magenta
 color13="$violet"  # brmagenta
 
  color6="$cyan"    # cyan
-color14="$base01"  # brcyan
+color14="$base1"   # brcyan
 
- color7="$base02"  # white
-color15="$base03"  # brwhite
+ color7="$base2"   # white
+color15="$base3"   # brwhite
