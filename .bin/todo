@@ -1,0 +1,4 @@
+#!/bin/sh
+
+ack --color-match="black on_green bold" TODO:
+ack --color-match="black on_yellow bold" FIXME:

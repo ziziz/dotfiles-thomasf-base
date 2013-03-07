@@ -160,7 +160,7 @@ function findext {
     find . -iname \*.${1}
 }
 
-alias t='tree'
+
 alias t2='tree -d -L 2'
 alias t3='tree -d -L 3'
 
@@ -300,11 +300,6 @@ z() {
     [[ -z $* ]] && return 1
     local reporoot=$(command git rev-parse --show-toplevel 2> /dev/null)
     _z $reporoot $*
-}
-
-todo() {
-    ack --color-match="black on_green bold" TODO:
-    ack --color-match="black on_yellow bold" FIXME:
 }
 
 s() {
