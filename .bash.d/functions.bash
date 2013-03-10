@@ -311,11 +311,11 @@ d() {
 }
 
 # TODO: This emacs man function stopped working
-# man() {
-#     local init=""
-#     [ -e ~/.emacs.d/init-low.el ] && init="-l ~/.emacs.d/init-low"
-#     emacs -q $init -nw -eval "(man \"$*\")"
-# }
+man() {
+    local init=""
+    [ -e ~/.emacs.d/init-low.el ] && init="-l ~/.emacs.d/init-low"
+    emacs -q $init -nw -eval "(man \"$@\")"
+}
 
 octopresscreate () {
     local name="${1}"
@@ -367,10 +367,4 @@ cdp() {
 
 pwdclip() {
     pwd | xsel --clipboard
-}
-
-emacs() {
-    t=${TERM}
-    [ "${TERM}" == "rxvt-unicode-256color" ] && t="xterm"
-    command env TERM=$t emacs $*
 }

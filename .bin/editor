@@ -17,21 +17,21 @@ cmd=$(basename ${0})
 # if runnung under osx, make some changes
 [ "${OSTYPE:0:6}" = "darwin" ] \
     && [ -x "/Applications/Emacs.app/Contents/MacOS/Emacs" ] \
-    && exec /Applications/Emacs.app/Contents/MacOS/Emacs $emacsargs $*
+    && exec /Applications/Emacs.app/Contents/MacOS/Emacs $emacsargs "$@"
 
 if [ $(which emacs) ]; then
     if [ -v DISPLAY ] && [ ${cmd} != ee ]; then
-        emacs $emacsargs $* &
+        emacs $emacsargs "$@" &
         exit
     else
-        exec emacs -nw $emacsargs $*
+        exec emacs -nw $emacsargs "$@"
     fi
 fi
 
 [ $(which vim) ] \
-    && exec vim $*
+    && exec vim "$@"
 
 [ $(which vi) ] \
-    && exec vi $*
+    && exec vi "$@"
 
 echo "no suitable editor found"
