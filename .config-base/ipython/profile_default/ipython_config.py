@@ -5,5 +5,7 @@ c = get_config()  # noqa
 
 c.InteractiveShellApp.extensions = [
     'hierarchymagic',
-    'django_notebook'
+    'django_notebook',
+    'tempmagic',
+    'importfilemagic'
 ]
