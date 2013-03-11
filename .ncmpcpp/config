@@ -44,7 +44,7 @@ mpd_music_dir = "~/Music"
 ## are some problems with it.
 ##
 #
-visualizer_output_name = "My FIFO"
+# visualizer_output_name = "My FIFO"
 #
 ##
 ## Note: Below parameter defines how often ncmpcpp
