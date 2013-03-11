@@ -11,8 +11,8 @@
 ##
 
 ##
-key_up = 259 'k'
-key_down = 258 'j'
+key_up = 259 'p'
+key_down = 258 'n'
 key_up_album = '['
 key_down_album = ']'
 key_up_artist = '{'
@@ -48,7 +48,7 @@ key_music_visualizer = 0
 key_clock = '0' 274
 key_server_info = '@'
 key_stop = 0
-key_pause = 'P'
+key_pause = 27
 key_next = '>'
 key_prev = '<'
 key_replay = 263 127
@@ -81,8 +81,8 @@ key_select_album = 'B'
 key_add_selected_items = 'A'
 key_clear = 'c'
 key_crop = 'C'
-key_move_song_up = 'm'
-key_move_song_down = 'n'
+key_move_song_up = 'P'
+key_move_song_down = 'N'
 key_move_to = 'M'
 key_move_before = 0
 key_move_after = 0
@@ -90,7 +90,7 @@ key_add = 'a'
 key_save_playlist = 'S'
 key_go_to_now_playing = 'o'
 key_toggle_auto_center = 'U'
-key_toggle_display_mode = 'p'
+key_toggle_display_mode = 0
 key_toggle_separators_in_playlist = 0
 key_toggle_lyrics_db = 0
 key_toggle_fetching_lyrics_for_current_song_in_background = 0
