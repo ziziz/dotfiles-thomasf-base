@@ -104,7 +104,7 @@ else
     export HISTFILE=~/.bash_history_root
 fi
 shopt -s histappend
-export HISTCONTROL=ignoreboth
+export HISTCONTROL=ignoredups
 export HISTSIZE=20000
 export HISTTIMEFORMAT='%F %T '
 export HISTIGNORE="&:ls:cd*:[bf]g:exit:pwd:clear:mount:umount:?"
