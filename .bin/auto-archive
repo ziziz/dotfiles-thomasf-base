@@ -104,8 +104,8 @@ home = AutoArchiver("~",
                              "VirtualBox VMs", "repos", "mnt"])
 home.run()
 
-browser_downloads = AutoArchiver("~/Downloads/browser")
-browser_downloads.run()
+# browser_downloads = AutoArchiver("~/Downloads/browser")
+# browser_downloads.run()
 
 downloads = AutoArchiver("~/Downloads", exclude=["sorted", "bittorrent", "browser"])
 downloads.run()
