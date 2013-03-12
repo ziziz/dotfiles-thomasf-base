@@ -95,7 +95,13 @@ from IPython.core.magic_arguments import (argument, magic_arguments,
                                           parse_argstring)
 from IPython.core.display import display_png, display_svg
 
-from sphinx.ext.inheritance_diagram import InheritanceGraph
+try:
+    from sphinx.ext.inheritance_diagram import InheritanceGraph
+except:
+    print("InheritanceGraph disabled: pip install sphinx")
+    class InheritanceGraph(object):
+        pass
+
 
 
 def run_dot(code, options=[], format='png'):
