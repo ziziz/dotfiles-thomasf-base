@@ -96,6 +96,6 @@ key_toggle_lyrics_db = 0
 key_toggle_fetching_lyrics_for_current_song_in_background = 0
 key_go_to_containing_directory = 'G'
 key_go_to_media_library = '~'
-key_go_to_parent_dir = 263 127
+key_go_to_parent_dir = '.'
 key_switch_tag_type_list = '`'
 key_quit = 0
