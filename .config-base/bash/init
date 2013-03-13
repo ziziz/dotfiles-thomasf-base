@@ -276,3 +276,6 @@ esac
     && [ -z $TMUX ] \
     && [ $(which tmux) ] \
     && tmux list-sessions 2>/dev/null || true
+
+[ $UID == 0 ] && \
+    export TMOUT=3600
