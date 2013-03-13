@@ -277,6 +277,7 @@ cdd() {
                 ;;
             *)
                 _z "${HOME}" "${name/-/ }"
+                # TODO: maybe modify CDPATH variable
                 ;;
         esac
     fi
