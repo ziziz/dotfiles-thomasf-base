@@ -7,6 +7,7 @@ set -o errexit
 set -o pipefail
 
 curl_opts=${CURL_OPTS:-""}
+reuse_xp=${REUSE_XP:-"yes"}
 
 log()  { printf "$*\n" ; return $? ;  }
 
@@ -18,6 +19,9 @@ create_home() {
 
     mkdir -p "${ievms_home}"
     cd "${ievms_home}"
+
+    # Move old ovas and zips into place:
+    mv -f ./ova/IE*/IE*.{ova,zip} "${ievms_home}/" 2>/dev/null || true
 }
 
 check_system() {
@@ -31,7 +35,7 @@ check_system() {
 
 check_virtualbox() {
     log "Checking for VirtualBox"
-    hash VBoxManage 2>&- || fail "VirtualBox is not installed! (http://virtualbox.org)"
+    hash VBoxManage 2>&- || fail "VirtualBox command line utilities are not installed, please reinstall! (http://virtualbox.org)"
 }
 
 check_version() {
@@ -39,6 +43,10 @@ check_version() {
     major_minor_release="${version%%[-_r]*}"
     major_minor="${version%.*}"
     dl_page=`curl ${curl_opts} -L "http://download.virtualbox.org/virtualbox/" 2>/dev/null`
+
+    if [[ "$version" == *"kernel module is not loaded"* ]]; then
+        fail "$version"
+    fi
 
     for (( release="${major_minor_release#*.*.}"; release >= 0; release-- ))
     do
@@ -78,235 +86,175 @@ check_ext_pack() {
     fi
 }
 
-install_unrar() {
-    case $kernel in
-        Darwin) download_unrar ;;
-        Linux) fail "Linux support requires unrar (sudo apt-get install for Ubuntu/Debian)" ;;
-    esac
-}
+download_unar() {
+    unar_url="http://theunarchiver.googlecode.com/files/unar1.5.zip"
+    unar_archive=`basename "${unar_url}"`
 
-install_cabextract() {
-    case $kernel in
-        Darwin) download_cabextract ;;
-        Linux) fail "Linux support requires cabextract (sudo apt-get install for Ubuntu/Debian)" ;;
-    esac
-}
-
-download_unrar() {
-    url="http://www.rarlab.com/rar/rarosx-4.0.1.tar.gz"
-    archive="rar.tar.gz"
-
-    log "Downloading unrar from ${url} to ${ievms_home}/${archive}"
-    if ! curl ${curl_opts} -C - -L "${url}" -o "${archive}"
+    log "Downloading unar from ${unar_url} to ${ievms_home}/${unar_archive}"
+    if [[ ! -f "${unar_archive}" ]] && ! curl ${curl_opts} -L "${unar_url}" -o "${unar_archive}"
     then
-        fail "Failed to download ${url} to ${ievms_home}/${archive} using 'curl', error code ($?)"
+        fail "Failed to download ${unar_url} to ${ievms_home}/${unar_archive} using 'curl', error code ($?)"
     fi
 
-    if ! tar zxf "${archive}" -C "${ievms_home}/" --no-same-owner
+    if ! unzip "${unar_archive}"
     then
-        fail "Failed to extract ${ievms_home}/${archive} to ${ievms_home}/," \
-            "tar command returned error code $?"
+        fail "Failed to extract ${ievms_home}/${unar_archive} to ${ievms_home}/," \
+            "unzip command returned error code $?"
     fi
 
-    hash unrar 2>&- || fail "Could not find unrar in ${ievms_home}/rar/"
+    hash unar 2>&- || fail "Could not find unar in ${ievms_home}"
 }
 
-download_cabextract() {
-    url="http://rudix.googlecode.com/files/cabextract-1.4-3.pkg"
-    archive="cabextract.pkg"
-
-    log "Downloading cabextract from ${url} to ${ievms_home}/${archive}"
-    if ! curl ${curl_opts} -C - -L "${url}" -o "${archive}"
+check_unar() {
+    if [ "${kernel}" == "Darwin" ]
     then
-        fail "Failed to download ${url} to ${ievms_home}/${archive} using 'curl', error code ($?)"
+        PATH="${PATH}:${ievms_home}"
+        hash unar 2>&- || download_unar
+    else
+        hash unar 2>&- || fail "Linux support requires unar (sudo apt-get install for Ubuntu/Debian)"
     fi
-
-    mkdir -p "${ievms_home}/cabextract"
-    if ! xar -xf "${archive}" -C "${ievms_home}/cabextract"
-    then
-        fail "Failed to extract ${ievms_home}/${archive} to ${ievms_home}/cabextract," \
-            "xar command returned error code $?"
-    fi
-
-    cd "${ievms_home}/cabextract/cabextractinstall.pkg"
-    gzcat Payload | cpio -i --quiet
-    cd "${ievms_home}"
-    hash cabextract 2>&- || fail "Could not find cabextract in ${ievms_home}/cabextract/cabextractinstall.pkg/usr/local/bin"
-}
-
-check_unrar() {
-    PATH="${PATH}:${ievms_home}/rar"
-    hash unrar 2>&- || install_unrar
-}
-
-check_cabextract() {
-    PATH="${PATH}:${ievms_home}/cabextract/cabextractinstall.pkg/usr/local/bin"
-    hash cabextract 2>&- || install_cabextract
 }
 
 build_ievm() {
-    extract_cmd="unrar e -y"
-
+    unset archive
+    unset unit
     case $1 in
-        6) 
-            urls="http://download.microsoft.com/download/B/7/2/B72085AE-0F04-4C6F-9182-BF1EE90F5273/Windows_XP_IE6.exe"
-            vhd="Windows XP.vhd"
-            vm_type="WindowsXP"
-            extract_cmd="cabextract"
+        6|7|8)
+            os="WinXP"
+            if [ "${reuse_xp}" != "yes" ]
+            then
+                if [ "$1" == "7" ]; then os="Vista"; fi
+                if [ "$1" == "8" ]; then os="Win7"; fi
+            else
+                archive="IE6_WinXP.zip"
+                unit="10"
+            fi
             ;;
-        7) 
-            urls=`echo http://download.microsoft.com/download/B/7/2/B72085AE-0F04-4C6F-9182-BF1EE90F5273/Windows_Vista_IE7.part0{1.exe,2.rar,3.rar,4.rar,5.rar,6.rar}`
-            vhd="Windows Vista.vhd"
-            vm_type="WindowsVista"
-            ;;
-        8) 
-            urls=`echo http://download.microsoft.com/download/B/7/2/B72085AE-0F04-4C6F-9182-BF1EE90F5273/Windows_7_IE8.part0{1.exe,2.rar,3.rar,4.rar}`
-            vhd="Win7_IE8.vhd"
-            vm_type="Windows7"
-            ;;
-        9) 
-            urls=`echo http://download.microsoft.com/download/B/7/2/B72085AE-0F04-4C6F-9182-BF1EE90F5273/Windows_7_IE9.part0{1.exe,2.rar,3.rar,4.rar,5.rar,6.rar,7.rar}`
-            vhd="Windows 7.vhd"
-            vm_type="Windows7"
-            ;;
-        *)
-            fail "Invalid IE version: ${1}"
-            ;;
+        9) os="Win7" ;;
+        10) os="Win8" ;;
+        *) fail "Invalid IE version: ${1}" ;;
     esac
 
-    vm="IE${1}"
-    vhd_path="${ievms_home}/vhd/${vm}"
-    mkdir -p "${vhd_path}"
-    cd "${vhd_path}"
-
-    log "Checking for existing VHD at ${vhd_path}/${vhd}"
-    if [[ ! -f "${vhd}" ]]
+    vm="IE${1} - ${os}"
+    def_archive="${vm/ - /_}.zip"
+    archive=${archive:-$def_archive}
+    unit=${unit:-"11"}
+    ova=`basename "${archive/_/ - }" .zip`.ova
+    url="http://virtualization.modern.ie/vhd/IEKitV1_Final/VirtualBox/OSX/${archive}"
+    
+    log "Checking for existing OVA at ${ievms_home}/${ova}"
+    if [[ ! -f "${ova}" ]]
     then
-
-        log "Checking for downloaded VHDs at ${vhd_path}/"
-        for url in $urls
-        do
-            archive=`basename $url`
-            log "Downloading VHD from ${url} to ${ievms_home}/"
-            if ! curl ${curl_opts} -C - -L -O "${url}"
-            then
-                fail "Failed to download ${url} to ${vhd_path}/ using 'curl', error code ($?)"
-            fi
-        done
-
-        rm -f "${vhd_path}/"*.vmc
-
-        log "Extracting VHD from ${vhd_path}/${archive}"
-        if ! ${extract_cmd} "${archive}"
+        log "Downloading OVA ZIP from ${url} to ${ievms_home}/${archive}"
+        if [[ ! -f "${archive}" ]] && ! curl ${curl_opts} -L -O "${url}"
         then
-            fail "Failed to extract ${archive} to ${vhd_path}/${vhd}," \
-                "unrar command returned error code $?"
+            fail "Failed to download ${url} to ${ievms_home}/ using 'curl', error code ($?)"
+        fi
+
+        log "Extracting OVA from ${ievms_home}/${archive}"
+        if ! unar "${archive}"
+        then
+            fail "Failed to extract ${archive} to ${ievms_home}/${ova}," \
+                "unar command returned error code $?"
         fi
     fi
 
     log "Checking for existing ${vm} VM"
-    if ! VBoxManage showvminfo "${vm}"
+    if ! VBoxManage showvminfo "${vm}" >/dev/null 2>/dev/null
     then
+        disk_path="${ievms_home}/${vm}-disk1.vmdk"
+        log "Creating ${vm} VM (disk: ${disk_path})"
+        VBoxManage import "${ova}" --vsys 0 --vmname "${vm}" --unit "${unit}" --disk "${disk_path}"
 
-        case $kernel in
-            Darwin) ga_iso="/Applications/VirtualBox.app/Contents/MacOS/VBoxGuestAdditions.iso" ;;
-            Linux) ga_iso="/usr/share/virtualbox/VBoxGuestAdditions.iso" ;;
-        esac
-
-        if [[ ! -f "${ga_iso}" ]]
-        then
-            check_version
-            ga_iso="${ievms_home}/VBoxGuestAdditions_${major_minor_release}.iso"
-
-            if [[ ! -f "${ga_iso}" ]]
-            then
-                url="http://download.virtualbox.org/virtualbox/${major_minor_release}/VBoxGuestAdditions_${major_minor_release}.iso"
-                log "Downloading Virtualbox Guest Additions ISO from ${url} to ${ga_iso}"
-                if ! curl ${curl_opts} -L "${url}" -o "${ga_iso}"
-                then
-                    fail "Failed to download ${url} to ${ga_iso} using 'curl', error code ($?)"
-                fi
-            fi
-        fi
-
-        log "Creating ${vm} VM"
-        VBoxManage createvm --name "${vm}" --ostype "${vm_type}" --register
-        VBoxManage modifyvm "${vm}" --memory 256 --vram 32
-        VBoxManage storagectl "${vm}" --name "IDE Controller" --add ide --controller PIIX4 --bootable on
-        VBoxManage storagectl "${vm}" --name "Floppy Controller" --add floppy
-        VBoxManage internalcommands sethduuid "${vhd_path}/${vhd}"
-        VBoxManage storageattach "${vm}" --storagectl "IDE Controller" --port 0 --device 0 --type hdd --medium "${vhd_path}/${vhd}"
-        VBoxManage storageattach "${vm}" --storagectl "IDE Controller" --port 0 --device 1 --type dvddrive --medium "${ga_iso}"
-        VBoxManage storageattach "${vm}" --storagectl "Floppy Controller" --port 0 --device 0 --type fdd --medium emptydrive
+        log "Building ${vm} VM"
         declare -F "build_ievm_ie${1}" && "build_ievm_ie${1}"
+        
+        log "Creating clean snapshot"
         VBoxManage snapshot "${vm}" take clean --description "The initial VM state"
     fi
-
 }
 
-build_ievm_ie6() {
-    log "Setting up ${vm} VM"
+build_ievm_xp() {
+    sleep_wait="10"
 
-    if [[ ! -f "${ievms_home}/drivers/PRO2KXP.exe" ]]
+    installer=`basename "${2}"`
+    installer_host="${ievms_home}/${installer}"
+    installer_guest="/Documents and Settings/IEUser/Desktop/Install IE${1}.exe"
+    log "Downloading IE${1} installer from ${2}"
+    if [[ ! -f "${installer}" ]] && ! curl ${curl_opts} -L "${2}" -o "${installer}"
     then
-        download_driver "http://downloadmirror.intel.com/8659/eng/PRO2KXP.exe" "Downloading 82540EM network adapter driver"
-
-        if [[ ! -f "${ievms_home}/drivers/autorun.inf" ]]
-        then
-            cd "${ievms_home}/drivers"
-            echo '[autorun]' > autorun.inf
-            echo 'open=PRO2KXP.exe' >> autorun.inf
-            cd "${ievms_home}"
-        fi
+        fail "Failed to download ${url} to ${ievms_home}/${installer} using 'curl', error code ($?)"
     fi
 
-    log "Changing network adapter to 82540EM"
-    VBoxManage modifyvm "${vm}" --nictype1 "82540EM"
+    iso_url="https://dl.dropbox.com/u/463624/ievms-control.iso"
+    dev_iso=`pwd`/ievms-control.iso # Use local iso if in ievms dev root
+    if [[ -f "${dev_iso}" ]]; then iso=$dev_iso; else iso="${ievms_home}/ievms-control.iso"; fi
+    log "Downloading ievms ISO from ${iso_url}"
+    if [[ ! -f "${iso}" ]] && ! curl ${curl_opts} -L "${iso_url}" -o "${iso}"
+    then
+        fail "Failed to download ${iso_url} to ${ievms_home}/${iso} using 'curl', error code ($?)"
+    fi
 
-    build_and_attach_drivers
+    log "Attaching ievms.iso"
+    VBoxManage storageattach "${vm}" --storagectl "IDE Controller" --port 1 --device 0 --type dvddrive --medium "${iso}"
+
+    log "Starting VM ${vm}"
+    VBoxManage startvm "${vm}" --type headless
+
+    log "Waiting for ${vm} to shutdown..."
+    x="0" ; until [ "${x}" != "0" ]; do
+      sleep "${sleep_wait}"
+      VBoxManage list runningvms | grep "${vm}" >/dev/null && x=$? || x=$?
+    done
+
+    log "Ejecting ievms.iso"
+    VBoxManage modifyvm "${vm}" --dvd none
+
+    log "Starting VM ${vm}"
+    VBoxManage startvm "${vm}" --type headless
+
+    log "Waiting for ${vm} to be available for guestcontrol..."
+    x="1" ; until [ "${x}" == "0" ]; do
+      sleep "${sleep_wait}"
+      VBoxManage guestcontrol "${vm}" cp "${installer_host}" "${installer_guest}" --username IEUser --dryrun && x=$? || x=$?
+    done
+
+    sleep "${sleep_wait}" # Extra sleep for good measure.
+    log "Copying IE${1} installer to Desktop"
+    VBoxManage guestcontrol "${vm}" cp "${installer_host}" "${installer_guest}" --username IEUser
+
+    log "Installing IE${1}" # Always "fails"
+    VBoxManage guestcontrol "${vm}" exec --image "${installer_guest}" --username IEUser --wait-exit -- /passive /norestart || true
+
+    log "Shutting down VM ${vm}"
+    VBoxManage guestcontrol "${vm}" exec --image "/WINDOWS/system32/shutdown.exe" --username IEUser --wait-exit -- -s -f -t 0
+
+    x="0" ; until [ "${x}" != "0" ]; do
+      sleep "${sleep_wait}"
+      log "Waiting for ${vm} to shutdown..."
+      VBoxManage list runningvms | grep "${vm}" >/dev/null && x=$? || x=$?
+    done
+
+    sleep "${sleep_wait}" # Extra sleep for good measure.
 }
 
-download_driver() {
-    if [[ ! -d "${ievms_home}/drivers" ]]
-    then
-        mkdir -p "${ievms_home}/drivers"
-    fi
-
-    log $2
-
-    cd "${ievms_home}/drivers"
-    # Currently the IE6 driver download server doesn't support resume
-    if ! curl ${curl_opts} -L -O "$1"
-    then
-        fail "Failed to download $1 to ${ievms_home}/drivers/ using 'curl', error code ($?)"
-    fi
-    cd ..
+build_ievm_ie7() {
+    if [ "${reuse_xp}" != "yes" ]; then return; fi
+    build_ievm_xp 7 "http://download.microsoft.com/download/3/8/8/38889dc1-848c-4bf2-8335-86c573ad86d9/IE7-WindowsXP-x86-enu.exe"
 }
 
-build_and_attach_drivers() {
-    log "Building drivers ISO for ${vm}"
-    if [[ ! -f "${ievms_home}/drivers.iso" ]]
-    then
-      log "Writing drivers ISO"
-
-      
-      case $kernel in
-          Darwin) hdiutil makehybrid "${ievms_home}/drivers" -o "${ievms_home}/drivers.iso" ;;
-          Linux) mkisofs -o "${ievms_home}/drivers.iso" "${ievms_home}/drivers" ;;
-      esac
-    fi
-
-    VBoxManage storageattach "${vm}" --storagectl "IDE Controller" --port 1 --device 0 --type dvddrive --medium "${ievms_home}/drivers.iso"
+build_ievm_ie8() {
+    if [ "${reuse_xp}" != "yes" ]; then return; fi
+    build_ievm_xp 8 "http://download.microsoft.com/download/C/C/0/CC0BD555-33DD-411E-936B-73AC6F95AE11/IE8-WindowsXP-x86-ENU.exe"
 }
 
 check_system
 create_home
 check_virtualbox
 check_ext_pack
-check_unrar
-check_cabextract
+check_unar
 
-all_versions="6 7 8 9"
+all_versions="6 7 8 9 10"
 for ver in ${IEVMS_VERSIONS:-$all_versions}
 do
     log "Building IE${ver} VM"
