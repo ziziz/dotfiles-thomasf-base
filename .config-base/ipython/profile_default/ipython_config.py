@@ -7,5 +7,6 @@ c.InteractiveShellApp.extensions = [
     'hierarchymagic',
     'django_notebook',
     'tempmagic',
-    'importfilemagic'
+    'importfilemagic',
+    # 'django'
 ]
