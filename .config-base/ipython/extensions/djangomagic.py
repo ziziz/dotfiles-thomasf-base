@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Thomas Frössman'
 
-# FIXME: WIP: not yet working
-
 from IPython.core.magic import Magics, magics_class, line_magic
 
 
