@@ -4,15 +4,25 @@ __author__ = 'Thomas Frössman'
 # FIXME: WIP: not yet working
 
 from IPython.core.magic import Magics, magics_class, line_magic
-from IPython.core.magic_arguments import (argument, magic_arguments,
-                                          parse_argstring)
 
-try:
-    import settings
+
+def import_settings(shell, module_import="settings"):
+    """
+    """
+    global _settings_imported
+    import importlib
+    settings = importlib.import_module(module_import)
     import django.core.management
     django.core.management.setup_environ(settings)
-except ImportError:
-    pass
+    shell.push({'settings': settings})
+    _settings_imported = True
+
+
+def _autoimport_settings(shell):
+    if not _settings_imported:
+        import_settings(shell)
+
+_settings_imported = False
 
 
 def import_objects(options, style):
@@ -122,25 +132,24 @@ class DjangoMagics(Magics):
         super(DjangoMagics, self).__init__(*args, **kwds)
 
     @line_magic
-    def django_load_settings(self, arg):
-        import settings
-        import django.core.management
-        django.core.management.setup_environ(settings)
-        self.shell.push({
-            "settings": settings
-        })
+    def django_loadsettings(self, arg):
+        if len(arg) > 0:
+            import_settings(self.shell, module_import=arg)
+        else:
+            import_settings(self.shell)
 
     @line_magic
-    def django_load_models(self, arg):
+    def django_loadmodels(self, arg):
         """
         """
+        _autoimport_settings(self.shell)
         from django.core.management.color import no_style
         imported_objects = import_objects(options={'dont_load': []},
                                           style=no_style())
         self.shell.push(imported_objects)
 
     @line_magic
-    def django_print_models(self, models):
+    def django_printmodels(self, models):
         """
         """
         dprint(self.shell.ev(models))
