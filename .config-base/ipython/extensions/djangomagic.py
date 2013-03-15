@@ -3,22 +3,29 @@ __author__ = 'Thomas Frössman'
 
 # FIXME: WIP: not yet working
 
-from IPython.core.magic import Magics, magics_class, line_magic, cell_magic
+from IPython.core.magic import Magics, magics_class, line_magic
 from IPython.core.magic_arguments import (argument, magic_arguments,
                                           parse_argstring)
 
+try:
+    import settings
+    import django.core.management
+    django.core.management.setup_environ(settings)
+except ImportError:
+    pass
 
 
-def import_objects(options, style=None):
-    from django.core.management.color import no_style
-    style = no_style
+def import_objects(options, style):
+
     class ObjectImportError(Exception):
         pass
 
     # XXX: (Temporary) workaround for ticket #1796: force early loading of all
     # models from installed apps. (this is fixed by now, but leaving it here
     # for people using 0.96 or older trunk (pre [5919]) versions.
+
     from django.db.models.loading import get_models, get_apps
+    # from django.db.models.loading import get_models, get_apps
     loaded_models = get_models()  # NOQA
 
     from django.conf import settings
@@ -68,6 +75,38 @@ def import_objects(options, style=None):
     return imported_objects
 
 
+def dprint(object, stream=None, indent=1, width=80, depth=None):
+    """
+    A small addition to pprint that converts any Django model objects to dictionaries so they print prettier.
+
+    h3. Example usage
+
+        >>> from toolbox.dprint import dprint
+        >>> from app.models import Dummy
+        >>> dprint(Dummy.objects.all().latest())
+         {'first_name': u'Ben',
+          'last_name': u'Welsh',
+          'city': u'Los Angeles',
+          'slug': u'ben-welsh',
+    """
+    from django.db.models.query import QuerySet
+    from pprint import PrettyPrinter
+    # Catch any singleton Django model object that might get passed in
+    if getattr(object, '__metaclass__', None):
+        if object.__metaclass__.__name__ == 'ModelBase':
+            # Convert it to a dictionary
+            object = object.__dict__
+
+    # Catch any Django QuerySets that might get passed in
+    elif isinstance(object, QuerySet):
+        # Convert it to a list of dictionaries
+        object = [i.__dict__ for i in object]
+
+    # Pass everything through pprint in the typical way
+    printer = PrettyPrinter(stream=stream, indent=indent, width=width, depth=depth)
+    printer.pprint(object)
+
+
 @magics_class
 class DjangoMagics(Magics):
     """
@@ -83,13 +122,28 @@ class DjangoMagics(Magics):
         super(DjangoMagics, self).__init__(*args, **kwds)
 
     @line_magic
-    def load_models(self, arg):
+    def django_load_settings(self, arg):
+        import settings
+        import django.core.management
+        django.core.management.setup_environ(settings)
+        self.shell.push({
+            "settings": settings
+        })
+
+    @line_magic
+    def django_load_models(self, arg):
         """
         """
+        from django.core.management.color import no_style
         imported_objects = import_objects(options={'dont_load': []},
                                           style=no_style())
-        # ipython.push(imported_objects)
-        import_objects()
+        self.shell.push(imported_objects)
+
+    @line_magic
+    def django_print_models(self, models):
+        """
+        """
+        dprint(self.shell.ev(models))
 
 
 def load_ipython_extension(ip):
