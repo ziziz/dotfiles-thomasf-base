@@ -4,6 +4,7 @@ __author__ = 'Thomas Frössman'
 from IPython.core.magic import Magics, magics_class, line_magic
 
 
+
 def import_settings(shell, module_import="settings"):
     """
     """
@@ -82,7 +83,7 @@ def import_objects(options, style):
 
     return imported_objects
 
-
+# TODO Support printing using texttable.py or https://github.com/epmoyer/ipy_table
 def dprint(object, stream=None, indent=1, width=80, depth=None):
     """
     A small addition to pprint that converts any Django model objects to dictionaries so they print prettier.
