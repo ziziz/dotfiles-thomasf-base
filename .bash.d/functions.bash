@@ -142,6 +142,8 @@ alias la='ls -A'
 alias ll="ls -l"
 alias lsnew="find . -mindepth 1 -maxdepth 1 -mtime 0"
 
+alias adblogcat="adb logcat | adb-logcat-pp"
+
 if [ -n "$DISPLAY" ] && [ $(which dmenu) ] ; then
     alias selectline="dmenu -l 50"
 else
