@@ -4,7 +4,6 @@ __author__ = 'Thomas Frössman'
 from IPython.core.magic import Magics, magics_class, line_magic
 
 
-
 def import_settings(shell, module_import="settings"):
     """
     """
@@ -83,6 +82,7 @@ def import_objects(options, style):
 
     return imported_objects
 
+
 # TODO Support printing using texttable.py or https://github.com/epmoyer/ipy_table
 def dprint(object, stream=None, indent=1, width=80, depth=None):
     """
@@ -131,14 +131,14 @@ class DjangoMagics(Magics):
         super(DjangoMagics, self).__init__(*args, **kwds)
 
     @line_magic
-    def django_loadsettings(self, arg):
+    def django_settings(self, arg):
         if len(arg) > 0:
             import_settings(self.shell, module_import=arg)
         else:
             import_settings(self.shell)
 
     @line_magic
-    def django_loadmodels(self, arg):
+    def django_models(self, arg):
         """
         """
         _autoimport_settings(self.shell)
@@ -156,6 +156,7 @@ class DjangoMagics(Magics):
 
 def load_ipython_extension(ip):
     """Load the extension in IPython."""
+    ip.register_magics(DjangoMagics)
     global _loaded
     if not _loaded:
         ip.register_magics(DjangoMagics)
