@@ -1,0 +1,8 @@
+.idea/
+.ropeproject/
+CACHE/
+node_modules/
+.sass-cache/
+build/
+*.min.js
+*.min.css
