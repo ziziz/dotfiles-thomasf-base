@@ -5,7 +5,10 @@ node_modules/
 .sass-cache/
 build/
 *.min.js
+*-min.js
 *.min.css
+*-min.css
+
 
 *.pyc
 *.elc
