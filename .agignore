@@ -25,3 +25,5 @@ build/
 *.dat
 *.bin
 *.out
+
+*.pdf
