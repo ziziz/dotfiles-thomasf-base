@@ -16,7 +16,6 @@ build/
 *.dll
 *.lib
 *.deb
-*.ai
 *.obj
 *.dat
 *.bin
@@ -30,6 +29,17 @@ build/
 *.gif
 *.pdf
 *.psd
+*.ico
+*.pbm
+*.xpm
+*.eps
+*.ai
+
+*.avi
+
+*.wav
+*.mp3
+
 
 *.ttf
 *.otf
