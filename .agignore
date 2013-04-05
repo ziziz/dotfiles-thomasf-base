@@ -12,18 +12,26 @@ build/
 
 *.pyc
 *.elc
+*.exe
+*.dll
+*.lib
+*.deb
+*.ai
+*.obj
+*.dat
+*.bin
+*.out
 *.so
 *.class
 
 *.jpg
+*.jpeg
 *.png
 *.gif
+*.pdf
+*.psd
 
 *.ttf
 *.otf
 
-*.dat
-*.bin
-*.out
 
-*.pdf
