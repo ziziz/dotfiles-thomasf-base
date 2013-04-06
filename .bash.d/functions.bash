@@ -151,7 +151,7 @@ else
 fi
 
 __select_subdir() {
-    local result=$(find . -mindepth 1 -type d -not \( -name ".?*" -prune \) | cut -c 3- | dmenu -l 50 -p dir)
+    local result=$(find . -mindepth 1 -maxdepth 10 -type d -not \( -name ".?*" -prune \) | cut -c 3- | dmenu -l 50 -p dir)
     [[ -z $result ]] && return 1
     echo -n "./${result}"
 
@@ -162,6 +162,17 @@ function findext {
     find . -iname \*.${1}
 }
 
+function findname {
+    [[ -z $1 ]] && return 1
+    find . -iname \*${1}\*
+}
+
+function cdl {
+    local target
+    target=`readlink -f $PWD`
+    [[ -z $target ]] && return 1
+    cd $target
+}
 
 alias t2='tree -d -L 2'
 alias t3='tree -d -L 3'
@@ -291,6 +302,8 @@ cds() {
     dir=$(__select_subdir) || return 1
     cd "${dir}"
 }
+
+
 
 # Git or possibly other repositories or possibly anything.
 
