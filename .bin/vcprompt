@@ -8,6 +8,7 @@ Options:
   -f, --format FORMAT        The format string to use.
   -p, --path PATH            The path to run vcprompt on.
   -s, --systems              Print all known VCSs and exit
+  -t, --timeout              The max execution time in milliseconds
   -v, --version              Show program's version number and exit
   -h, --help                 Show this help message and exit
 
@@ -42,11 +43,14 @@ Format tokens:
 
 __version__ = '1.0.1'
 
-from subprocess import call, Popen, PIPE
+from subprocess import Popen, PIPE
 from xml.dom.minidom import parseString
+import errno
 import optparse
 import os
 import re
+import shlex
+import signal
 import sys
 
 try:
@@ -62,6 +66,7 @@ except ImportError:
 # user editable options
 FORMAT = os.environ.get('VCPROMPT_FORMAT', '%s:%b')
 UNKNOWN = os.environ.get('VCPROMPT_UNKNOWN', '(unknown)')
+TIMEOUT = os.environ.get('VCPROMPT_TIMEOUT', 0)
 SYSTEMS = []
 
 # status indicators
@@ -72,7 +77,8 @@ UNTRACKED = os.environ.get('VCPROMPT_UNTRACKED', '?')
 
 def popen(command, stdout=PIPE, stderr=PIPE):
     try:
-        process = Popen(command.split(), stdout=stdout, stderr=stderr)
+        commands = shlex.split(command)
+        process = Popen(commands, stdout=stdout, stderr=stderr)
         output = process.communicate()[0]
         returncode = process.returncode
     except OSError:
@@ -142,6 +148,7 @@ def vcprompt(options):
     """
     options.path = os.path.abspath(os.path.expanduser(options.path))
     original_path = options.path
+    unknown = options.unknown
     prompt = None
 
     while options.path:
@@ -172,11 +179,11 @@ def vcprompt(options):
                 prompt = options.format
 
                 # Get hash and revision, with fallback to each other
-                hash = conf.get('hash', conf.get('revision', options.unknown))
-                revision = conf.get('revision', conf.get('hash', options.unknown))
+                hash = conf.get('hash', conf.get('revision', unknown))
+                revision = conf.get('revision', conf.get('hash', unknown))
 
                 # Substitute stuff
-                prompt = prompt.replace("%b", conf.get('branch', options.unknown))
+                prompt = prompt.replace("%b", conf.get('branch', unknown))
                 prompt = prompt.replace("%r", revision)
                 prompt = prompt.replace("%h", hash)
                 prompt = prompt.replace("%m", conf.get('modified', ''))
@@ -200,6 +207,7 @@ def main():
     parser.add_option('-f', '--format', dest='format', default=FORMAT)
     parser.add_option('-p', '--path', dest='path', default='.')
     parser.add_option('-s', '--systems', action='callback', callback=systems)
+    parser.add_option('-t', '--timeout', dest='timeout', default=TIMEOUT, type='int')
     parser.add_option('-A', '--staged', dest='staged', default=STAGED)
     parser.add_option('-M', '--modified', dest='modified', default=MODIFIED)
     parser.add_option('-U', '--untracked', dest='untracked', default=UNTRACKED)
@@ -215,8 +223,19 @@ def main():
         parser.add_option(flag, dest=dest, default=default)
 
     options, args = parser.parse_args()
-    output = vcprompt(options)
 
+    # set max execution time
+    # exit with status errno.ETIME if timeout is reached
+    timeout = float(options.timeout) / 1000
+    signal.signal(signal.SIGALRM, lambda x, y: sys.exit(errno.ETIME))
+
+    # Use setitimer on Python 2.6+
+    try:
+        signal.setitimer(signal.ITIMER_REAL, timeout)
+    except AttributeError:
+        signal.alarm(int(round(timeout)))
+
+    output = vcprompt(options)
     return output
 
 
@@ -258,7 +277,7 @@ def bzr(options):
         'revision': revision,
         'modified': modified,
         'untracked': untracked,
-        }
+    }
 
 
 @vcs(["CVS"])
@@ -268,7 +287,7 @@ def cvs(options):
 
     Concurrent Versions System.
     """
-    return { }
+    return {}
 
 
 @vcs(["_darcs/hashed_inventory"])
@@ -316,7 +335,7 @@ def darcs(options):
         'hash': sha,
         'modified': modified,
         'untracked': untracked,
-        }
+    }
 
 
 @vcs([".fslckout", "_FOSSIL_"])
@@ -405,7 +424,7 @@ def fossil(options):
         'hash': sha,
         'modified': modified,
         'untracked': untracked,
-        }
+    }
 
 
 @vcs([".git"])
@@ -418,7 +437,8 @@ def git(options):
     staged = branch = sha = modified = untracked = options.unknown
 
     if os.path.isfile(options.file):
-        options.file = open(options.file, "r").read().rstrip('\n').split(" ", 1)[1]
+        fn = open(options.file, 'r').read().rstrip('\n').split(' ', 1)[1]
+        options.file = fn
 
     def revstring(ref, chars=7):
         if not os.path.exists(ref):
@@ -499,7 +519,7 @@ def git(options):
         'modified': modified,
         'untracked': untracked,
         'staged': staged,
-        }
+    }
 
 
 @vcs([".hg"])
@@ -513,23 +533,23 @@ def hg(options):
 
     # changeset ID or global sha
     if re.search('%(r|h)', options.format):
-        try:
-            fh = open(os.path.join(options.file, 'cache/branchheads'), 'r')
-            line = fh.readline()
-            sha, revision = line.strip().split()
-            sha = sha[:7]
-        except IOError:
-            pass
+        fns = ['cache/branchheads', 'cache/branchheads-served']
+        for fn in fns:
+            try:
+                fh = open(os.path.join(options.file, fn), 'r')
+                line = fh.readline()
+                sha, revision = line.strip().split()
+                sha = sha[:7]
+            except IOError:
+                continue
 
     # branch
     if '%b' in options.format:
-        file = os.path.join(options.file, 'undo.branch')
         try:
-            fh = open(file, 'r')
-            line = fh.readline()
-            branch = line.strip()
+            fn = os.path.join(options.file, 'branch')
+            branch = open(fn, 'r').readline().strip()
         except IOError:
-            pass
+            branch = "default"
 
     # modified
     if '%m' in options.format:
@@ -555,7 +575,7 @@ def hg(options):
         'revision': revision,
         'modified': modified,
         'untracked': untracked,
-        }
+    }
 
 
 @vcs([".svn/entries"])
@@ -568,27 +588,23 @@ def svn(options):
     branch = revision = modified = untracked = staged = options.unknown
 
     # branch
-    output, returncode = popen('svn info %s' % options.path)
+    output, returncode = popen('svn info --xml %s' % options.path)
 
     if returncode == 0:
-        # compile some regexes
-        branch_regex = re.compile('((tags|branches)/([^/]*)|trunk)')
-        revision_regex = re.compile('^Revision: (?P<revision>\d+)')
+        dom = parseString(output)
 
-        for line in output.split('\n'):
-            # branch
-            if '%b' in options.format:
-                if re.match('URL', line):
-                    matches = re.search(branch_regex, line)
-                    if matches:
-                        branch = matches.groups(0)[0]
+        # branch
+        if '%b' in options.format:
+            regex = re.compile('((tags|branches)/([^/]*)|trunk)')
+            tag = dom.getElementsByTagName('url')[0]
+            matches = re.search(regex, tag.childNodes[0].data)
+            if matches:
+                branch = matches.groups(0)[0]
 
-            # revision/sha
-            if re.search('%(r|h)', options.format):
-                if re.match('Revision:', line):
-                    matches = re.search(revision_regex, line)
-                    if 'revision' in matches.groupdict():
-                        revision = matches.group('revision')
+        # revision/sha
+        if re.search('%(r|h)', options.format):
+            tag = dom.getElementsByTagName('commit')[0]
+            revision = tag.getAttribute('revision')
 
     # modified/staged/untracked
     if re.search('%[amu]', options.format):
@@ -614,7 +630,7 @@ def svn(options):
         'modified': modified,
         'untracked': untracked,
         'staged': staged,
-        }
+    }
 
 
 if __name__ == '__main__':
