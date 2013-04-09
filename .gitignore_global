@@ -31,6 +31,7 @@ cabal-dev
 .emacs.desktop.lock
 .emacs.bm
 .ropeproject/
+*_flymake*
 
 #### Idea - Intellij/Pycharm...
 .idea/
