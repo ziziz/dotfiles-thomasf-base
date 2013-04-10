@@ -1,5 +1,4 @@
 # -*- mode: sh -*-
-
 source ~/.config-base/bash/common
 
 # ------------------------------------------------------------------------------
@@ -196,11 +195,11 @@ fi
 # Misc
 #
 
-[ -f "${HOME}/.bash.d/z.bash" ] \
+[ -f "${__BASH}/z" ] \
     && ! shopt -oq posix \
     && log "z" \
     && export _Z_CMD=zz \
-    && . "${HOME}/.bash.d/z.bash"
+    && . "${__BASH}/z"
 
 [ -x /usr/bin/lesspipe ] \
     && eval "$(SHELL=/bin/sh lesspipe)"
