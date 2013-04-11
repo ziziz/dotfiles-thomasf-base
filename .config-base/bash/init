@@ -204,13 +204,13 @@ fi
 [ -x /usr/bin/lesspipe ] \
     && eval "$(SHELL=/bin/sh lesspipe)"
 
-[ -f "${HOME}/.bash.d/functions.bash" ] \
-    && log "functions.bash" \
-    && . "${HOME}/.bash.d/functions.bash"
+[ -f "${__BASH}/functions" ] \
+    && log "functions" \
+    && . "${__BASH}/functions"
 
-[ -f "${HOME}/.bash.d/prompt.bash" ] \
-    && log "prompt.bash" \
-    && . "${HOME}/.bash.d/prompt.bash"
+[ -f "${__BASH}/prompt" ] \
+    && log "prompt" \
+    && . "${__BASH}/prompt"
 
 # clipboard paste
 if [ -n "$DISPLAY" ] && [ -x /usr/bin/xsel ] ; then
