@@ -137,7 +137,7 @@ if [ ${OSTYPE:0:6} = darwin ]; then
 else
     alias ls="ls --group-directories-first --color"
 fi
-alias l="ls -lh"
+alias l='ls -lhG'
 alias la='ls -A'
 alias ll="ls -l"
 alias lsnew="find . -mindepth 1 -maxdepth 1 -mtime 0"
@@ -177,7 +177,7 @@ function cdl {
 alias t2='tree -d -L 2'
 alias t3='tree -d -L 3'
 
-alias py='python'
+alias p='python'
 
 sshmnt() {
     local MOUNT_POINT_PREFIX=
