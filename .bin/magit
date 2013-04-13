@@ -39,11 +39,6 @@ fi
 # Disable any ALTERNATE_EDITOR except the special blank value.
 [ -z "$ALTERNATE_EDITOR" ] || ALTERNATE_EDITOR=false
 
-useexisting=false
-if test "$1" = "-e" || test "$1" = "--use-existing"; then
-    useexisting=true
-    shift;
-fi
 
 runmagit="(progn "
 if [ -n "$1" ]; then
@@ -54,32 +49,15 @@ else
     runmagit="$runmagit (let ((default-directory \"$(pwd)\"))
                           (call-interactively 'magit-status))"
 fi
-if ! $useexisting; then
-    #Don't steal the whole frame if we're using an existing one.
-    runmagit="$runmagit (delete-other-windows)"
-fi
-runmagit="$runmagit nil)"
 
-if $useexisting; then
-    emacsclient --eval "$runmagit"
-    exit
-fi
+runmagit="$runmagit (delete-other-windows)"
+
+runmagit="$runmagit nil)"
 
 xsupport=false
 if emacs -Q --batch --eval "(kill-emacs (if (featurep 'x) 0 1))"; then
     xsupport=true
 fi
 
-if test -n "$DISPLAY" && $xsupport; then
-    emacsclient --eval "(progn (select-frame (make-frame-on-display \"$DISPLAY\"))
-                               $runmagit)" 2>/dev/null
-    runemacs=$?
-else
-    emacsclient --tty --eval "$runmagit" 2/dev/null
-    runemacs=$?
-fi
+emacs --eval "$runmagit"
 
-if [ $runemacs != 0 ]; then
-    #Server not running or emacsclient not usable
-    emacs --eval "$runmagit"
-fi
