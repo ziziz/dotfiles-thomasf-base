@@ -68,7 +68,7 @@ fi
 
 # -------------------------------------------------------------------------------
 # Connect to gpg agent if possible
-#
+# TODO maybe not always do this
 log "gpg-agent"
 agent_file="$HOME/.gnupg/gpg-agent-info-$(hostname)"
 if [ -r "$agent_file" ] && kill -0 $(grep GPG_AGENT_INFO "$agent_file" | cut -d: -f 2) 2>/dev/null; then
