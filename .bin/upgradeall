@@ -23,7 +23,7 @@ read any;" &
     fi
 }
 
-runCmd "sudo apt-get update && sudo apt-get dist-upgrade"
+runCmd "sudo apt-get update ; sudo apt-get dist-upgrade"
 runCmd "xmonadUpdate"
 runCmd "~/.emacs.d/installDeps emacs && ~/.emacs.d/installDeps local"
 runCmd "hsadmin pull"
