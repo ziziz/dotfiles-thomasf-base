@@ -6,6 +6,7 @@
 alias historyreload='history -r'
 
 alias df='df -h'
+alias reset="echo -ne '\033c'"
 
 __exec_in_dir() {
     local ncolors=$(tput colors)
