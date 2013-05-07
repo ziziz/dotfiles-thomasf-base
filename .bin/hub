@@ -7,7 +7,7 @@
 #
 
 module Hub
-  Version = VERSION = '1.10.5'
+  Version = VERSION = '1.10.6'
 end
 
 module Hub
@@ -269,6 +269,14 @@ module Hub
       res.data
     end
 
+    def statuses project, sha
+      res = get "https://%s/repos/%s/%s/statuses/%s" %
+        [api_host(project.host), project.owner, project.name, sha]
+
+      res.error! unless res.success?
+      res.data
+    end
+
     module HttpMethods
       module ResponseMethods
         def status() code.to_i end
@@ -327,6 +335,7 @@ module Hub
           create_connection host_url
         end
 
+        req['User-Agent'] = "Hub #{Hub::VERSION}"
         apply_authentication(req, url)
         yield req if block_given?
 
@@ -1201,7 +1210,7 @@ module Hub
     OWNER_RE = /[a-zA-Z0-9][a-zA-Z0-9-]*/
     NAME_WITH_OWNER_RE = /^(?:#{NAME_RE}|#{OWNER_RE}\/#{NAME_RE})$/
 
-    CUSTOM_COMMANDS = %w[alias create browse compare fork pull-request]
+    CUSTOM_COMMANDS = %w[alias create browse compare fork pull-request ci-status]
 
     def run(args)
       slurp_global_flags(args)
@@ -1229,6 +1238,34 @@ module Hub
       end
     rescue Context::FatalError => err
       abort "fatal: #{err.message}"
+    end
+
+
+    def ci_status(args)
+      args.shift
+      ref = args.words.first || 'HEAD'
+
+      unless head_project = local_repo.current_project
+        abort "Aborted: the origin remote doesn't point to a GitHub repository."
+      end
+
+      unless sha = local_repo.git_command("rev-parse -q #{ref}")
+        abort "Aborted: no revision could be determined from '#{ref}'"
+      end
+
+      statuses = api_client.statuses(head_project, sha)
+      status = statuses.last
+      ref_state = status ? status['state'] : 'no status'
+
+      exit_code = case ref_state
+        when 'success'          then 0
+        when 'failure', 'error' then 1
+        when 'pending'          then 2
+        else 3
+        end
+
+      $stdout.puts ref_state
+      exit exit_code
     end
 
     def pull_request(args)
@@ -1841,6 +1878,7 @@ GitHub Commands:
    create         Create this repository on GitHub and add GitHub as origin
    browse         Open a GitHub page in the default browser
    compare        Open a compare page on GitHub
+   ci-status      Show the CI status of a commit
 
 See 'git help <command>' for more information on a specific command.
 help
@@ -1989,7 +2027,7 @@ help
         end
       end
     end
-    
+
     def display_api_exception(action, response)
       $stderr.puts "Error #{action}: #{response.message.strip} (HTTP #{response.status})"
       if 422 == response.status and response.error_message?
@@ -2068,7 +2106,7 @@ __END__
 .\" generated with Ronn/v0.7.3
 .\" http://github.com/rtomayko/ronn/tree/0.7.3
 .
-.TH "HUB" "1" "March 2013" "DEFUNKT" "Git Manual"
+.TH "HUB" "1" "April 2013" "DEFUNKT" "Git Manual"
 .
 .SH "NAME"
 \fBhub\fR \- git + hub = github
@@ -2129,6 +2167,9 @@ __END__
 .
 .br
 \fBgit pull\-request\fR [\fB\-f\fR] [\fITITLE\fR|\fB\-i\fR \fIISSUE\fR] [\fB\-b\fR \fIBASE\fR] [\fB\-h\fR \fIHEAD\fR]
+.
+.br
+\fBgit ci\-status\fR [\fICOMMIT\fR]
 .
 .SH "DESCRIPTION"
 hub enhances various git commands to ease most common workflows with GitHub\.
@@ -2217,6 +2258,13 @@ If \fITITLE\fR is omitted, a text editor will open in which title and body of th
 .
 .IP
 If instead of normal \fITITLE\fR an issue number is given with \fB\-i\fR, the pull request will be attached to an existing GitHub issue\. Alternatively, instead of title you can paste a full URL to an issue on GitHub\.
+.
+.TP
+\fBgit ci\-status\fR [\fICOMMIT\fR]
+Looks up the SHA for \fICOMMIT\fR in GitHub Status API and displays the latest status\. Exits with one of:
+.
+.br
+success (0), error (1), failure (1), pending (2), no status (3)
 .
 .SH "CONFIGURATION"
 Hub will prompt for GitHub username & password the first time it needs to access the API and exchange it for an OAuth token, which it saves in "~/\.config/hub"\.
@@ -2494,6 +2542,16 @@ $ hub submodule add \-p wycats/bundler vendor/bundler
 
 $ hub submodule add \-b ryppl \-\-name pip ryppl/pip vendor/pip
 > git submodule add \-b ryppl \-\-name pip git://github\.com/ryppl/pip\.git vendor/pip
+.
+.fi
+.
+.SS "git ci\-status"
+.
+.nf
+
+$ hub ci\-status [commit]
+> (prints CI state of commit and exits with appropriate code)
+> One of: success (0), error (1), failure (1), pending (2), no status (3)
 .
 .fi
 .
