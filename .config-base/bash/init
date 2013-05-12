@@ -226,7 +226,7 @@ fi
 # HUB
 #
 
-[ $(which ruby) ] \
+[ $(which /usr/bin/ruby) ] \
     && [ $(which hub) ] && \
     alias git=hub
 
