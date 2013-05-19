@@ -16,6 +16,7 @@ log() {
 
 # Don't let virtualenv change the prompt
 export VIRTUAL_ENV_DISABLE_PROMPT=1
+export VIRTUALENV_DISTRIBUTE=1
 
 # Only do this automatically if not root
 if [ $UID != 0 ] && [ ! "${TERM}" == "dumb" ]; then
