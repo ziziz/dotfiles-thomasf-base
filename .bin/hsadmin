@@ -11,8 +11,8 @@
 
 set -e
 
-
 base="${HOME}/.config/dotfiles/"
+dotfiles=$(readlink -f $(dirname $0)/dotfiles)
 
 # Run dotfiles syncrhonization and/or source INSTALLER script if found
 function install_repositories {
@@ -20,7 +20,7 @@ function install_repositories {
     for d in ${all}; do
         cd ${d}
         [ -e "PREINSTALLER" ] && source ./PREINSTALLER
-        [ -e .dotfilesrc ] && dotfiles -s ${force_opt} -R .
+        [ -e .dotfilesrc ] && $dotfiles -s ${force_opt} -R .
         [ -e "INSTALLER" ] && source ./INSTALLER
         true
     done
