@@ -19,6 +19,7 @@ function install_repositories {
     local all=${base}/*
     for d in ${all}; do
         cd ${d}
+        [ -e "PREINSTALLER" ] && source ./PREINSTALLER
         [ -e .dotfilesrc ] && dotfiles -s ${force_opt} -R .
         [ -e "INSTALLER" ] && source ./INSTALLER
         true
