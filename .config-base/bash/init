@@ -165,18 +165,6 @@ log "bash completion"
     && ! shopt -oq posix \
     && . "/etc/bash_completion"
 
-[[ -r $GOROOT/misc/bash/go ]] \
-    && ! shopt -oq posix \
-    && source $GOROOT/misc/bash/go
-
-[[ -r $rvm_path/scripts/completion ]] \
-    && ! shopt -oq posix \
-    && source $rvm_path/scripts/completion
-
-[[ -r "${HOME}/.opt/nvm/bash_completion" ]] \
-    && ! shopt -oq posix \
-    && source "${HOME}/.opt/nvm/bash_completion"
-
 for file in $(find $HOME/.config-base/bash/completion.d/ -not -type d); do
     source $file # 2>/dev/null
 done
