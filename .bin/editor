@@ -20,7 +20,7 @@ cmd=$(basename ${0})
     && exec /Applications/Emacs.app/Contents/MacOS/Emacs $emacsargs "$@"
 
 if [ $(which emacs) ]; then
-    if [ -v DISPLAY ] && [ ${cmd} != ee ]; then
+    if [ -n "${DISPLAY}" ] && [ ${cmd} != ee ]; then
         emacs $emacsargs "$@" &
         exit
     else
