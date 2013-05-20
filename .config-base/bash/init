@@ -8,6 +8,7 @@ bash_start_time=$(date +%s)
 bash_uptime() {
     echo "$(($(date +%s)-${bash_start_time})) seconds"
 }
+
 log() {
     [ ! -z "$PS1" ] && [ ! "${TERM}" == "dumb" ]\
         && echo -n "■"
@@ -19,7 +20,7 @@ export VIRTUAL_ENV_DISABLE_PROMPT=1
 export VIRTUALENV_DISTRIBUTE=1
 
 # Only do this automatically if not root
-if [ $UID != 0 ] && [ ! "${TERM}" == "dumb" ]; then
+if [ $UID != 0 ]; then
 
     # Pip download cache
     mkdir -p "${HOME}/.cache/pip_download" \
@@ -160,7 +161,6 @@ fi
 #
 
 log "bash completion"
-
 [ -f "/etc/bash_completion" ] \
     && ! shopt -oq posix \
     && . "/etc/bash_completion"
@@ -186,7 +186,6 @@ fi
 #
 
 [ -f "${__BASH}/z" ] \
-    && ! shopt -oq posix \
     && log "z" \
     && export _Z_CMD=zz \
     && . "${__BASH}/z"
