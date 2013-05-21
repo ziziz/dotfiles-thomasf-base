@@ -133,7 +133,7 @@ __darkmode_switcher() {
     fi
 }
 
-if [ $(which termcolor) ] && [ -z $SSH_TTY ] && [ -z $TMUX ] && [ ! -z $DISPLAY ]; then
+if [ $(which termcolors) ] && [ -z $SSH_TTY ] && [ -z $TMUX ] && [ ! -z $DISPLAY ]; then
     case $TERM in
         rxvt*|xterm*)
             [ -e ~/.config/darkmode ] && export DARKMODE=dark || export DARKMODE=light
