@@ -290,7 +290,7 @@ cdd() {
                 cd ~/Downloads
                 ;;
             *)
-                _z "${HOME}" "${name/-/ }"
+                _z "${HOME}" "${name//-/ }"
                 # TODO: maybe modify CDPATH variable
                 ;;
         esac
