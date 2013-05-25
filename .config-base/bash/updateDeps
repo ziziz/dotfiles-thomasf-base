@@ -2,8 +2,15 @@
 
 curl -s -k -L "$url" -o "${target}"
 cp $GOROOT/misc/bash/go completion.d/go
-curl -s -k -L "https://raw.github.com/wayneeseguin/rvm/master/scripts/completion" -o "completion.d/rvm"
 curl -s -k -L "https://raw.github.com/creationix/nvm/master/bash_completion" -o "completion.d/nvm"
+curl -s -k -L "https://raw.github.com/technomancy/leiningen/master/bash_completion.bash" -o "completion.d/lein"
+
+curl -s -k -L "https://raw.github.com/mbrubeck/android-completion/master/android" -o "completion.d/android"
+curl -s -k -L "https://raw.github.com/git/git/master/contrib/completion/git-completion.bash" -o "completion.d/git"
+curl -s -k -L "https://raw.github.com/ipython/ipython/master/examples/core/ipython-completion.bash" -o "completion.d/ipython"
+curl -s -k -L "https://raw.github.com/juven/maven-bash-completion/master/bash_completion.bash" -o "completion.d/maven"
+
+
 npm install -g bower
 bower completion > completion.d/bower
 

@@ -1,4 +1,3 @@
-# -*- mode: bash -*-
 ## Bash completion for the Android SDK tools.
 ##
 ## Copyright (c) 2009 Matt Brubeck
@@ -117,11 +116,12 @@ function _adb()
   cur="${COMP_WORDS[COMP_CWORD]}"
   prev="${COMP_WORDS[COMP_CWORD-1]}"
   opts="-d -e -s -p"
-  cmds="devices push pull sync shell emu logcat forward jdwp install \
+  cmds="devices push pull sync shell emu logcat forward jdwp install sideload \
         uninstall bugreport help version wait-for-device start-server \
         reboot reboot-bootloader \
+        connect disconnect \
         kill-server get-state get-serialno status-window remount root ppp"
-  cmds_not_need_device="devices help version start-server kill-server"
+  cmds_not_need_device="devices help version start-server kill-server connect disconnect"
   subcommand=""
   device_selected=""
 
@@ -184,13 +184,12 @@ function _adb()
       return 0
       ;;
     uninstall)
-      local apks=$(adb shell ls /data/data 2>/dev/null | tr '\n' ' ' | tr -d '\r')
-      if [[ $prev != "-k" && $cur == "-" ]]; then
-          COMPREPLY=( $(compgen -W "-k $apks" -- ${cur}) )
-      else
-          COMPREPLY=( $(compgen -W "$apks" -- ${cur}) )
-      fi
-      return 0
+      case "${cur}" in
+        -*)
+          COMPREPLY=( $(compgen -W "-k" -- ${cur}) )
+          return 0
+          ;;
+      esac
       ;;
     logcat)
       case "${cur}" in
@@ -210,30 +209,6 @@ function _adb()
           ;;
       esac
       ;;
-    pull)
-      if [ ${prev} == "pull" ]; then
-          if [ -z ${cur} ]; then
-              local files=$(adb shell "ls -a -d /*" 2>/dev/null | tr '\n' ' ' | tr -d '\r')
-              COMPREPLY=( $(compgen -W "$files" -o filenames -- ${cur}) )
-          else
-              local files=$(adb shell "ls -a -d ${cur}*" 2>/dev/null | tr '\n' ' ' | tr -d '\r')
-              COMPREPLY=( $(compgen -W "$files" -o filenames -- ${cur}) )
-          fi
-          return 0
-      fi
-      ;;
-    push)
-      if [ "${COMP_WORDS[COMP_CWORD-2]}" == "push" ]; then
-          if [ -z "${cur}" ]; then
-              local files=$(adb shell "ls -a -d /*" 2>/dev/null | tr '\n' ' ' | tr -d '\r')
-              COMPREPLY=( $(compgen -W "$files" -o filenames -- ${cur}) )
-          else
-              local files=$(adb shell "ls -a -d ${cur}*" 2>/dev/null | tr '\n' ' ' | tr -d '\r')
-              COMPREPLY=( $(compgen -W "$files" -o filenames -- ${cur}) )
-          fi
-          return 0
-      fi
-      ;;
   esac
 }
 complete -o default -F _adb adb
@@ -246,7 +221,7 @@ function _fastboot()
   prev="${COMP_WORDS[COMP_CWORD-1]}"
   opts="-w -s -p -c -i -b -n"
   cmds="update flashall flash erase getvar boot devices \
-        reboot reboot-bootloader oem"
+        reboot reboot-bootloader oem continue"
   subcommand=""
   partition_list="boot recovery system userdata"
   device_selected=""
@@ -308,211 +283,26 @@ complete -o default -F _fastboot fastboot
 
 function _emulator()
 {
-  local cur prev opts onion_opts
-  COMPREPLY=()
-  cur="${COMP_WORDS[COMP_CWORD]}"
-  prev="${COMP_WORDS[COMP_CWORD-1]}"
-  opts="-sysdir -system -datadir -kernel -ramdisk -initdata -data -partition-size -cache -no-cache -sdcard -snapstorage -no-snapstorage -snapshot -no-snapshot -no-snapshot-save -no-snapshot-load -snapshot-list -no-snapshot-update-time -wipe-data -avd -skindir -skin -no-skin -memory -netspeed -netdelay -netfast -trace -show-kernel -shell -no-jni -logcat -no-audio -audio -raw-keys -radio -port -ports -onion -scale -dpi-device -http-proxy -timezone -dns-server -cpu-delay -no-boot-anim -no-window -version -report-console -gps -keyset -shell-serial -tcpdump -bootchart -charmap -prop -shared-net-id -nand-limits -memcheck -gpu -fake-camera -webcam -screen -qemu -verbose -debug -help -help-disk-images -help-keys -help-debug-tags -help-char-devices -help-environment -help-keyset-file -help-virtual-device -help-sdk-images -help-build-images -help-all"
-  onion_opts="-onion-alpha -onion-rotation"
-
-  if [ ${COMP_CWORD} -eq 1 ]; then
-      COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
-      return 0
-  fi
-
-  case "${prev}" in
-      -avd)
-          local avds=$(for a in $HOME/.android/avd/*.avd; do \
-              echo $a | sed 's|.*/\(.*\)\.avd$|\1|'; \
-              done)
-         COMPREPLY=( $(compgen -W "${avds}" -- ${cur}) )
-          ;;
-      -onion-rotation)
-          local rotations="0 1 2 3"
-         COMPREPLY=( $(compgen -W "${rotations}" -- ${cur}) )
-          return 0
-          ;;
-      -audio)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -bootchart)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -cache)
-         COMPREPLY=( $(compgen -A file -o filenames -G '*.img' -- ${cur}) )
-          ;;
-      -cache-size)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -camera-back)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -camera-front)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -charmap)
-         COMPREPLY=( $(compgen -A file -o filenames -- ${cur}) )
-          ;;
-      -cpu-delay)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -data)
-         COMPREPLY=( $(compgen -A file -o filenames -- ${cur}) )
-          ;;
-      -datadir)
-         COMPREPLY=( $(compgen -A directory -- ${cur}) )
-          ;;
-      -debug)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -dns-server)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -dpi-device)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -gps)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -gpu)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -http-proxy)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -initdata)
-         COMPREPLY=( $(compgen -A file -o filenames -- ${cur}) )
-          ;;
-      -kernel)
-         COMPREPLY=( $(compgen -A file -o filenames -- ${cur}) )
-          ;;
-      -keyset)
-         COMPREPLY=( $(compgen -A file -o filenames -- ${cur}) )
-          ;;
-      -logcat)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -memcheck)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -memory)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -nand-limits)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -netdelay)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -netspeed)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -onion)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -onion-alpha)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -partition-size)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -port)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -ports)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -prop)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -radio)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -ramdisk)
-         COMPREPLY=( $(compgen -A file -o filenames -G '*.img' -- ${cur}) )
-          ;;
-      -report-console)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -scale)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -screen)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -sdcard)
-         COMPREPLY=( $(compgen -A file -o filenames -G '*.img' -- ${cur}) )
-          ;;
-      -shared-net-id)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -shell-serial)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -skin)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -skindir)
-         COMPREPLY=( $(compgen -A directory -- ${cur}) )
-          ;;
-      -snapshot)
-         COMPREPLY=( $(compgen -A file -- ${cur}) )
-          ;;
-      -snapstorage)
-         COMPREPLY=( $(compgen -A file -- ${cur}) )
-          ;;
-      -sysdir)
-         COMPREPLY=( $(compgen -A directory -- ${cur}) )
-          ;;
-      -system)
-         COMPREPLY=( $(compgen -A file -o filenames -G '*.img' -- ${cur}) )
-          ;;
-      -tcpdump)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -timezone)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      -trace)
-         COMPREPLY=( $(compgen -W "" -- ${cur}) )
-          ;;
-      *)
-          COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
-          ;;
-  esac
-}
-complete -o default -F _emulator emulator
-complete -o default -F _emulator emulator-arm
-complete -o default -F _emulator emulator-x86
-
-# http://source-android.frandroid.com/ndk/docs/NDK-BUILD.html
-function _ndk_build()
-{
-  local cur prev cmds opts
-  COMPREPLY=()
-  cur="${COMP_WORDS[COMP_CWORD]}"
-  prev="${COMP_WORDS[COMP_CWORD-1]}"
-  cmds="clean NDK_APP_APPLICATION_MK= NDK_DEBUG=0 NDK_DEBUG=1 NDK_LOG=1 V=1"
-  opts="-b -B -C -d -e -f -h -i -I -j -k -l -L -n -o -p -q -r -R -s -S -t -v -w -W --always-make --directory= --debug --environment-overrides --file= --help --ignore-errors --include-dir= --jobs --keep-going --load-average --check-symlink-times --just-print --old-file= --print-data-base --question --no-builtin-rules --no-builtin-variables --silent --no-keep-going --touch --version --print-directory even --what-if= --warn-undefined-variables"
-
-  if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]]; then
-      COMPREPLY=( $(compgen -W "${opts} ${cmds}" -- ${cur}) )
-      return 0
-  fi
-}
-complete -o default -F _ndk_build ndk-build
-
-function _ndk_gdb()
-{
   local cur prev opts
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
   prev="${COMP_WORDS[COMP_CWORD-1]}"
-  opts="-d -e -h -? -p -s -x --help --verbose --force --start --launch= --launch-list --delay= --project= --port= --exec= --adb= --awk="
+  opts="-system -datadir -kernel -ramdisk -init-data -data -partition-size -cache \
+    -no-cache -sdcard -wipe-data -avd -skindir -skin -no-skin -memory -netspeed -netdelay \
+    -netfast -trace -show-kernel -shell -no-jni -logcat -no-audio -audio \
+    -audio-in -audio-out -raw-keys -radio -port -ports -onion -onion-alpha \
+    -onion-rotation -scale -dpi-device -http-proxy -timezone -dns-server \
+    -cpu-delay -no-boot-anim -no-window -version -report-console -gps -keyset \
+    -shell-serial -old-system -tcpdump -bootchart -nand-limits -qemu -verbose -debug -help \
+    -help-disk-images -help-keys -help-debug-tags -help-char-devices \
+    -help-environment -help-keyset-file -help-virtual-device -help-sdk-images \
+    -help-build-images -help-all"
 
-  if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]]; then
-      COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+  case "$cur" in
+    -*)
+      COMPREPLY=( $(compgen -W "$opts" -- ${cur}) )
       return 0
-  fi
+      ;;
+  esac
 }
-complete -o default -F _ndk_gdb ndk-gdb
+complete -o default -F _emulator emulator
