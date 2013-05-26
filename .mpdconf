@@ -38,7 +38,8 @@ enabled               "no"
 
 gapless_mp3_playback  "yes"
 max_command_list_size "16384"
-auto_update           "yes"
+# auto_update           "yes"
+# auto_update_depth     "1"
 
 # Local Variables:
 # mode: conf-space
