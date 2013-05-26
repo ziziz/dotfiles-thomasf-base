@@ -247,9 +247,6 @@ case $TERM in
     dumb)
         # do nothing
         ;;
-    eterm|eterm-color)
-        echo ""
-        ;;
     *)
         echo -e -n '\r'
         ;;
