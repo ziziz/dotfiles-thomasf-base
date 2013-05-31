@@ -48,10 +48,9 @@ if [ $UID != 0 ]; then
             && source "${HOME}/.venvburrito/startup.sh" \
             && [ -z "${VIRTUAL_ENV}" ] \
             && workon default
-    elif  [ -f "${HOME}/.pythonbrew/etc/bashrc" ]; then
-        log "pythonbrew" \
-            && source "${HOME}/.pythonbrew/etc/bashrc"
     fi
+
+    [[ -s $HOME/opt/pythonz/etc/bashrc ]] && log "pythonz" && source $HOME/opt/pythonz/etc/bashrc
 
     # Set flexsdk home
     [ -d "${HOME}/.opt/flex_sdk" ] \

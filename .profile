@@ -111,6 +111,7 @@ fi
     PYTHONSTARTUP="${HOME}/.config-base/python/pythonrc.py" && \
     export PYTHONSTARTUP
 
+PYTHONZ_ROOT="${HOME}/opt/pythonz" && export PYTHONZ_ROOT
 
 # coffeelint configuration file
 COFFEELINT_CONFIG="${HOME}/.config-base/coffeelint.json"
