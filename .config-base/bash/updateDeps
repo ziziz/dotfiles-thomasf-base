@@ -1,6 +1,7 @@
 #!/bin/sh
+set -e
+set -x
 
-curl -s -k -L "$url" -o "${target}"
 cp $GOROOT/misc/bash/go completion.d/go
 curl -s -k -L "https://raw.github.com/creationix/nvm/master/bash_completion" -o "completion.d/nvm"
 curl -s -k -L "https://raw.github.com/technomancy/leiningen/master/bash_completion.bash" -o "completion.d/lein"
@@ -15,3 +16,11 @@ npm install -g bower
 bower completion > completion.d/bower
 
 curl -s -k -L "https://raw.github.com/rupa/z/master/z.sh" -o z
+
+(
+    cd ~/repos/github/hub
+    git pull origin master
+    rake standalone
+)
+
+cp ~/repos/github/hub/hub ~/.bin/hub
