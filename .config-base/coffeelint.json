@@ -38,7 +38,7 @@
   },
 
   "cyclomatic_complexity" : {
-    "value" : 11,
+    "value" : 10,
     "level" : "ignore"
   },
 
@@ -56,7 +56,13 @@
   },
 
   "newlines_after_classes": {
-    "value": 2,
-    "level": "ignore"
+    "value": 3,
+    "level": "warn"
+  },
+  "spaced_operators": {
+    "level": "warn"
+  },
+  "arrow_spacing": {
+    "level": "warn"
   }
 }
