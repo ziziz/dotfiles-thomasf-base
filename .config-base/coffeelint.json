@@ -59,10 +59,16 @@
     "value": 3,
     "level": "warn"
   },
-  "spaced_operators": {
+
+  "space_operators": {
     "level": "warn"
   },
+
   "arrow_spacing": {
     "level": "warn"
+  },
+
+  "duplicate_key": {
+    "level": "error"
   }
 }
