@@ -69,7 +69,7 @@ export GIT_PS1_SHOWUPSTREAM="no"
 export GIT_PS1_SHOWUNTRACKEDFILES="yes"
 function __prompt_vcs {
     if [[ $(which vcprompt) ]]; then
-        vcprompt -f "(%n:%b%m%u) "
+        vcprompt -f "(%n:%b%u%a%m) "
     elif [[ $(type -t __git_ps1) == "function" ]]; then
         __git_ps1 "(%s) "
     fi
