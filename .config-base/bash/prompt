@@ -50,14 +50,14 @@ function __prompt_hostname {
 # SSH agent indicator
 function __prompt_ssh_agent {
     if [ -n "${SSH_CLIENT}" ] && [ -n "${SSH_AUTH_SOCK}" ] && [ -e "${SSH_AUTH_SOCK}" ]; then
-        echo -n "@"
+        echo -n ':'
     fi
 }
 
 # SSH session session indicator
 function __prompt_ssh {
     if [ -n "$SSH_CLIENT" ]; then
-        echo -n 'ssh'
+        echo -n '/\'
     fi
 }
 
@@ -197,7 +197,7 @@ ${cyan}\$(__prompt_venv)\
 ${green}\$(__prompt_rvm)\
 ${cyan}\$(__prompt_nvm)\
 \n${red}:\$(__prompt_m) \
-${yellow}\$(__prompt_username)${redH}@${HOST_COLOR}\$(__prompt_hostname)${white}${magentaB}\$(__prompt_ssh_agent)${black}${magentaB}\$(__prompt_ssh)\
+${yellow}\$(__prompt_username)${redH}@${HOST_COLOR}\$(__prompt_hostname)${black}${greenB}\$(__prompt_ssh)${green}\$(__prompt_ssh_agent)\
 ${magenta}\$(__prompt_last) \
 ${resetFormating}"
     PS2='> '
