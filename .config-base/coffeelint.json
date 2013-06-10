@@ -57,7 +57,7 @@
 
   "newlines_after_classes": {
     "value": 3,
-    "level": "warn"
+    "level": "ignore"
   },
 
   "space_operators": {
