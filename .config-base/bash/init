@@ -189,8 +189,13 @@ fi
     && export _Z_CMD=zz \
     && . "${__BASH}/z"
 
-[ -x /usr/bin/lesspipe ] \
-    && eval "$(SHELL=/bin/sh lesspipe)"
+if [ -x /usr/bin/lesspipe ]; then
+    eval "$(SHELL=/bin/sh lesspipe)"
+    if [ -f /usr/share/source-highlight/src-hilite-lesspipe.sh ]; then
+        export LESSOPEN="| /usr/share/source-highlight/src-hilite-lesspipe.sh %s"
+        export LESS=' -R '
+    fi
+fi
 
 [ -f "${__BASH}/functions" ] \
     && log "functions" \
