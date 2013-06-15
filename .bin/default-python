@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ -x ~/.virtualenvs/default/bin/python ]; then
+    exec ~/.virtualenvs/default/bin/python "$@"
+else
+    exec python "$@"
+fi
+
