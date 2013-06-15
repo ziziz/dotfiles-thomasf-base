@@ -1,5 +1,21 @@
 #!/usr/bin/env ruby
 # encoding: utf-8
+module GHI
+  module Commands
+    module Version
+      MAJOR   = 0
+      MINOR   = 9
+      PATCH   = 0
+      PRE     = 20130504
+
+      VERSION = [MAJOR, MINOR, PATCH, PRE].compact.join '.'
+
+      def self.execute args
+        puts "ghi version #{VERSION}"
+      end
+    end
+  end
+end
 require 'optparse'
 
 module GHI
@@ -55,7 +71,7 @@ EOF
       end
 
       if command_name.nil?
-        command_name = "list"
+        command_name = 'list'
       end
 
       if command_name == 'help'
@@ -1681,11 +1697,15 @@ module GHI
         return yield unless color && colorize?
         previous_escape = Thread.current[:escape] || "\e[0m"
         escape = Thread.current[:escape] = "\e[%s%sm" % [
-          layer, ANSI[color] || "8;5;#{to_256(*to_rgb(color))}"
+          layer, ANSI[color] || escape_256(color)
         ]
         [escape, yield, previous_escape].join
       ensure
         Thread.current[:escape] = previous_escape
+      end
+
+      def escape_256 color
+        "8;5;#{to_256(*to_rgb(color))}" if `tput colors` =~ /256/
       end
 
       def to_256 r, g, b
@@ -1858,6 +1878,10 @@ module GHI
     # Specific formatters:
     #++
 
+    def format_username username
+      username == Authorization.username ? 'you' : username
+    end
+
     def format_issues_header
       state = assigns[:state] || 'open'
       header = "# #{repo || 'Global,'} #{state} issues"
@@ -1875,13 +1899,11 @@ module GHI
             when '*'    then ', assigned'
             when 'none' then ', unassigned'
           else
-            assignee = 'you' if Authorization.username == assignee
-            ", assigned to #{assignee}"
+            ", assigned to #{format_username assignee}"
           end
         end
         if mentioned = assigns[:mentioned]
-          mentioned = 'you' if Authorization.username == mentioned
-          header << ", mentioning #{mentioned}"
+          header << ", mentioning #{format_username mentioned}"
         end
       else
         header << case assigns[:filter]
@@ -1892,8 +1914,14 @@ module GHI
           ' assigned to you'
         end
       end
+      if creator = assigns[:creator]
+        header << " #{format_username creator} created"
+      end
       if labels = assigns[:labels]
-        header << ", labeled #{assigns[:labels].gsub ',', ', '}"
+        header << ", labeled #{labels.gsub ',', ', '}"
+      end
+      if excluded_labels = assigns[:exclude_labels]
+        header << ", excluding those labeled #{excluded_labels.gsub ',', ', '}"
       end
       if sort = assigns[:sort]
         header << ", by #{sort} #{reverse ? 'ascending' : 'descending'}"
@@ -1924,7 +1952,7 @@ module GHI
         [
           " ",
           (i['repo'].to_s.rjust(rmax) if i['repo']),
-          "#{bright { n.to_s.rjust nmax }}:",
+          format_number(n.to_s.rjust(nmax)),
           truncate(title, l),
           format_labels(labels),
           (fg('aaaaaa') { c } unless c == 0),
@@ -1932,6 +1960,10 @@ module GHI
           (fg(:yellow) { '@' } if a)
         ].compact.join ' '
       }
+    end
+
+    def format_number n
+      colorize? ? "#{bright { n }}:" : "#{n} "
     end
 
     # TODO: Show milestone, number of comments, pull request attached.
@@ -2319,6 +2351,11 @@ module GHI
     end
 
     CONTENT_TYPE = 'application/vnd.github+json'
+    USER_AGENT = 'ghi/%s (%s; +%s)' % [
+      GHI::Commands::Version::VERSION,
+      RUBY_DESCRIPTION,
+      'https://github.com/stephencelis/ghi'
+    ]
     METHODS = {
       :head   => Net::HTTP::Head,
       :get    => Net::HTTP::Get,
@@ -2327,7 +2364,8 @@ module GHI
       :patch  => Net::HTTP::Patch,
       :delete => Net::HTTP::Delete
     }
-    HOST = 'api.github.com'
+    DEFAULT_HOST = 'api.github.com'
+    HOST = GHI.config('github.host') || DEFAULT_HOST
     PORT = 443
 
     attr_reader :username, :password
@@ -2362,12 +2400,15 @@ module GHI
     private
 
     def request method, path, options
+      path = "/api/v3#{path}" if HOST != DEFAULT_HOST
+
       if params = options[:params] and !params.empty?
         q = params.map { |k, v| "#{CGI.escape k.to_s}=#{CGI.escape v.to_s}" }
         path += "?#{q.join '&'}"
       end
 
-      req = METHODS[method].new path, 'Accept' => CONTENT_TYPE
+      headers = { 'Accept' => CONTENT_TYPE, 'User-Agent' => USER_AGENT }
+      req = METHODS[method].new path, headers
       if GHI::Authorization.token
         req['Authorization'] = "token #{GHI::Authorization.token}"
       end
@@ -2459,7 +2500,8 @@ require 'uri'
 
 module GHI
   class Web
-    BASE_URI = 'https://github.com/'
+    HOST = GHI.config('github.host') || 'github.com'
+    BASE_URI = "https://#{HOST}/"
 
     attr_reader :base
     def initialize base
@@ -2467,7 +2509,9 @@ module GHI
     end
 
     def open path = '', params = {}
-      system "open '#{uri_for path, params}'"
+      launcher = 'open'
+      launcher = 'xdg-open' if /linux/ =~ RUBY_PLATFORM
+      system "#{launcher} '#{uri_for path, params}'"
     end
 
     def curl path = '', params = {}
@@ -2563,7 +2607,8 @@ module GHI
       def remotes
         return @remotes if defined? @remotes
         @remotes = `git config --get-regexp remote\..+\.url`.split "\n"
-        @remotes.reject! { |r| !r.include? 'github.com'}
+        github_host = GHI.config('github.host') || 'github.com'
+        @remotes.reject! { |r| !r.include? github_host}
         @remotes.map! { |r|
           remote, user, repo = r.scan(
             %r{remote\.([^\.]+)\.url .*?([^:/]+)/([^/\s]+?)(?:\.git)?$}
@@ -2964,7 +3009,7 @@ EOF
               e.unlink "There's no issue." if message.nil? || message.empty?
               assigns[:title], assigns[:body] = message.split(/\n+/, 2)
             end
-            if i && assigns.keys.sort == [:body, :title]
+            if i && assigns.keys.map { |k| k.to_s }.sort == %w[body title]
               titles_match = assigns[:title].strip == i['title'].strip
               if assigns[:body]
                 bodies_match = assigns[:body].to_s.strip == i['body'].to_s.strip
@@ -3278,6 +3323,11 @@ module GHI
             (assigns[:labels] ||= []).concat labels
           end
           opts.on(
+            '-N', '--not-label <labelname>...', Array, 'exclude with label(s)'
+          ) do |labels|
+            (assigns[:exclude_labels] ||= []).concat labels
+          end
+          opts.on(
             '-S', '--sort <by>', %w(created updated comments),
             {'c'=>'created','u'=>'updated','m'=>'comments'},
             "'created', 'updated', or 'comments'"
@@ -3328,6 +3378,12 @@ module GHI
             assigns[:assignee] = Authorization.username
           end
           opts.on(
+            '--creator [<user>]', 'created by you or specified user'
+          ) do |creator|
+            creator = creator.sub /^@/, '' if creator
+            assigns[:creator] = creator || Authorization.username
+          end
+          opts.on(
             '-U', '--mentioned [<user>]', 'mentioning you or specified user'
           ) do |mentioned|
             assigns[:mentioned] = mentioned || Authorization.username
@@ -3343,11 +3399,15 @@ module GHI
 
         begin
           options.parse! args
+          @repo ||= ARGV[0] if ARGV.one?
         rescue OptionParser::InvalidOption => e
           fallback.parse! e.args
           retry
         end
         assigns[:labels] = assigns[:labels].join ',' if assigns[:labels]
+        if assigns[:exclude_labels]
+          assigns[:exclude_labels] = assigns[:exclude_labels].join ','
+        end
         if reverse
           assigns[:sort] ||= 'created'
           assigns[:direction] = 'asc'
@@ -3368,6 +3428,13 @@ module GHI
             issues = res.body
             if exclude_pull_requests
               issues = issues.reject {|i| i["pull_request"].any? {|k,v| !v.nil? } }
+            end
+            if assigns[:exclude_labels]
+              issues = issues.reject  do |i|
+                i["labels"].any? do |label|
+                  assigns[:exclude_labels].include? label["name"]
+                end
+              end
             end
             if verbose
               puts issues.map { |i| format_issue i }
@@ -3732,8 +3799,12 @@ module GHI
         else
           if patch_path
             i = throb { Web.new(repo).curl patch_path }
+            unless i.start_with? 'From'
+              warn 'Patch not found'
+              abort
+            end
             page do
-              puts i
+              no_color { puts i }
               break
             end
           else
@@ -3749,22 +3820,6 @@ module GHI
             end
           end
         end
-      end
-    end
-  end
-end
-module GHI
-  module Commands
-    module Version
-      MAJOR   = 0
-      MINOR   = 9
-      PATCH   = 0
-      PRE     = 20130318
-
-      VERSION = [MAJOR, MINOR, PATCH, PRE].compact.join '.'
-
-      def self.execute args
-        puts "ghi version #{VERSION}"
       end
     end
   end
