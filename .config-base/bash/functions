@@ -158,6 +158,10 @@ __select_subdir() {
 
 }
 
+function findupcased {
+    find . -name '*[A-Z]*'
+}
+
 function findext {
     [[ -z $1 ]] && return 1
     find . -iname \*.${1}
