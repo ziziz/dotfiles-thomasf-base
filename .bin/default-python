@@ -1,8 +1,11 @@
 #!/bin/sh
 
-if [ -x ~/.virtualenvs/default/bin/python ]; then
-    exec ~/.virtualenvs/default/bin/python "$@"
+set -e
+cmd=$(basename ${0})
+[ "$cmd" = "default-python" ] && cmd="python"
+if [ -x ~/.virtualenvs/default/bin/$cmd ]; then
+    echo exec ~/.virtualenvs/default/bin/$cmd "$@"
 else
-    exec python "$@"
+    echo exec $cmd "$@"
 fi
 
