@@ -4,7 +4,7 @@
 #
 
 alias historyreload='history -r'
-alias h='history | tac | dmenu -l 30 -i -p bash'
+alias h='history | tac | dmenu -l 30 -i -p bash2clip | xsel --clipboard'
 
 alias df='df -h'
 alias reset="echo -ne '\033c'"
