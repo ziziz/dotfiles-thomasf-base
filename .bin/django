@@ -77,7 +77,7 @@ def run(command=None, *arguments):
 
 def main():
     """Entry-point function."""
-    exit(run(*sys.argv[1:]))
+    sys.exit(run(*sys.argv[1:]))
 
 if __name__ == '__main__':
     main()
