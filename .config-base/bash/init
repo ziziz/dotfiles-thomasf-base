@@ -140,7 +140,7 @@ if [ $(which termcolors) ] && [ -z $SSH_TTY ] && [ -z $TMUX ]; then
         rxvt*|xterm*)
             [ -e ~/.config/darkmode ] && export DARKMODE=dark || export DARKMODE=light
             termcolors
-            PROMPT_COMMAND="${PROMPT_COMMAND}; __darkmode_switcher"
+            PROMPT_COMMAND="${PROMPT_COMMAND}; __darkmode_switcher;"
         ;;
     esac
 fi
