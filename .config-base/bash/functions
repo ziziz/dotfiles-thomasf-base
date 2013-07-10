@@ -131,7 +131,7 @@ rmpyc() {
 
 bak() {
     if [[ -e $1 ]]; then
-        cp "$1" "$1.$(date +"%m-%d-%Y_%H%M%S")"
+        cp "$1" "$1.backup-$(date +"%m-%d-%Y_%H%M%S")"
     else
         return 1
     fi
