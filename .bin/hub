@@ -1819,7 +1819,7 @@ module Hub
         config_file = ENV['HUB_CONFIG'] || '~/.config/hub'
         file_store = GitHubAPI::FileStore.new File.expand_path(config_file)
         file_config = GitHubAPI::Configuration.new file_store
-        GitHubAPI.new file_config, :app_url => 'http://defunkt.io/hub/'
+        GitHubAPI.new file_config, :app_url => 'http://github.github.com/hub/'
       end
     end
 
@@ -2155,7 +2155,7 @@ __END__
 .\" generated with Ronn/v0.7.3
 .\" http://github.com/rtomayko/ronn/tree/0.7.3
 .
-.TH "HUB" "1" "June 2013" "DEFUNKT" "Git Manual"
+.TH "HUB" "1" "July 2013" "GITHUB" "Git Manual"
 .
 .SH "NAME"
 \fBhub\fR \- git + hub = github
@@ -2616,10 +2616,10 @@ $ git help hub
 .fi
 .
 .SH "BUGS"
-\fIhttps://github\.com/defunkt/hub/issues\fR
+\fIhttps://github\.com/github/hub/issues\fR
 .
 .SH "AUTHORS"
-\fIhttps://github\.com/defunkt/hub/contributors\fR
+\fIhttps://github\.com/github/hub/contributors\fR
 .
 .SH "SEE ALSO"
-git(1), git\-clone(1), git\-remote(1), git\-init(1), \fIhttp://github\.com\fR, \fIhttps://github\.com/defunkt/hub\fR
+git(1), git\-clone(1), git\-remote(1), git\-init(1), \fIhttp://github\.com\fR, \fIhttps://github\.com/github/hub\fR
