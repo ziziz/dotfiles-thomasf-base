@@ -17,9 +17,9 @@ bower completion > completion.d/bower
 curl -s -k -L "https://raw.github.com/rupa/z/master/z.sh" -o z
 
 (
-    cd ~/repos/github/hub
-    git pull origin master
-    rake standalone
+  cd ~/repos/github/hub
+  git pull origin master
+  rake standalone
 )
 
 cp ~/repos/github/hub/hub ~/.bin/hub
