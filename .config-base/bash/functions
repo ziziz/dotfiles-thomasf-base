@@ -116,6 +116,28 @@ rmclean() {
     fi
 }
 
+rmpyc() {
+    echo -n "recursivley delete all .pyc files?"
+    read -n 1 yorn;
+    if test "$yorn" = "y"; then
+        echo
+        find -name \*.pyc -execdir rm '{}' \;
+    else
+        echo
+        return 1
+    fi
+
+}
+
+bak() {
+    if [[ -e $1 ]]; then
+        cp "$1" "$1.$(date +"%m-%d-%Y_%H%M%S")"
+    else
+        return 1
+    fi
+}
+
+
 awscredentials() {
     local account="aws-$1"
     local access_key=$(acc ${account} access-key-id)
