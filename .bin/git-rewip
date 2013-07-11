@@ -13,7 +13,7 @@ OPTIONS_SPEC="\
 git rewip"
 
 version_print() {
-    echo "git rewip version ${VERSION}"
+  echo "git rewip version ${VERSION}"
 }
 
 git reset --soft HEAD^

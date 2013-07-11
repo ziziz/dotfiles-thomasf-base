@@ -15,40 +15,40 @@
 
 
 for arg in $*; do
-    case $arg in
-        silence)
-            mpc pause
-            ;;
-        deauth)
-            # Unload any loaded agent keys
-            [ -n "$GPG_AGENT_INFO" ] \
-                && kill -HUP $(echo $GPG_AGENT_INFO | awk -F: '{print $2}')
-            # Drop sudo authentications
-            [ -x "$(which sudo)" ] \
-                && sudo -K
-            ;;
-        lock)
-            # If running an xsession
-            if [ -n "${DISPLAY}" ]; then
-                [ `which gnome-screensaver-command` ] \
-                    && gnome-screensaver-command --lock
-                [ `which xset` ] \
-                    && sleep 5 \
-                    && xset dpms force off
-            fi
-            ;;
-        hibernate)
-            gksudo /usr/sbin/pm-hibernate
-            ;;
-        suspend)
-            gksudo /usr/sbin/pm-suspend
-            ;;
-        reboot)
-            gksudo reboot
-            ;;
-        shutdown)
-            gksudo "shutdown now -h"
-        ;;
+  case $arg in
+    silence)
+      mpc pause
+      ;;
+    deauth)
+      # Unload any loaded agent keys
+      [ -n "$GPG_AGENT_INFO" ] \
+        && kill -HUP $(echo $GPG_AGENT_INFO | awk -F: '{print $2}')
+      # Drop sudo authentications
+      [ -x "$(which sudo)" ] \
+        && sudo -K
+      ;;
+    lock)
+      # If running an xsession
+      if [ -n "${DISPLAY}" ]; then
+        [ `which gnome-screensaver-command` ] \
+          && gnome-screensaver-command --lock
+        [ `which xset` ] \
+          && sleep 5 \
+          && xset dpms force off
+      fi
+      ;;
+    hibernate)
+      gksudo /usr/sbin/pm-hibernate
+      ;;
+    suspend)
+      gksudo /usr/sbin/pm-suspend
+      ;;
+    reboot)
+      gksudo reboot
+      ;;
+    shutdown)
+      gksudo "shutdown now -h"
+      ;;
 
-    esac
+  esac
 done

@@ -13,7 +13,7 @@ OPTIONS_SPEC="\
 git magit"
 
 version_print() {
-    echo "git magit version ${VERSION}"
+  echo "git magit version ${VERSION}"
 }
 
 magit

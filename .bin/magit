@@ -17,7 +17,7 @@
 # ====================================================================
 
 if test "$1" = "-h" || test "$1" = "--help"; then
-    cat <<EOF
+  cat <<EOF
 Usage: magit [OPTION] [REPOSITORY] [REPOSITORY2]...
 
 Open a Magit session in Emacs visiting the specified repository.  If no
@@ -33,7 +33,7 @@ If Emacs is running in server mode or if the ALTERNATE_EDITOR environment
 variable is the empty string, emacsclient will be used.  Otherwise a new Emacs
 session will be started.
 EOF
-    exit 0;
+  exit 0;
 fi
 
 # Disable any ALTERNATE_EDITOR except the special blank value.
@@ -42,11 +42,11 @@ fi
 
 runmagit="(progn "
 if [ -n "$1" ]; then
-    for dir in $*; do
-        runmagit="$runmagit (magit-status \"$(readlink -m ${dir})\")"
-    done
+  for dir in $*; do
+    runmagit="$runmagit (magit-status \"$(readlink -m ${dir})\")"
+  done
 else
-    runmagit="$runmagit (let ((default-directory \"$(pwd)\"))
+  runmagit="$runmagit (let ((default-directory \"$(pwd)\"))
                           (call-interactively 'magit-status))"
 fi
 
@@ -56,7 +56,7 @@ runmagit="$runmagit nil)"
 
 xsupport=false
 if emacs -Q --batch --eval "(kill-emacs (if (featurep 'x) 0 1))"; then
-    xsupport=true
+  xsupport=true
 fi
 
 emacs --eval "$runmagit"
