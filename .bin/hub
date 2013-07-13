@@ -107,7 +107,7 @@ module Hub
       @settings = Hash.new {|h,k| h[k] = {} }
       Array(files || CONFIG_FILES).each do |path|
         file = File.expand_path path
-        parse_file file if File.exist? file
+        parse_file file if File.readable?(file)
       end
     end
 
@@ -1029,6 +1029,11 @@ module Hub
         RbConfig::CONFIG['host_os'] =~ /msdos|mswin|djgpp|mingw|windows/
       end
 
+      def unix?
+        require 'rbconfig'
+        RbConfig::CONFIG['host_os'] =~ /(aix|darwin|linux|(net|free|open)bsd|cygwin|solaris|irix|hpux)/i
+      end
+
       def which(cmd)
         exts = ENV['PATHEXT'] ? ENV['PATHEXT'].split(';') : ['']
         ENV['PATH'].split(File::PATH_SEPARATOR).each do |path|
@@ -1046,6 +1051,16 @@ module Hub
 
       def tmp_dir
         ENV['TMPDIR'] || ENV['TEMP'] || '/tmp'
+      end
+
+      def terminal_width
+        if unix?
+          width = %x{stty size 2>#{NULL}}.split[1].to_i
+          width = %x{tput cols 2>#{NULL}}.to_i if width.zero?
+        else
+          width = 0
+        end
+        width < 10 ? 78 : width
       end
     end
 
@@ -1771,13 +1786,18 @@ module Hub
           when 'bash' then '~/.bash_profile'
           when 'zsh'  then '~/.zshrc'
           when 'ksh'  then '~/.profile'
+          when 'fish' then '~/.config/fish/config.fish'
           else
             'your profile'
           end
 
         puts "# Wrap git automatically by adding the following to #{profile}:"
         puts
-        puts 'eval "$(hub alias -s)"'
+        if shell == 'fish'
+          puts 'eval (hub alias -s)'
+        else
+          puts 'eval "$(hub alias -s)"'
+        end
       end
 
       exit
@@ -1819,7 +1839,7 @@ module Hub
         config_file = ENV['HUB_CONFIG'] || '~/.config/hub'
         file_store = GitHubAPI::FileStore.new File.expand_path(config_file)
         file_config = GitHubAPI::Configuration.new file_store
-        GitHubAPI.new file_config, :app_url => 'http://github.github.com/hub/'
+        GitHubAPI.new file_config, :app_url => 'http://hub.github.com/'
       end
     end
 
@@ -1958,7 +1978,8 @@ help
     end
 
     def groff_command
-      "groff -Wall -mtty-char -mandoc -Tascii"
+      cols = terminal_width
+      "groff -Wall -mtty-char -mandoc -Tascii -rLL=#{cols}n -rLT=#{cols}n"
     end
 
     def hub_raw_manpage
