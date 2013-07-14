@@ -328,6 +328,7 @@ def require_clean_work_tree(action):
     The code is a Python translation of the git-sh-setup(1) function
     of the same name."""
 
+
     process = subprocess.Popen(
         ['git', 'rev-parse', '--verify', 'HEAD'],
         stdout=subprocess.PIPE, stderr=subprocess.PIPE,
@@ -570,7 +571,9 @@ def automerge(commit1, commit2):
     try:
         call_silently(['git', '-c', 'rerere.enabled=false', 'merge', commit2])
     except CalledProcessError:
-        call_silently(['git', 'merge', '--abort'])
+        # We don't use "git merge --abort" here because it was only
+        # added in git version 1.7.4.
+        call_silently(['git', 'reset', '--merge'])
         raise AutomaticMergeFailed(commit1, commit2)
     else:
         return get_commit_sha1('HEAD')
@@ -1931,7 +1934,9 @@ class MergeState(Block):
             head_refname = None
         if head_refname == scratch_refname:
             try:
-                check_call(['git', 'merge', '--abort'])
+                # We don't use "git merge --abort" here because it was
+                # only added in git version 1.7.4.
+                check_call(['git', 'reset', '--merge'])
             except CalledProcessError:
                 pass
             # Detach head so that we can delete scratch_refname:
@@ -2274,17 +2279,17 @@ def request_user_merge(merge_state, i1, i2):
     except CalledProcessError:
         # We expect an error (otherwise we would have automerged!)
         pass
-    sys.stdout.write(
+    sys.stderr.write(
         '\n'
         'Original first commit:\n'
         )
     check_call(['git', 'log', '--no-walk', merge_state[i1,0].sha1])
-    sys.stdout.write(
+    sys.stderr.write(
         '\n'
         'Original second commit:\n'
         )
     check_call(['git', 'log', '--no-walk', merge_state[0,i2].sha1])
-    sys.stdout.write(
+    sys.stderr.write(
         '\n'
         'There was a conflict merging commit %d-%d, shown above.\n'
         'Please resolve the conflict, commit the result, then type\n'
@@ -2314,8 +2319,6 @@ def incorporate_user_merge(merge_state):
     # This might throw ManualMergeUnusableError:
     (i1, i2) = merge_state.incorporate_manual_merge(commit)
 
-    merge_state.save()
-
     try:
         headref = check_output(['git', 'symbolic-ref', '-q', 'HEAD']).strip()
     except CalledProcessError:
@@ -2335,8 +2338,18 @@ def incorporate_user_merge(merge_state):
             '-d', refname,
             ])
 
-    # This might throw NotABlockingCommitError:
-    return merge_frontier.get_affected_blocker_block(i1, i2)
+    try:
+        # This might throw NotABlockingCommitError:
+        unblocked_block = merge_frontier.get_affected_blocker_block(i1, i2)
+        unblocked_block[1,1].record_blocked(False)
+        sys.stderr.write(
+            'Merge has been recorded for merge %d-%d.\n'
+            % unblocked_block.get_original_indexes(1, 1)
+            )
+    except NotABlockingCommitError:
+        raise
+    finally:
+        merge_state.save()
 
 
 def choose_merge_name(name, default_to_unique=True):
@@ -2667,12 +2680,7 @@ def main(args):
         require_clean_work_tree('proceed')
         merge_state = read_merge_state(options.name)
         try:
-            unblocked_block = incorporate_user_merge(merge_state)
-            unblocked_block[1,1].record_blocked(False)
-            sys.stderr.write(
-                'Merge has been recorded for merge %d-%d.\n'
-                % unblocked_block.get_original_indexes(1, 1)
-                )
+            incorporate_user_merge(merge_state)
         except NoManualMergeError:
             pass
         except NotABlockingCommitError:
@@ -2690,12 +2698,7 @@ def main(args):
         require_clean_work_tree('proceed')
         merge_state = read_merge_state(options.name)
         try:
-            unblocked_block = incorporate_user_merge(merge_state)
-            unblocked_block[1,1].record_blocked(False)
-            sys.stderr.write(
-                'Merge has been recorded for merge %d-%d.\n'
-                % unblocked_block.get_original_indexes(1, 1)
-                )
+            incorporate_user_merge(merge_state)
         except NoManualMergeError, e:
             raise Failure(str(e))
         except NotABlockingCommitError:
