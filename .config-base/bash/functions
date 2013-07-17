@@ -257,6 +257,11 @@ sshmnt() {
 
 alias agent='eval $(ssh-agent); ssh-add;'
 
+agentunset() {
+  unset SSH_AUTH_SOCK
+  unset SSH_AGENT_PID
+}
+
 alias apt-update-upgrade='sudo apt-get update && sudo apt-get dist-upgrade'
 
 # ffmpeg - for - phone
