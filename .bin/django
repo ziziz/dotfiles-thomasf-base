@@ -9,17 +9,16 @@ ALIASES = {
     'c': 'collectstatic',
     'r': 'runserver',
     'sd': 'syncdb',
-    'sp': 'startproject',
-    'sa': 'startapp',
     't': 'test',
 
     # Shell
     'd': 'dbshell',
     's': 'shell',
+    'sp': 'shell_plus --ipython',
 
     # Auth
-    'csu': 'createsuperuser',
-    'cpw': 'changepassword',
+    # 'csu': 'createsuperuser',
+    # 'cpw': 'changepassword',
 
     # South
     'm': 'migrate',
@@ -34,7 +33,6 @@ ALIASES = {
     'sk': 'generate_secret_key',
     'rdb': 'reset_db',
     'rp': 'runserver_plus',
-    'shp': 'shell_plus',
     'url': 'show_urls',
     'gm': 'graph_models',
     'rs': 'runscript'
