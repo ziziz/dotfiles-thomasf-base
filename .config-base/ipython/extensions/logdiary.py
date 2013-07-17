@@ -33,7 +33,7 @@ class LogDiaryMagics(LoggingMagics):
     @line_magic
     def logdiary(self, parameter_s=''):
         logdir = os.path.expanduser(time.strftime("~/notes/history/ipython/%Y/%m/"))
-        logfile = os.path.join(logdir, time.strftime("%d.log"))
+        logfile = os.path.join(logdir, time.strftime("%d.py"))
         if not os.path.exists(logdir):
             os.makedirs(logdir)
 
