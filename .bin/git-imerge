@@ -328,7 +328,6 @@ def require_clean_work_tree(action):
     The code is a Python translation of the git-sh-setup(1) function
     of the same name."""
 
-
     process = subprocess.Popen(
         ['git', 'rev-parse', '--verify', 'HEAD'],
         stdout=subprocess.PIPE, stderr=subprocess.PIPE,

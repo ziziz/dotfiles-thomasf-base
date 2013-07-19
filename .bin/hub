@@ -530,6 +530,8 @@ module Hub
       def prompt what
         print "#{what}: "
         $stdin.gets.chomp
+      rescue Interrupt
+        abort
       end
 
       def prompt_password host, user
@@ -541,6 +543,8 @@ module Hub
         else
           $stdin.gets.chomp
         end
+      rescue Interrupt
+        abort
       end
 
       NULL = defined?(File::NULL) ? File::NULL :
@@ -737,7 +741,10 @@ module Hub
       end
 
       def master_branch
-        Branch.new self, 'refs/heads/master'
+        if remote = origin_remote
+          default_branch = git_command("rev-parse --symbolic-full-name #{remote}")
+        end
+        Branch.new(self, default_branch || 'refs/heads/master')
       end
 
       def remotes
@@ -878,7 +885,10 @@ module Hub
       end
 
       def master?
-        short_name == 'master'
+        master_name = if local_repo then local_repo.master_branch.short_name
+        else 'master'
+        end
+        short_name == master_name
       end
 
       def upstream
