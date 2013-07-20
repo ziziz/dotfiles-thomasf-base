@@ -67,7 +67,15 @@ case ${1} in
         remote=$(git config --local --get remote.origin.url) && \
           echo "${magenta}PUSH${reset} $remote" && \
           git push -q origin master && \
-          echo "${green}DONE${reset} $remote" && \
+          echo "${green}DONE${reset} $remote"
+      ) &
+    done
+    ;;
+  # Publish all repositories
+  publish)
+    for d in ${base}/*; do
+      (
+        cd ${d}
           remote=$(git config --local --get remote.publish.url) && \
           echo "${magenta}PUSH${reset} $remote" && \
           git push -q publish master && \
