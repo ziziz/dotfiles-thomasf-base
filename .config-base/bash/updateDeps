@@ -23,18 +23,19 @@ dl_completion "android" "https://raw.github.com/mbrubeck/android-completion/mast
 dl_completion "git" "https://raw.github.com/git/git/master/contrib/completion/git-completion.bash"
 dl_completion "ipython" "https://raw.github.com/ipython/ipython/master/examples/core/ipython-completion.bash"
 dl_completion "maven" "https://raw.github.com/juven/maven-bash-completion/master/bash_completion.bash"
+dl_completion "vagrant" "https://raw.github.com/kura/vagrant-bash-completion/master/vagrant"
 
 dl_bin "git-imerge" "https://raw.github.com/mhagger/git-imerge/master/git-imerge"
 dl_bin "ghi" "https://raw.github.com/stephencelis/ghi/master/ghi"
 dl_bin "vcprompt" "https://raw.github.com/djl/vcprompt/master/bin/vcprompt"
 dl_bin "svtget" "https://raw.github.com/mmn/svtget/master/bash/svtget"
 
-npm install -g bower
-bower completion > completion.d/bower
-
 curl -s -k -L "https://raw.github.com/rupa/z/master/z.sh" -o z
 
 youtube-dl -U
+
+npm install -g bower
+bower completion > completion.d/bower
 
 (
   cd ~/repos/github/hub
