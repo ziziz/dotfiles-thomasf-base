@@ -4,8 +4,8 @@ set -e
 cmd=$(basename ${0})
 [ "$cmd" = "default-python" ] && cmd="python"
 if [ -x ~/.virtualenvs/default/bin/$cmd ]; then
-    echo exec ~/.virtualenvs/default/bin/$cmd "$@"
+    exec ~/.virtualenvs/default/bin/$cmd "$@"
 else
-    echo exec $cmd "$@"
+    exec $cmd "$@"
 fi
 
