@@ -165,7 +165,7 @@ alias l='ls -lhG'
 alias la='ls -A'
 alias ll="ls -l"
 alias lsnew="find . -mindepth 1 -maxdepth 1 -mtime 0"
-
+alias lslistenports="sudo netstat -plunt"
 alias adblogcat="adb logcat | adb-logcat-pp"
 
 if [ -n "$DISPLAY" ] && [ $(which dmenu) ] ; then
