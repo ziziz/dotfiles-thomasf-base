@@ -25,6 +25,9 @@ ppath "${HOME}/.opt/go/bin" \
 ppath "${HOME}/.opt/ec2-api-tools/bin" \
     && EC2_HOME="${HOME}/.opt/ec2-api-tools" \
     && export EC2_HOME
+# ppath "${HOME}/.opt/plan9port/bin" \
+#   && PLAN9="${HOME}/.opt/plan9port" \
+#   && export PLAN9
 ppath "${HOME}/.opt/groovy/bin"
 ppath "${HOME}/.opt/gradle/bin"
 ppath "${HOME}/.opt/apache-maven/bin"
