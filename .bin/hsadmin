@@ -12,7 +12,13 @@
 set -e
 
 base="${HOME}/.config/dotfiles/"
-dotfiles=$(readlink -f $(dirname $0)/dotfiles)
+
+if [ $(which dotfiles) ]; then
+  dotfiles=$(which dotfiles)
+else
+  # TODO this will fail in osx
+  dotfiles=$(readlink -f $(dirname $0)/dotfiles)
+fi
 
 # Run dotfiles syncrhonization and/or source INSTALLER script if found
 function install_repositories {
