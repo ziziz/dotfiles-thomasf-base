@@ -137,6 +137,14 @@ bak() {
   fi
 }
 
+bakdir() {
+  if [[ -d $1 ]]; then
+    cp -R "$1" "$1.backup-$(date +"%m-%d-%Y_%H%M%S")"
+  else
+    return 1
+  fi
+}
+
 
 awscredentials() {
   local account="aws-$1"
