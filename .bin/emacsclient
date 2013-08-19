@@ -2,7 +2,7 @@
 #
 
 if [ -x ~/.opt/emacs/lib-src/emacsclient ]; then
-  emacs=~/.opt/emacs/src/emacs
+  emacs=~/.opt/emacs/lib-src/emacsclient
 elif [ -x /usr/bin/emacsclient ]; then
   emacs=/usr/bin/emacsclient
 fi
