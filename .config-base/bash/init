@@ -142,7 +142,15 @@ __pwd_logger() {
     __last_logged_pwd="$PWD"
   fi
 }
-PROMPT_COMMAND="__pwd_logger; history -a; echo -ne '\a'"
+
+case $TERM in
+  dumb)
+    # do nothing
+    ;;
+  *)
+    PROMPT_COMMAND="__pwd_logger; history -a; echo -ne '\a'"
+    ;;
+esac
 
 # ------------------------------------------------------------------------------
 #
@@ -260,7 +268,15 @@ fi
 
 # Activate the prompt
 log "activate prompt"
-__prompt_activate
+case $TERM in
+  dumb)
+    # do nothing
+    ;;
+  *)
+    __prompt_activate
+    ;;
+esac
+
 
 # replace logger with empty stub
 function log() {
