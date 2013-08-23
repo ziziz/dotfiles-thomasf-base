@@ -9,15 +9,18 @@
 function __prompt_h {
   echo -n `date +%H`
 }
+export -f __prompt_h
 
 function __prompt_m {
   echo -n `date +%M`
 }
+export -f __prompt_m
 
 function __prompt_venv {
   # [[ -n ${VIRTUAL_ENV} ]] && [ "${VIRTUAL_ENV##*/}" != "default" ] && echo -n " p:${VIRTUAL_ENV##*/} "
   [[ -n ${VIRTUAL_ENV} ]] && echo -n "(p:${VIRTUAL_ENV##*/}) "
 }
+export -f __prompt_venv
 
 function __prompt_rvm {
   which rvm-prompt >/dev/null 2>/dev/null && echo -n "(r:$(rvm-prompt v g 2>/dev/null)) "
@@ -37,6 +40,7 @@ function __prompt_username {
     echo -n "$(whoami | cut -c1-4)"
   fi
 }
+export -f  __prompt_username
 
 # Hostname or alias
 function __prompt_hostname {
@@ -46,6 +50,7 @@ function __prompt_hostname {
     echo -n "$(hostname | cut -c1-4)"
   fi
 }
+export -f  __prompt_hostname
 
 # SSH agent indicator
 function __prompt_ssh_agent {
@@ -53,6 +58,7 @@ function __prompt_ssh_agent {
     echo -n ':'
   fi
 }
+export -f  __prompt_ssh_agent
 
 # SSH session session indicator
 function __prompt_ssh {
@@ -60,6 +66,7 @@ function __prompt_ssh {
     echo -n '/\'
   fi
 }
+export -f  __prompt_ssh
 
 # Show version controlled repository status.
 # vcprompt is used if installed, otherwise __git_ps1 will be tried as well.
@@ -74,6 +81,7 @@ function __prompt_vcs {
     __git_ps1 "(%s) "
   fi
 }
+export -f  __prompt_vcs
 
 # Support function to compactify a path
 # copied: http://stackoverflow.com/questions/3497885/code-challenge-bash-prompt-path-shortener
@@ -96,17 +104,20 @@ function __dir_chomp {
   done
   echo ${b/\/~/\~}${b+/}$p
 }
+export -f  __dir_chomp
 
 # Compact version of current working directory
 function __prompt_pwd {
   local w=$(($(tput cols)-50))
   echo -n $(__dir_chomp  "$(pwd)" $w)
 }
+export -f  __prompt_pwd
 
 # Compact version of current working directory
 function __title_pwd {
   echo -n $(__dir_chomp  "$(pwd)" 40)
 }
+export -f  __title_pwd
 
 #
 function __prompt_last {
@@ -124,6 +135,7 @@ function __prompt_last {
     fi
   fi
 }
+export -f  __prompt_last
 
 
 # Set up prompt
@@ -203,3 +215,4 @@ ${resetFormating}"
   PS2='> '
   PS4='+ '
 }
+export -f  __prompt_activate
