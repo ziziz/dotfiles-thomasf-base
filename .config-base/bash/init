@@ -20,23 +20,23 @@ log() {
 
 # Solarized dark for console terminal
 if [ "$TERM" = "linux" ]; then
-    echo -en "\e]P0073642"
-    echo -en "\e]P8002b36"
-    echo -en "\e]P1dc322f"
-    echo -en "\e]P9cb4b16"
-    echo -en "\e]P2859900"
-    echo -en "\e]PA586e75"
-    echo -en "\e]P3b58900"
-    echo -en "\e]PB657b83"
-    echo -en "\e]P4268bd2"
-    echo -en "\e]PC839496"
-    echo -en "\e]P5d33682"
-    echo -en "\e]PD6c71c4"
-    echo -en "\e]P62aa198"
-    echo -en "\e]PE93a1a1"
-    echo -en "\e]P7eee8d5"
-    echo -en "\e]PFfdf6e3"
-    clear
+  echo -en "\e]P0073642"
+  echo -en "\e]P8002b36"
+  echo -en "\e]P1dc322f"
+  echo -en "\e]P9cb4b16"
+  echo -en "\e]P2859900"
+  echo -en "\e]PA586e75"
+  echo -en "\e]P3b58900"
+  echo -en "\e]PB657b83"
+  echo -en "\e]P4268bd2"
+  echo -en "\e]PC839496"
+  echo -en "\e]P5d33682"
+  echo -en "\e]PD6c71c4"
+  echo -en "\e]P62aa198"
+  echo -en "\e]PE93a1a1"
+  echo -en "\e]P7eee8d5"
+  echo -en "\e]PFfdf6e3"
+  clear
 fi
 
 # Don't let virtualenv change the prompt
@@ -229,13 +229,12 @@ if [ -x /usr/bin/lesspipe ]; then
   fi
 fi
 
-[ -f "${__BASH}/functions" ] \
-  && log "functions" \
-  && . "${__BASH}/functions"
+if [ ! -z "${BASH}" ]; then
+  [ -f "${__BASH}/functions" ] \
+    && log "functions" \
+    && . "${__BASH}/functions"
+fi
 
-[ -f "${__BASH}/prompt" ] \
-  && log "prompt" \
-  && . "${__BASH}/prompt"
 
 # clipboard paste
 if [ -n "$DISPLAY" ] && [ -x /usr/bin/xsel ] ; then
@@ -268,15 +267,22 @@ fi
 
 # Activate the prompt
 log "activate prompt"
-case $TERM in
-  dumb)
-    # do nothing
-    ;;
-  *)
-    __prompt_activate
-    ;;
-esac
 
+if [ ! -z "${BASH}" ]; then
+  [ -f "${__BASH}/prompt" ] \
+    && log "prompt" \
+    && . "${__BASH}/prompt"
+
+
+  case $TERM in
+    dumb)
+      # do nothing
+      ;;
+    *)
+      __prompt_activate
+      ;;
+  esac
+fi
 
 # replace logger with empty stub
 function log() {
